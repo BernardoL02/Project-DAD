@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Config
+clusters:
+  - name: default
+    cluster:
+      server: https://172.22.21.107:443
+      insecure-skip-tls-verify: true
+contexts:
+  - name: dad-group-13-context
+    context:
+      cluster: default
+      namespace: dad-group-13
+      user: dad-group-13-user
+current-context: dad-group-13-context
+users:
+  - name: dad-group-13-user
+    user:
+      token: eyJhbGciOiJSUzI1NiIsImtpZCI6IkpST3l6UlNKU2dmZ3dnSXp5VDhsRURhUEpfVG1aRUlzWHBYcU9hWjJVM2cifQ.eyJhdWQiOlsiaHR0cHM6Ly9rdWJlcm5ldGVzLmRlZmF1bHQuc3ZjLmNsdXN0ZXIubG9jYWwiLCJrM3MiXSwiZXhwIjoxNzM5MjE0MzE2LCJpYXQiOjE3MzE0MzgzMTYsImlzcyI6Imh0dHBzOi8va3ViZXJuZXRlcy5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsIiwianRpIjoiMDQ4MDRiNjEtNzE0OC00OWU1LTgxM2MtNzEzMTBmMzFjM2FiIiwia3ViZXJuZXRlcy5pbyI6eyJuYW1lc3BhY2UiOiJkYWQtZ3JvdXAtMTMiLCJzZXJ2aWNlYWNjb3VudCI6eyJuYW1lIjoiZGFkLWdyb3VwLTEzLXVzZXIiLCJ1aWQiOiIyMDBhYmE2Yi1iYjczLTQwMDItODk5YS04MzQ2M2VlMWYyYjUifX0sIm5iZiI6MTczMTQzODMxNiwic3ViIjoic3lzdGVtOnNlcnZpY2VhY2NvdW50OmRhZC1ncm91cC0xMzpkYWQtZ3JvdXAtMTMtdXNlciJ9.W7G6VjEREDzI1TFfcCgSAr97FnRKOM-TlYc7Ro98oUjU_-cxOzrGv600-tOj_jpDvYIZbaPn1bauwTC0nmMQeNIuy6vnADHnMdEoZ_WvO89KJZPjNrTmYpby5x_FFgBlCUIQM884_U85vHcXuQRK-wsdH2W06c3Fuw81JbDiwiVzbtaZ0aHAli46k_ktmicV7Brm9cnSIK5EJtYbJZudRK7SWZmxSKL_SG4ch7BcK_nIgHW-HGlJSlSg04IA1vBPUT1hrL4zCf-VXQjVI160K2anBiVzk7wzRtklxZ6PCpUDOgYbFtB65CUlrjPGgpjq2rpnLS98sPPjIx5sLGKuLw
