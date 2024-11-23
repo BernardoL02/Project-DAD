@@ -11,9 +11,11 @@ class GameController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return GameResource::collection(Game::all());
+        $user = $request->user();
+
+        return GameResource::collection($user->games);
     }
 
     /**
