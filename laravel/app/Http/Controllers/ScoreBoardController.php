@@ -27,24 +27,25 @@ class ScoreBoardController extends Controller
 
         // Use Eloquent models and relationships to query
         $scoreboards = Game::query()
-            ->where('type', 'S') // Single-player games
-            ->where('status', 'E') // Only completed games
+            ->where('type', 'S')
+            ->where('status', 'E')
             ->whereHas('board', function ($query) use ($cols, $rows) {
                 $query->where('board_cols', $cols)
-                      ->where('board_rows', $rows);
+                    ->where('board_rows', $rows);
             })
-            ->with(['user:id,nickname', 'board:board_cols,board_rows']) // Include related user and board data
-            ->selectRaw('created_user_id, MIN(total_time) as best_time, status') // Aggregate best time
-            ->groupBy('created_user_id') // Group by player
-            ->orderBy('best_time', 'asc') // Sort by best time
-            ->limit(10) // Top 10 players
+            ->with(['user:id,nickname', 'board:board_cols,board_rows'])
+            ->selectRaw('created_user_id, MIN(total_time) as best_time, MAX(status) as status') // Use MAX() to select a single status
+            ->groupBy('created_user_id') // Only group by created_user_id
+            ->orderBy('best_time', 'asc')
+            ->limit(10)
             ->get()
             ->map(function ($game) {
                 return [
                     'nickname' => $game->user->nickname,
                     'best_time' => $game->best_time,
-                    'min_turns' => 'N/A', // Placeholder as turns data is not included
-                    'status' => $game->status
+                    'status' => $game->status,
+                    'min_turns' => 'N/A',
+
                 ];
             });
 
