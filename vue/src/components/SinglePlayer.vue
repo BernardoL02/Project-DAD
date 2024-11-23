@@ -42,7 +42,6 @@ const startGame = (size, cost) => {
                 class="bg-indigo-500 text-white px-6 py-2 rounded-lg hover:bg-indigo-600 transition duration-300">
                 History
             </RouterLink>
-
         </div>
 
         <div class="bg-white p-4 rounded shadow-md">
