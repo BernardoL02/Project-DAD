@@ -1,5 +1,5 @@
 <script setup>
-import { useGameStore } from '@/stores/games'
+import { useGameStore } from '@/stores/game'
 
 import DynamicTable from '@/components/StandardTable.vue';
 
@@ -9,10 +9,13 @@ const gameStore = useGameStore()
 
 gameStore.getSingleGames()
 
+console.log(gameStore.games)
+
 </script>
 
 <template>
   <div class="max-w-4xl mx-auto mt-10">
     <DynamicTable :columns="tableColumns" :data="gameStore.games" />
   </div>
+
 </template>

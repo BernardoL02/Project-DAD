@@ -34,8 +34,9 @@ const handleLogout = async () => {
     <div v-else-if="profileStore.userProfile" class="space-y-6">
       <div class="text-center">
         <!-- Profile Picture -->
-        <img :src="`http://${apiDomain}/storage/photos/${profileStore.userProfile.photo_filename}`"
-          alt="User Profile Picture"
+        <img :src="profileStore.userProfile.photo_filename
+          ? `http://${apiDomain}/storage/photos/${profileStore.userProfile.photo_filename}`
+          : '/defaultPhotoProfile.jpg'" alt="User Profile Picture"
           class="w-60 h-60 rounded-full mx-auto border-4 border-white shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl" />
       </div>
 
