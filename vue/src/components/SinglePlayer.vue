@@ -30,8 +30,12 @@ const startGame = (size, cost) => {
         <div class="bg-gray-100 p-4 rounded shadow-md flex justify-between items-center">
             <div>
                 <p class="text-lg font-semibold">Welcome, {{ user.username }}</p>
-                <p class="text-sm text-gray-600">Brain Coins: <span class="font-bold">{{ user.brainCoins }}</span>
-                </p>
+
+                <div class="flex items-left justify-left pt-2">
+                    <img src="/coin.png" alt="Coin Icon" class="w-6 h-6 object-contain mr-2" />
+                    <span class="mr-2">{{ user.brainCoins }}</span>
+                </div>
+
             </div>
             <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
                 @click="alert('View game history')">
@@ -48,7 +52,7 @@ const startGame = (size, cost) => {
                     <p class="text-sm text-gray-500">
                         Required Coins: <span class="font-semibold">{{ board.coinsRequired }}</span>
                     </p>
-                    <button class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+                    <button class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600 transition"
                         :class="{ 'opacity-50': user.brainCoins < board.coinsRequired }"
                         :disabled="user.brainCoins < board.coinsRequired"
                         @click="startGame(board.size, board.coinsRequired)">

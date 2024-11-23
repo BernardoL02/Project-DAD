@@ -10,8 +10,14 @@ class Game extends Model
     use HasFactory;
 
     protected $fillable = [
-        'created_user_id', 'winner_user_id', 'type', 'status',
-        'began_at', 'ended_at', 'total_time', 'board_id', 'custom',
+        'created_user_id',
+        'winner_user_id',
+        'type',
+        'status',
+        'began_at',
+        'ended_at',
+        'total_time',
+        'board_id',
     ];
 
     protected $casts = [
