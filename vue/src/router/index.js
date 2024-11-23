@@ -69,7 +69,6 @@ router.beforeEach(async (to, from, next) => {
     handlingFirstRoute = false
     await storeAuth.restoreToken()
   }
-
   
   if ((to.name == 'single-playerHistory' || to.name == 'Profile') && !storeAuth.user) {
     next({ name: 'login' })

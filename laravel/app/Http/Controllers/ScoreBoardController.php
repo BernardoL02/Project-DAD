@@ -12,6 +12,7 @@ class ScoreBoardController extends Controller
 {
     public function globalSinglePlayerScoreboard($boardSize)
     {
+        // Define board dimensions
         $boardDimensions = [
             '3x4' => [3, 4],
             '4x4' => [4, 4],
@@ -24,23 +25,28 @@ class ScoreBoardController extends Controller
 
         [$cols, $rows] = $boardDimensions[$boardSize];
 
-        $scoreboards = DB::table('games')
-            ->join('boards', 'boards.id', '=', 'games.board_id')
-            ->join('users', 'users.id', '=', 'games.created_user_id') // Corrected column
-            ->select(
-                'games.created_user_id',
-                'users.nickname',
-                'boards.board_cols',
-                'boards.board_rows',
-                DB::raw('MIN(total_time) as best_time') // Removed `turns`
-            )
-            ->where('games.type', 'S') // Single-player games
-            ->where('boards.board_cols', $cols)
-            ->where('boards.board_rows', $rows)
-            ->groupBy('games.created_user_id', 'boards.board_cols', 'boards.board_rows', 'users.nickname') // Group by the correct columns
+        // Use Eloquent models and relationships to query
+        $scoreboards = Game::query()
+            ->where('type', 'S') // Single-player games
+            ->where('status', 'E') // Only completed games
+            ->whereHas('board', function ($query) use ($cols, $rows) {
+                $query->where('board_cols', $cols)
+                      ->where('board_rows', $rows);
+            })
+            ->with(['user:id,nickname', 'board:board_cols,board_rows']) // Include related user and board data
+            ->selectRaw('created_user_id, MIN(total_time) as best_time, status') // Aggregate best time
+            ->groupBy('created_user_id') // Group by player
             ->orderBy('best_time', 'asc') // Sort by best time
-            ->limit(10)
-            ->get();
+            ->limit(10) // Top 10 players
+            ->get()
+            ->map(function ($game) {
+                return [
+                    'nickname' => $game->user->nickname,
+                    'best_time' => $game->best_time,
+                    'min_turns' => 'N/A', // Placeholder as turns data is not included
+                    'status' => $game->status
+                ];
+            });
 
         return response()->json(['scoreboards' => $scoreboards]);
     }

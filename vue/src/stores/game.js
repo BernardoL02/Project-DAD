@@ -2,7 +2,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useErrorStore } from '@/stores/error'
-import { useAuthStore } from '@/stores/auth'
+
 
 export const useGameStore = defineStore('game', () => {
   const storeError = useErrorStore()
@@ -16,10 +16,10 @@ export const useGameStore = defineStore('game', () => {
   const getSingleGames = async () => {
     storeError.resetMessages()
     try {
-      useAuthStore.token
+      
       const response = await axios.get('games/single')
-      games.value = response.data.data
-      console.log(response)
+      games.value = response.data.data.data
+      
     } catch (e) {
       storeError.setErrorMessages(
         e.response.data.message,

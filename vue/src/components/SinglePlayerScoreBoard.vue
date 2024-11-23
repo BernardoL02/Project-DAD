@@ -8,7 +8,7 @@ const scoreboards = ref([]); // Data for the scoreboard
 const loading = ref(false);
 
 // Define table columns to pass to StandardTable
-const columns = ref(['Rank', 'Player', 'Best Time', 'Min Turns']);
+const columns = ref(['Rank', 'Player', 'Best Time', 'Min Turns','Stauts']);
 
 // Fetch scoreboard data from the server
 const fetchScoreboard = async (boardSize) => {
@@ -20,6 +20,7 @@ const fetchScoreboard = async (boardSize) => {
       Player: score.nickname, // Assuming 'nickname' is the player's name
       'Best Time': `${score.best_time}s`,
       'Min Turns': score.min_turns || 'N/A', // Handle cases where min_turns might be missing
+      'Status': score.Status
     }));
   } catch (error) {
     console.error('Error fetching scoreboard:', error);
@@ -47,16 +48,19 @@ onMounted(() => {
 
     <!-- Board size buttons -->
     <div class="flex justify-center space-x-4">
-      <button 
-        v-for="size in ['3x4', '4x4', '6x6']" 
-        :key="size" 
-        @click="handleBoardSizeChange(size)"
-        :class="{'bg-blue-600 text-white': boardSize === size}"
-        class="px-4 py-2 rounded-md border border-gray-300"
-      >
-        {{ size }}
-      </button>
-    </div>
+    <button 
+      v-for="size in ['3x4', '4x4', '6x6']" 
+      :key="size" 
+      @click="handleBoardSizeChange(size)"
+      :class="{
+        'bg-indigo-600 text-white': boardSize === size, // Darker color for the selected button
+        'bg-indigo-400 hover:bg-indigo-600 text-white': boardSize !== size // Lighter color with hover for other buttons
+      }"
+      class="px-4 py-2 rounded-md border border-gray-300 transition"
+    >
+      {{ size }}
+    </button>
+  </div>
 
     <div>
       <h2 class="text-xl font-semibold mb-4">Top 10 Best Players for {{ boardSize }} Board</h2>
@@ -74,12 +78,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-<style scoped>
-button {
-  transition: background-color 0.3s;
-}
-button:hover {
-  background-color: #3b82f6;
-}
-</style>

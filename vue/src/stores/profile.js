@@ -21,15 +21,10 @@ export const useProfileStore = defineStore('profile', () => {
       
       if (err.response?.status === 401) {
         try {
-          const refreshedToken = await refreshAuthToken();
-          if (refreshedToken) {
-            axios.defaults.headers.common.Authorization = `Bearer ${refreshedToken}`;
+          
+          const retryResponse = await axios.get('/users/me');
+          userProfile.value = retryResponse.data.data;
 
-            const retryResponse = await axios.get('/users/me');
-            userProfile.value = retryResponse.data.data;
-          } else {
-            error.value = 'Failed to refresh token. Please log in again.';
-          }
         } catch (e) {
           error.value = 'Error refreshing token. Please log in again.';
           storeError.setErrorMessages(
@@ -48,18 +43,7 @@ export const useProfileStore = defineStore('profile', () => {
     }
   };
   
-  // Function to refresh the token
-  const refreshAuthToken = async () => {
-    try {
-      const response = await axios.post('/auth/refreshtoken');
-      const newToken = response.data.token;
-      sessionStorage.setItem('token', newToken); // Update token in sessionStorage
-      return newToken;
-    } catch (err) {
-      console.error('Error refreshing token:', err);
-      return null;
-    }
-  };
+
 
   return {
     userProfile,
