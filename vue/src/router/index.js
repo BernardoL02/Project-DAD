@@ -23,6 +23,7 @@ const router = createRouter({
       children: [
         {
           path: 'laravel',
+          name: 'login',
           component: LaravelTester
         },
         {
@@ -38,7 +39,7 @@ const router = createRouter({
     },
     {
       path: '/singleplayer/history',
-      name: 'single-player/history',
+      name: 'single-playerHistory',
       component: PlayerHistory
     },
 
@@ -69,12 +70,11 @@ router.beforeEach(async (to, from, next) => {
     await storeAuth.restoreToken()
   }
 
-  // routes "updateTask" and "updateProject" are only accessible when user is logged in
-  if ((to.name == 'updateTask' || to.name == 'updateProject') && !storeAuth.user) {
+  
+  if ((to.name == 'single-playerHistory' || to.name == 'Profile') && !storeAuth.user) {
     next({ name: 'login' })
     return
   }
-  // all other routes are accessible to everyone, including anonymous users
   next()
 })
 

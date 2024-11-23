@@ -13,17 +13,7 @@ export const useProfileStore = defineStore('profile', () => {
   const fetchProfile = async () => {
     loading.value = true;
     error.value = null;
-  
-    // First check for token in sessionStorage
-    const token = sessionStorage.getItem('token');
-    if (token) {
-      axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-    } else {
-      error.value = 'Unauthorized: No token found';
-      loading.value = false;
-      return;
-    }
-  
+    
     try {
       const response = await axios.get('/users/me');
       userProfile.value = response.data.data;

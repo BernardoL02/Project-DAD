@@ -30,12 +30,12 @@ import Toaster from './components/ui/toast/Toaster.vue';
           </RouterLink>
 
           <div class="relative group">
-            <RouterLink 
+            <label  
               to="/scoreBoard"
               class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
               active-class="text-blue-600 font-semibold">
               Score Board
-            </RouterLink>
+          </label >
             <!-- Dropdown Menu -->
             <div class="absolute left-0 hidden mt-2 space-y-2 bg-white shadow-lg rounded-md w-48 group-hover:block">
               <RouterLink 

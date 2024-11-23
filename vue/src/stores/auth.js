@@ -73,7 +73,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const restoreToken = async function () {
-    let storedToken = localStorage.getItem('token')
+    let storedToken = sessionStorage.getItem('token')
     if (storedToken) {
       try {
         token.value = storedToken
