@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GameController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ScoreBoardController;
 
 Route::post('/auth/login', [AuthController::class, "login"]);
 
@@ -25,6 +26,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/games/{game}', [GameController::class, 'update']);
     Route::delete('/games/{game}', [GameController::class, 'destroy']);
 
+    // ------ Score Boards ----
+
+    Route::get('/scoreboard/single/{boardSize}', [ScoreBoardController::class, 'globalSinglePlayerScoreboard']);
+    Route::get('/scoreboard/multiplayer', [ScoreBoardController::class, 'multiplayerScoreboard']);
 });
 
 

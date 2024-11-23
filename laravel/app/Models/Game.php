@@ -54,4 +54,20 @@ class Game extends Model
     {
         return $this->belongsTo(User::class, 'created_user_id', 'id');
     }
+
+    public function player()
+    {
+        return $this->belongsTo(User::class, 'created_user_id');
+    }
+    public function scopeSinglePlayer($query)
+    {
+        return $query->where('type', 'S');
+    }
+
+    public function scopeWithBoardSize($query, $cols, $rows)
+    {
+        return $query->whereHas('board', function ($query) use ($cols, $rows) {
+            $query->where('board_cols', $cols)->where('board_rows', $rows);
+        });
+    }
 }

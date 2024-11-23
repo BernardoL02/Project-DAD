@@ -1,6 +1,5 @@
 <script setup>
 import Toaster from './components/ui/toast/Toaster.vue';
-
 </script>
 
 <template>
@@ -30,11 +29,35 @@ import Toaster from './components/ui/toast/Toaster.vue';
             Single-Player
           </RouterLink>
 
-          <RouterLink to="/playerProfile"
-            class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+          <div class="relative group">
+            <RouterLink 
+              to="/scoreBoard"
+              class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              active-class="text-blue-600 font-semibold">
+              Score Board
+            </RouterLink>
+            <!-- Dropdown Menu -->
+            <div class="absolute left-0 hidden mt-2 space-y-2 bg-white shadow-lg rounded-md w-48 group-hover:block">
+              <RouterLink 
+                to="/scoreBoard/singlePlayer" 
+                class="block text-gray-900 hover:bg-gray-100 px-4 py-2 text-sm rounded-md">
+                Single Player Score
+              </RouterLink>
+              <RouterLink 
+                to="/scoreBoard/multiPlayer" 
+                class="block text-gray-900 hover:bg-gray-100 px-4 py-2 text-sm rounded-md">
+                Multi Player Score
+              </RouterLink>
+            </div>
+          </div>
+
+          <RouterLink 
+            to="/playerProfile"
+            class="text-gray-900 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors ml-auto "
             active-class="text-blue-600 font-semibold">
             Profile
           </RouterLink>
+
         </nav>
       </div>
     </header>

@@ -5,6 +5,8 @@ import PlayerProfile from '@/components/PlayerProfile.vue'
 import SinglePlayer from '@/components/SinglePlayer.vue'
 import WebSocketTester from '@/components/WebSocketTester.vue'
 import { createRouter, createWebHistory } from 'vue-router'
+import SinglePlayerScoreBoard from '@/components/SinglePlayerScoreBoard.vue'
+import MultiPlayerScoreBoard from '@/components/MultiPlayerScoreBoard.vue'
 
 import { useAuthStore } from '@/stores/auth'
 
@@ -38,6 +40,17 @@ const router = createRouter({
       path: '/singleplayer/history',
       name: 'single-player/history',
       component: PlayerHistory
+    },
+
+    {
+      path: '/scoreBoard/singlePlayer',
+      name: 'singlePlayerScore',
+      component: SinglePlayerScoreBoard
+    },
+    {
+      path: '/scoreBoard/multiPlayer',
+      name: 'multiPlayerScore',
+      component: MultiPlayerScoreBoard
     },
     {
       path: '/playerProfile',
