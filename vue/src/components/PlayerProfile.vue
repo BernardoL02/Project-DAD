@@ -51,7 +51,7 @@ const handleLogout = async () => {
         <div class="bg-white p-5 rounded-lg shadow-md flex items-center justify-between">
 
           <!-- User Name -->
-          <div class="flex flex-col items-center ml-6">
+          <div class="flex flex-col items-center ml-4">
             <p class="text-lg font-bold text-black">User Name</p>
             <p class="text-lg font-semibold text-gray-500">
               {{ profileStore.userProfile.nickname }}
@@ -59,7 +59,7 @@ const handleLogout = async () => {
           </div>
 
           <!-- Account Type -->
-          <div class="flex flex-col items-center mr-6">
+          <div class="flex flex-col items-center mr-4">
             <p class="text-lg font-bold text-black">Account Type</p>
             <p class="text-lg font-semibold text-gray-500">
               {{ profileStore.userProfile.type === 'P' ? 'Player' :
@@ -71,7 +71,7 @@ const handleLogout = async () => {
 
 
         <!-- Brain Coins Section -->
-        <div class="bg-indigo-100 p-5 rounded-lg shadow-lg flex items-center justify-between ">
+        <div class="bg-indigo-100 p-5 rounded-lg shadow-lg flex items-center justify-between">
           <div class="flex items-center space-x-3">
             <img src="/coin.png" alt="Coin Icon" class="w-10 h-10 object-contain" />
             <div>
@@ -81,7 +81,8 @@ const handleLogout = async () => {
               </p>
             </div>
           </div>
-          <button class="bg-indigo-700 text-white px-4 py-2 rounded-lg hover:bg-indigo-500 transition duration-300">
+          <button
+            class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition duration-300 mr-2">
             Buy Coins
           </button>
         </div>
@@ -89,7 +90,7 @@ const handleLogout = async () => {
 
       <div class="text-center mt-8">
         <button @click="handleLogout"
-          class="px-6 py-2 bg-red-700 text-white font-semibold rounded-lg shadow-md hover:bg-red-500 transition duration-200">
+          class="px-6 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 transition duration-200">
           Log Out
         </button>
       </div>

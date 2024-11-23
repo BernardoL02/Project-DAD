@@ -68,4 +68,14 @@ class GameController extends Controller
         return response()->json(null, 204);
     }
 
+    //Other Functions
+    public function mySinglePlayerGames(Request $request)
+    {
+        $user = $request->user();
+
+        $singlePlayerGames = $user->games()->where('type', 'S')->get();
+
+        return GameResource::collection($singlePlayerGames);
+    }
+
 }

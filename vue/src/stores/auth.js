@@ -9,7 +9,7 @@ export const useAuthStore = defineStore('auth', () => {
   const storeError = useErrorStore()
 
   const user = ref(null)
-  const token = ref(sessionStorage.getItem('token') || '');
+  const token = ref(sessionStorage.getItem('token') || '')
 
   const userName = computed(() => {
     return user.value ? user.value.name : ''
@@ -51,10 +51,10 @@ export const useAuthStore = defineStore('auth', () => {
 
   const login = async (credentials) => {
     storeError.resetMessages()
-    try { 
+    try {
       const responseLogin = await axios.post('auth/login', credentials)
       token.value = responseLogin.data.token
-      sessionStorage.setItem('token', token.value);
+      sessionStorage.setItem('token', token.value)
       axios.defaults.headers.common.Authorization = 'Bearer ' + token.value
       const responseUser = await axios.get('users/me')
       user.value = responseUser.data
@@ -70,6 +70,24 @@ export const useAuthStore = defineStore('auth', () => {
       )
       return false
     }
+  }
+
+  const restoreToken = async function () {
+    let storedToken = localStorage.getItem('token')
+    if (storedToken) {
+      try {
+        token.value = storedToken
+        axios.defaults.headers.common.Authorization = 'Bearer ' + token.value
+        const responseUser = await axios.get('users/me')
+        user.value = responseUser.data.data
+        repeatRefreshToken()
+        return true
+      } catch {
+        clearUser()
+        return false
+      }
+    }
+    return false
   }
 
   const logout = async () => {
@@ -135,6 +153,7 @@ export const useAuthStore = defineStore('auth', () => {
     userGender,
     userPhotoUrl,
     login,
-    logout
+    logout,
+    restoreToken
   }
 })
