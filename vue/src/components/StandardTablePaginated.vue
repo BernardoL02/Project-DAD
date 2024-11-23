@@ -16,11 +16,12 @@ const { columns, data } = defineProps({
 const currentPage = ref(1); // Página atual
 const itemsPerPage = 10; // Itens por página
 
-// Calcular o número total de páginas
-const totalPages = computed(() => Math.ceil(data.length / itemsPerPage));
+// Calcular o número total de páginas, considerando o caso quando data.length é 0
+const totalPages = computed(() => data.length === 0 ? 0 : Math.ceil(data.length / itemsPerPage));
 
 // Dados paginados da página atual
 const paginatedData = computed(() => {
+    if (data.length === 0) return []; // Retorna um array vazio se não houver dados
     const start = (currentPage.value - 1) * itemsPerPage;
     const end = start + itemsPerPage;
     return data.slice(start, end); // Usa `data` desestruturado
@@ -39,6 +40,7 @@ const previousPage = () => {
         currentPage.value--;
     }
 };
+
 </script>
 
 <template>
@@ -69,21 +71,21 @@ const previousPage = () => {
         <!-- Controles de Paginação -->
         <div class="flex items-center justify-between m-4">
             <div>
-                <button @click="previousPage" :disabled="currentPage === 1"
+                <button @click="previousPage" :disabled="currentPage === 1 || totalPages === 0"
                     class="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400">
                     Previous
                 </button>
 
-                <button @click="nextPage" :disabled="currentPage === totalPages"
+                <button @click="nextPage" :disabled="currentPage === totalPages || totalPages === 0"
                     class="ml-2 px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400">
                     Next
                 </button>
             </div>
 
             <span class="text-gray-600 mr-2">
-                Page {{ currentPage }} of {{ totalPages }}
+                <!-- Exibe "Page 0 of 0" quando não há dados -->
+                Page {{ totalPages === 0 ? 0 : currentPage }} of {{ totalPages }}
             </span>
-
         </div>
     </div>
 </template>

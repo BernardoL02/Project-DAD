@@ -47,7 +47,7 @@ export const useGameStore = defineStore('game', () => {
     let filtered = games.value
 
     // Filtro por status
-    if (statusFilter.value) {
+    if (statusFilter.value && statusFilter.value != 'All') {
       filtered = filtered.filter((game) => game.status === statusFilter.value)
     }
 
@@ -64,6 +64,6 @@ export const useGameStore = defineStore('game', () => {
     getSinglePlayerGames,
     statusFilter,
     beginDateFilter,
-    filteredGames // Aqui exportamos a lista filtrada
+    filteredGames
   }
 })
