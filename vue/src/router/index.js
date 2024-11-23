@@ -1,5 +1,6 @@
 import HomeComponent from '@/components/HomeComponent.vue'
 import LaravelTester from '@/components/LaravelTester.vue'
+import PlayerHistory from '@/components/PlayerHistory.vue'
 import PlayerProfile from '@/components/PlayerProfile.vue'
 import SinglePlayer from '@/components/SinglePlayer.vue'
 import WebSocketTester from '@/components/WebSocketTester.vue'
@@ -29,9 +30,13 @@ const router = createRouter({
     {
       path: '/singleplayer',
       name: 'single-player',
-      component: SinglePlayer
+      component: SinglePlayer,
     },
-
+    {
+      path: '/singleplayer/history',
+      name: 'single-player/history',
+      component: PlayerHistory,
+    },
     {
       path: '/playerProfile',
       name: 'Profile',

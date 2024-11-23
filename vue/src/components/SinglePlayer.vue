@@ -37,10 +37,12 @@ const startGame = (size, cost) => {
                 </div>
 
             </div>
-            <button class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
-                @click="alert('View game history')">
+    
+            <RouterLink to="/singlePlayer/history"
+                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition">
                 History
-            </button>
+            </RouterLink>
+          
         </div>
 
         <div class="bg-white p-4 rounded shadow-md">
@@ -61,8 +63,8 @@ const startGame = (size, cost) => {
                 </div>
             </div>
         </div>
-
-
+        <RouterView />
+        
         <div class="bg-gray-100 p-4 rounded shadow-md">
             <h2 class="text-xl font-semibold mb-4">Scoreboard</h2>
             <p class="text-sm text-gray-500">Global ranking and score history will appear here.</p>
@@ -71,4 +73,5 @@ const startGame = (size, cost) => {
             </div>
         </div>
     </div>
+    
 </template>
