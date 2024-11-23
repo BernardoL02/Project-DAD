@@ -20,6 +20,7 @@ const startGame = (size, cost) => {
         // Logic to start the game
     }
 };
+
 </script>
 
 <template>
