@@ -15,8 +15,11 @@ class GameController extends Controller
     {
         $user = $request->user();
 
+        // Retornar apenas os jogos que pertencem ao usuário autenticado
         return GameResource::collection($user->games);
+
     }
+
 
     /**
      * Show the form for creating a new resource.

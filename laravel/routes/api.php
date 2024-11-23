@@ -5,15 +5,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GameController;
-
-
-
-Route::get('/users/me', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+use App\Http\Controllers\UserController;
 
 Route::post('/auth/login', [AuthController::class, "login"]);
 
 
-Route::get('/games', [GameController::class, 'index']);
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+    Route::post('/auth/refreshtoken', [AuthController::class, 'refreshToken']);
+    Route::get('/users/me', [UserController::class , 'showMe']);
+    Route::get('/games', [GameController::class, 'index']);
+});
+
+
+
+
 

@@ -43,4 +43,9 @@ class Game extends Model
     {
         return $this->hasMany(MultiplayerGame::class);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'created_user_id', 'id');
+    }
 }

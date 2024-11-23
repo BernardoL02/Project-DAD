@@ -22,6 +22,9 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'email_verified_at',
+        'nickname',
+        'type', 'blocked', 'photo_filename', 'brain_coins_balance', 'custom', 'deleted_at',
     ];
 
     /**
@@ -46,4 +49,31 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+     // Relationships
+     public function transactions()
+     {
+         return $this->hasMany(Transaction::class);
+     }
+
+     public function multiplayerGames()
+     {
+         return $this->hasMany(MultiplayerGame::class);
+     }
+
+     public function createdGames()
+     {
+         return $this->hasMany(Game::class, 'created_user_id');
+     }
+
+     public function wonGames()
+     {
+         return $this->hasMany(Game::class, 'winner_user_id');
+     }
+
+     public function games()
+     {
+         return $this->hasMany(Game::class, 'created_user_id', 'id');
+     }
+
 }
