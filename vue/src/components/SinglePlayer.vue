@@ -1,9 +1,8 @@
 <script setup>
-// Simulated user data for demonstration
-const user = {
-    username: "José Delgado",
-    brainCoins: 10,
-};
+import { onMounted } from 'vue';
+import { useProfileStore } from '@/stores/profile';
+
+const profileStore = useProfileStore();
 
 const boardSizes = [
     { size: "3x4", coinsRequired: 0 },
@@ -11,13 +10,15 @@ const boardSizes = [
     { size: "6x6", coinsRequired: 1 },
 ];
 
-// Function to start the game
+onMounted(async () => {
+    await profileStore.fetchProfile();
+});
+
 const startGame = (size, cost) => {
-    if (user.brainCoins < cost) {
+    if (profileStore.coins < cost) {
         alert("You don't have enough brain coins to play on this board!");
     } else {
         alert(`Game started on the ${size} board`);
-        // Logic to start the game
     }
 };
 
@@ -30,11 +31,11 @@ const startGame = (size, cost) => {
 
         <div class="bg-sky-100 p-4 rounded shadow-md flex justify-between items-center">
             <div>
-                <p class="text-lg font-semibold">Welcome, {{ user.username }}</p>
+                <p class="text-lg font-semibold">Welcome, {{ profileStore.nickname }}</p>
 
                 <div class="flex items-left justify-left pt-2">
                     <img src="/coin.png" alt="Coin Icon" class="w-6 h-6 object-contain mr-2" />
-                    <span class="mr-2 text-semibold">{{ user.brainCoins }}</span>
+                    <span class="mr-2 text-semibold">{{ profileStore.coins }}</span>
                 </div>
             </div>
 
@@ -54,8 +55,8 @@ const startGame = (size, cost) => {
                         Required Coins - <span class="font-semibold">{{ board.coinsRequired }}</span>
                     </p>
                     <button class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600 transition mt-8"
-                        :class="{ 'opacity-50': user.brainCoins < board.coinsRequired }"
-                        :disabled="user.brainCoins < board.coinsRequired"
+                        :class="{ 'opacity-50': profileStore.coins < board.coinsRequired }"
+                        :disabled="profileStore.coins < board.coinsRequired"
                         @click="startGame(board.size, board.coinsRequired)">
                         Play
                     </button>

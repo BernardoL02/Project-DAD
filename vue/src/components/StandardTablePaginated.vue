@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue';
 
 // Recebe as propriedades com `defineProps`
 const { data, columns } = defineProps({
@@ -40,7 +40,13 @@ const previousPage = () => {
         currentPage.value--;
     }
 };
+
+// Reseta para a página 1 sempre que os dados mudarem
+watch(() => data, () => {
+    currentPage.value = 1;
+});
 </script>
+
 
 <template>
     <div class="overflow-x-auto shadow-md rounded-lg">

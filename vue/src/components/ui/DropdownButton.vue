@@ -57,8 +57,8 @@ onBeforeUnmount(() => {
     <div class="relative inline-block text-left">
         <!-- Botão para abrir o dropdown -->
         <button type="button" ref="buttonRef" @click="toggleDropdown" class="inline-flex justify-between w-full sm:w-48 rounded-md border border-gray-300 bg-white py-2 px-4
-            text-sm font-medium text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-            focus:border-blue-500">
+            text-sm font-medium text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500
+            focus:border-sky-500">
             <!-- Exibe a opção selecionada ou o texto inicial -->
             <span class="flex items-center">
                 {{ displayValue }}
@@ -73,7 +73,7 @@ onBeforeUnmount(() => {
             <div class="py-1" role="none">
                 <template v-for="option in props.options" :key="option">
                     <a href="#" @click.prevent="handleSelect(option)"
-                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
+                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-sky-100" role="menuitem">
                         {{ option }}
                     </a>
                 </template>

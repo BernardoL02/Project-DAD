@@ -5,10 +5,10 @@ import { useAuthStore } from '@/stores/auth'; // Import the auth store for logou
 
 const profileStore = useProfileStore();
 const authStore = useAuthStore();
-const apiDomain = import.meta.env.VITE_API_DOMAIN;
 
-onMounted(() => {
-  profileStore.fetchProfile();
+onMounted(async () => {
+  await profileStore.fetchProfile();
+  console.log(profileStore.photoUrl)
 });
 
 const handleLogout = async () => {
@@ -35,15 +35,13 @@ const handleLogout = async () => {
     <div v-else-if="profileStore.userProfile" class="space-y-6">
       <div class="text-center">
         <!-- Profile Picture -->
-        <img :src="profileStore.userProfile.photo_filename
-          ? `http://${apiDomain}/storage/photos/${profileStore.userProfile.photo_filename}`
-          : '/defaultPhotoProfile.jpg'" alt="User Profile Picture"
+        <img :src="profileStore.photoUrl || '/defaultPhotoProfile.jpg'" alt="User Profile Picture"
           class="w-60 h-60 rounded-full mx-auto border-4 border-white shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl" />
       </div>
 
       <!-- User Name and Nickname -->
       <div class="text-center">
-        <h2 class="text-3xl font-semibold text-gray-800">{{ profileStore.userProfile.name }}</h2>
+        <h2 class="text-3xl font-semibold text-gray-800">{{ profileStore.name }}</h2>
       </div>
 
       <!-- Brain Coins and Type -->
@@ -56,7 +54,7 @@ const handleLogout = async () => {
           <div class="flex flex-col items-center ml-4">
             <p class="text-lg font-bold text-black">User Name</p>
             <p class="text-lg font-semibold text-gray-500">
-              {{ profileStore.userProfile.nickname }}
+              {{ profileStore.nickname }}
             </p>
           </div>
 
@@ -64,13 +62,11 @@ const handleLogout = async () => {
           <div class="flex flex-col items-center mr-4">
             <p class="text-lg font-bold text-black">Account Type</p>
             <p class="text-lg font-semibold text-gray-500">
-              {{ profileStore.userProfile.type === 'P' ? 'Player' :
-                (profileStore.userProfile.type === 'A' ? 'Administrator' : 'Unknown') }}
+              {{ profileStore.type === 'P' ? 'Player' :
+                (profileStore.type === 'A' ? 'Administrator' : 'Unknown') }}
             </p>
           </div>
-
         </div>
-
 
         <!-- Brain Coins Section -->
         <div class="bg-sky-100 p-5 rounded-lg shadow-lg flex items-center justify-between">
@@ -78,7 +74,7 @@ const handleLogout = async () => {
             <img src="/coin.png" alt="Coin Icon" class="w-10 h-10 object-contain" />
             <div>
               <p class="text-xl">
-                {{ profileStore.userProfile.brain_coins_balance }}
+                {{ profileStore.coins }}
               </p>
             </div>
           </div>
