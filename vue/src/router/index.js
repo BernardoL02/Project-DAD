@@ -57,10 +57,10 @@ const router = createRouter({
       component: PlayerProfile
     },
     {
-      path: '/game/:size',
+      path: '/game/:size/:gameId',
       name: 'SinglePlayerGameBoard',
       component: SinglePlayerGameBoard,
-      props: route => ({ size: route.params.size })
+      props: route => ({ size: route.params.size, gameId: Number(route.params.gameId) })
     },
     {
       path: '/login',

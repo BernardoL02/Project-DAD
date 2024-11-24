@@ -22,6 +22,7 @@ onMounted(async () => {
 });
 
 const startGame = async (size, cost, board_id) => {
+    var gameId = 0;
     if (profileStore.userProfile) {
         if (profileStore.coins < cost) {
             alert("You don't have enough brain coins to play on this board!");
@@ -29,7 +30,7 @@ const startGame = async (size, cost, board_id) => {
         }
 
         try {
-            const gameId = await gameStore.createSinglePlayer(board_id);
+            gameId = await gameStore.createSinglePlayer(board_id);
             if(0 < cost){
                 await profileStore.createTransactionsGames(gameId, cost);
             }
@@ -38,7 +39,7 @@ const startGame = async (size, cost, board_id) => {
             return;
         }
     }
-    router.push({ name: 'SinglePlayerGameBoard', params: { size } });
+    router.push({ name: 'SinglePlayerGameBoard', params: { size, gameId } });
 };
 
 const onBoardClick = (size) => {
