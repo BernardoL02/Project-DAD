@@ -10,6 +10,7 @@ import MultiPlayerScoreBoard from '@/components/MultiPlayerScoreBoard.vue'
 import GameBoard from '@/components/GameBoard.vue'
 
 import { useAuthStore } from '@/stores/auth'
+import MultiPlayer from '@/components/MultiPlayer.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +45,11 @@ const router = createRouter({
       component: PlayerHistory
     },
     {
+      path: '/multiplayer',
+      name: 'multi-player',
+      component: MultiPlayer
+    },
+    {
       path: '/scoreBoard/singlePlayer',
       name: 'singlePlayerScore',
       component: SinglePlayerScoreBoard
@@ -63,7 +69,7 @@ const router = createRouter({
       name: 'gameBoard',
       component: GameBoard,
       props: true
-    } 
+    }
   ]
 })
 

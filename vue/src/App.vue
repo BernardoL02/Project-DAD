@@ -43,6 +43,12 @@
               Single-Player
             </RouterLink>
 
+            <RouterLink to="/multiplayer"
+              class="text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              active-class="text-blue-600 font-semibold">
+              Multi-Player
+            </RouterLink>
+
             <!-- Dropdown Score Board -->
             <div class="relative group pt-[6px]">
               <label for=""

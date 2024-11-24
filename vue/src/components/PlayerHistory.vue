@@ -4,7 +4,7 @@ import { useGameStore } from '@/stores/game'
 import PaginatedTable from '@/components/StandardTablePaginated.vue'
 import DropdownButton from '@/components/ui/DropdownButton.vue'
 
-const tableColumns = ['Id', 'Board', 'Status', 'Began At', 'Ended At', 'Total Time']
+const tableColumns = ['Id', 'Board', 'Status', 'Began At', 'Total Time']
 const gameStore = useGameStore()
 
 const isLoading = ref(true)

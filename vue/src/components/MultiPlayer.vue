@@ -1,16 +1,12 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useProfileStore } from '@/stores/profile';
 import { useGameStore } from '@/stores/game'
-import PaginatedTable from '@/components/StandardTablePaginated.vue'
 
 const router = useRouter();
 const profileStore = useProfileStore();
 const gameStore = useGameStore()
-const selectedBoard = ref("3x4");
-
-const tableColumns = ['Id', 'Board', 'Status', 'Began At', 'Total Time']
 
 const boards = [
     { size: "3x4", coinsRequired: 0 },
@@ -20,7 +16,7 @@ const boards = [
 
 onMounted(async () => {
     await profileStore.fetchProfile();
-    await gameStore.getSinglePlayerGames();
+    await gameStore.getSinglePlayerGames()
 });
 
 const startGame = (size, cost) => {
@@ -31,17 +27,12 @@ const startGame = (size, cost) => {
     }
 };
 
-const onBoardClick = (size) => {
-    selectedBoard.value = size;
-    gameStore.handleBoardSizeChange(size);
-};
-
 </script>
 
 <template>
     <div class="max-w-3xl mx-auto py-8 space-y-6">
 
-        <h1 class="text-3xl font-bold text-center mb-8">Single-Player Mode</h1>
+        <h1 class="text-3xl font-bold text-center mb-8">Multi-Player Mode</h1>
 
         <div class="bg-sky-100 p-4 rounded shadow-md flex justify-between items-center">
             <div>
@@ -53,7 +44,7 @@ const onBoardClick = (size) => {
                 </div>
             </div>
 
-            <RouterLink to="/singlePlayer/history"
+            <RouterLink to=""
                 class="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600 transition duration-300">
                 History
             </RouterLink>
@@ -78,30 +69,6 @@ const onBoardClick = (size) => {
             </div>
         </div>
 
-        <div class="pt-8">
-            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-
-                <div class="text-center mb-6">
-                    <p class="text-lg text-gray-700 font-semibold">Your Top 10 Single-Player Games
-                    </p>
-                    <p class="text-sm text-gray-500 mt-2">This table shows your best performance across different board
-                        sizes.</p>
-                </div>
-
-                <div class="flex justify-center pt-2">
-                    <div class="flex flex-row gap-8">
-                        <button v-for="board in boards" :key="board.size" @click="onBoardClick(board.size)" :class="{
-                            'bg-sky-600 text-white': board.size == selectedBoard,
-                            'bg-sky-500 hover:bg-sky-600 text-white': board.size != selectedBoard
-                        }" class="px-4 py-1 rounded-md border transition-all duration-300">
-                            {{ board.size }}
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <PaginatedTable :columns="tableColumns" :data="gameStore.bestResults" :pagination="false" />
-        </div>
     </div>
 
 </template>

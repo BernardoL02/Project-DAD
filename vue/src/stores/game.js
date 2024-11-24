@@ -43,8 +43,7 @@ export const useGameStore = defineStore('game', () => {
                   ? 'Interrupted'
                   : 'N/A',
         began_at: game.began_at || 'N/A',
-        ended_at: game.ended_at || 'N/A',
-        total_time: game.total_time || 'N/A'
+        total_time: game.total_time + 's' || 'N/A'
       }))
       games.value = updatedGames
     } catch (e) {
