@@ -7,8 +7,8 @@ import { useProfileStore } from '@/stores/profile';
 const authStore = useAuthStore();
 const profileStore = useProfileStore();
 
-const email = ref('');
-const password = ref('');
+const email = ref('p1@mail.pt');
+const password = ref('123');
 const responseData = ref('');
 
 const submitLogin = async () => {
