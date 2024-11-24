@@ -11,6 +11,11 @@ export const useGameStore = defineStore('game', () => {
   const beginDateFilter = ref('')
   const boardFilter = ref('All')
 
+  // Função para atualizar o filtro de tabuleiro
+  const handleBoardSizeChange = (boardSize) => {
+    boardFilter.value = boardSize
+  }
+
   const getSinglePlayerGames = async () => {
     storeError.resetMessages()
     try {
@@ -74,12 +79,30 @@ export const useGameStore = defineStore('game', () => {
     return filtered
   })
 
+  const bestResults = computed(() => {
+    const filtered = games.value.filter(
+      (game) =>
+        game.status === 'Ended' &&
+        (game.board_id === boardFilter.value || boardFilter.value === 'All')
+    )
+
+    const sorted = filtered.sort((a, b) => {
+      const timeA = parseInt(a.total_time) || 0
+      const timeB = parseInt(b.total_time) || 0
+      return timeA - timeB
+    })
+
+    return sorted.slice(0, 10)
+  })
+
   return {
     games,
     getSinglePlayerGames,
     statusFilter,
     beginDateFilter,
-    boardFilter, // Adicionado no retorno
-    filteredGames
+    boardFilter,
+    filteredGames,
+    bestResults,
+    handleBoardSizeChange
   }
 })

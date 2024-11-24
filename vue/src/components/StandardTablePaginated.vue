@@ -1,8 +1,8 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
 
-// Recebe as propriedades com `defineProps`
-const { data, columns } = defineProps({
+
+const { data, columns, pagination } = defineProps({
     data: {
         type: Array,
         required: true,
@@ -11,37 +11,38 @@ const { data, columns } = defineProps({
         type: Array,
         required: true,
     },
+    pagination: {
+        type: Boolean,
+        required: false,
+        default: true,
+    }
 });
 
-const currentPage = ref(1); // Página atual
-const itemsPerPage = 10; // Itens por página
+const currentPage = ref(1);
+const itemsPerPage = 10;
+const isPaginated = ref(pagination)
 
-// Calcular o número total de páginas, considerando o caso quando data.length é 0
 const totalPages = computed(() => data.length === 0 ? 0 : Math.ceil(data.length / itemsPerPage));
 
-// Dados paginados da página atual
 const paginatedData = computed(() => {
-    if (data.length === 0) return []; // Retorna um array vazio se não houver dados
+    if (data.length === 0) return [];
     const start = (currentPage.value - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return data.slice(start, end); // Usa `data` desestruturado
+    return data.slice(start, end);
 });
 
-// Ir para a próxima página
 const nextPage = () => {
     if (currentPage.value < totalPages.value) {
         currentPage.value++;
     }
 };
 
-// Voltar para a página anterior
 const previousPage = () => {
     if (currentPage.value > 1) {
         currentPage.value--;
     }
 };
 
-// Reseta para a página 1 sempre que os dados mudarem
 watch(() => data, () => {
     currentPage.value = 1;
 });
@@ -54,7 +55,6 @@ watch(() => data, () => {
         <table class="min-w-full text-sm text-left text-gray-600 border-collapse border border-gray-300">
             <thead class="bg-gray-200">
                 <tr>
-                    <!-- Cabeçalho da tabela: criando uma célula para cada nome de coluna vindo de `columns` -->
                     <th v-for="(column, index) in columns" :key="'header-' + index"
                         class="border border-gray-300 px-4 py-2 text-left">
                         {{ column }}
@@ -63,10 +63,8 @@ watch(() => data, () => {
             </thead>
 
             <tbody>
-                <!-- Percorre os dados paginados e exibe nas linhas -->
                 <tr v-for="(row, rowIndex) in paginatedData" :key="'row-' + rowIndex"
                     class="odd:bg-white even:bg-gray-100">
-                    <!-- Cada célula recebe o valor diretamente de cada dado na linha -->
                     <td v-for="(value, colIndex) in row" :key="'cell-' + rowIndex + '-' + colIndex"
                         class="border border-gray-300 px-4 py-2">
                         {{ value }}
@@ -76,7 +74,7 @@ watch(() => data, () => {
         </table>
 
         <!-- Controles de Paginação -->
-        <div class="flex items-center justify-between m-4">
+        <div v-if="isPaginated" class="flex items-center justify-between m-4">
             <div>
                 <button @click="previousPage" :disabled="currentPage === 1 || totalPages === 0"
                     class="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400">

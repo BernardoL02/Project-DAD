@@ -77,5 +77,4 @@ class GameController extends Controller
 
         return GameResource::collection($singlePlayerGames);
     }
-
 }

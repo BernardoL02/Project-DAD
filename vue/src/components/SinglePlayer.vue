@@ -2,11 +2,16 @@
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useProfileStore } from '@/stores/profile';
+import { useGameStore } from '@/stores/game'
+import PaginatedTable from '@/components/StandardTablePaginated.vue'
 
 const router = useRouter();
 const profileStore = useProfileStore();
+const gameStore = useGameStore()
 
-const boardSizes = [
+const tableColumns = ['Id', 'Board', 'Status', 'Began At', 'Ended At', 'Total Time']
+
+const boards = [
     { size: "3x4", coinsRequired: 0 },
     { size: "4x4", coinsRequired: 1 },
     { size: "6x6", coinsRequired: 1 },
@@ -14,6 +19,7 @@ const boardSizes = [
 
 onMounted(async () => {
     await profileStore.fetchProfile();
+    await gameStore.getSinglePlayerGames()
 });
 
 const startGame = (size, cost) => {
@@ -50,7 +56,7 @@ const startGame = (size, cost) => {
         <div class="bg-white p-4 rounded shadow-md">
             <h2 class="text-2xl font-semibold mb-4 text-center">Select Board</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div v-for="board in boardSizes" :key="board.size"
+                <div v-for="board in boards" :key="board.size"
                     class="p-6 border rounded-lg flex flex-col items-center justify-between bg-gray-100 shadow-sm">
                     <p class="text-lg font-bold">{{ board.size }}</p>
                     <p class="text-sm text-gray-500 mt-2">
@@ -64,6 +70,21 @@ const startGame = (size, cost) => {
                     </button>
                 </div>
             </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <div class="flex flex-row sm:flex-row sm:justify-between gap-4">
+                <div class="flex justify-center space-x-6">
+                    <button v-for="board in boards" :key="board.size"
+                        @click="gameStore.handleBoardSizeChange(board.size)"
+                        class="px-4 py-2 rounded-md border border-gray-300 transition">
+                        {{ board.size }}
+                    </button>
+                </div>
+            </div>
+
+            <PaginatedTable :columns="tableColumns" :data="gameStore.bestResults" :pagination="false" />
+
         </div>
     </div>
 
