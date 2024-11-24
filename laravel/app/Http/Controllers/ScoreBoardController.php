@@ -25,48 +25,45 @@ class ScoreBoardController extends Controller
 
         [$cols, $rows] = $boardDimensions[$boardSize];
 
-        // Use Eloquent models and relationships to query
-        $scoreboards = Game::query()
-            ->where('type', 'S')
-            ->where('status', 'E')
+        // Query using relationships
+        $scoreboards = Game::where('type', 'S')
+            ->where('status', 'E') // Completed games
             ->whereHas('board', function ($query) use ($cols, $rows) {
-                $query->where('board_cols', $cols)
-                    ->where('board_rows', $rows);
+                $query->where('board_cols', $cols)->where('board_rows', $rows);
             })
-            ->with(['user:id,nickname', 'board:board_cols,board_rows'])
-            ->selectRaw('created_user_id, MIN(total_time) as best_time, MAX(status) as status') // Use MAX() to select a single status
-            ->groupBy('created_user_id') // Only group by created_user_id
+            ->with('creator:id,nickname') // Load the creator's nickname
+            ->select('created_user_id', DB::raw('MIN(total_time) as best_time'), DB::raw('MAX(status) as status'))
+            ->groupBy('created_user_id')
             ->orderBy('best_time', 'asc')
-            ->limit(10)
+            ->limit(100)
             ->get()
             ->map(function ($game) {
                 return [
-                    'nickname' => $game->user->nickname,
+                    'nickname' => $game->creator->nickname,
                     'best_time' => $game->best_time,
                     'status' => $game->status,
                     'min_turns' => 'N/A',
-
                 ];
             });
 
         return response()->json(['scoreboards' => $scoreboards]);
     }
 
-        public function multiplayerScoreboard()
-        {
-            // Fetch the top players with most victories in multiplayer games
-            $topPlayers = Game::select('winner_user_id', DB::raw('COUNT(winner_user_id) as victories'))
-                ->where('type', 'M')  // Multiplayer games
-                ->groupBy('winner_user_id')
-                ->orderByDesc('victories')
-                ->limit(5)
-                ->get();
+    public function multiplayerScoreboard()
+    {
+        // Fetch players with the most victories and their losses
+        $topPlayers = User::withCount([
+            'wonGames as victories' => function ($query) {
+                $query->where('type', 'M');
+            },
+            'games as losses' => function ($query) {
+                $query->where('type', 'M')->whereNull('winner_user_id');
+            },
+        ])
+            ->orderByDesc('victories')
+            ->limit(100)
+            ->get(['id', 'nickname', 'victories', 'losses']);
 
-            $players = User::whereIn('id', $topPlayers->pluck('winner_user_id'))->get();
-
-            return response()->json([
-                'top_players' => $topPlayers,
-                'players' => $players
-            ]);
-        }
+        return response()->json(['player_stats' => $topPlayers]);
+    }
 }

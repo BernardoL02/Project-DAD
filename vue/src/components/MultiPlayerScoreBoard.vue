@@ -1,15 +1,35 @@
 <script setup>
+import { computed, onMounted } from 'vue';
+import { usescoreBoardStore } from '@/stores/scoreBoard';
+import PaginatedTable from '@/components/StandardTablePaginated.vue'
+
+// Updated columns to include 'Losses'
+const columns = ['Rank', 'Player', 'Victories', 'Losses'];
+const scoreBoardStore = usescoreBoardStore();
+
+// Computed properties for scoreboards and loading state
+const scoreboards = computed(() => scoreBoardStore.scoreboards);
+const loading = computed(() => scoreBoardStore.loading);
+
+onMounted(() => {
+  scoreBoardStore.fetchMultiPlayerScoreboard();
+});
 </script>
 
 <template>
-    <div class="max-w-2xl mx-auto py-8 space-y-6">
-        <h1 class="text-3xl font-bold text-center">Multi-Player     Score Board</h1>
-        <div class="bg-gray-100 p-4 rounded shadow-md">
-            <h2 class="text-xl font-semibold mb-4">Global Score Board</h2>
-            <div class="mt-4">
-                <p class="text-center text-gray-400 italic">No games registered yet.</p>
-            </div>
+  <div class="max-w-2xl mx-auto py-8 space-y-6">
+    <h1 class="text-3xl font-bold text-center">Multi-Player Score Board</h1>
+
+    <div>
+      <h2 class="text-xl font-semibold mb-4">Top 10 Multi Players with Most Victories and Losses</h2>
+      <div v-if="loading" class="text-center text-gray-400">Loading...</div>
+      <div v-else>
+        <PaginatedTable :columns="columns" :data="scoreboards" />
+        <!-- Show a message if there are no scores -->
+        <div v-if="!loading && scoreboards.length === 0" class="text-center text-gray-400 mt-4">
+          No scores available
         </div>
+      </div>
     </div>
-    
+  </div>
 </template>

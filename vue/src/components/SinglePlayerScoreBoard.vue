@@ -1,23 +1,20 @@
 <script setup>
 import { computed, onMounted } from 'vue';
 import { usescoreBoardStore } from '@/stores/scoreBoard';
-import StandardTable from './StandardTable.vue';
+import PaginatedTable from '@/components/StandardTablePaginated.vue'
 
 const columns = ['Rank', 'Player', 'Best Time', 'Min Turns', 'Status'];
 const scoreBoardStore = usescoreBoardStore();
 
-// Expose store properties as computed properties
 const scoreboards = computed(() => scoreBoardStore.scoreboards);
 const loading = computed(() => scoreBoardStore.loading);
 const boardSize = computed(() => scoreBoardStore.boardSize);
 
-
-
+// Fetch the scoreboard on mount
 onMounted(() => {
-  if (!scoreBoardStore.scoreboards.length) {
-    scoreBoardStore.fetchScoreboard(scoreBoardStore.boardSize);
-  }
+  scoreBoardStore.fetchSinglePlayerScoreboard(boardSize.value);
 });
+
 </script>
 
 <template>
@@ -36,12 +33,12 @@ onMounted(() => {
     </div>
 
     <div>
-      <h2 class="text-xl font-semibold mb-4">Top 10 Best Players for {{ boardSize }} Board</h2>
+      <h2 class="text-xl font-semibold mb-4">Top 10 Best Single Players for {{ boardSize }} Board</h2>
       <div v-if="loading" class="text-center text-gray-400">Loading...</div>
       <div v-else>
-        <StandardTable :columns="columns" :data="scoreboards" />
+        <PaginatedTable :columns="columns" :data="scoreboards" />
         <!-- Show a message if there are no scores -->
-        <div v-if="!loading && scoreBoardStore.length == 0" class="text-center text-gray-400 mt-4">
+        <div v-if="!loading && scoreboards.length === 0" class="text-center text-gray-400 mt-4">
           No scores available
         </div>
       </div>
