@@ -34,6 +34,10 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::get('/scoreboard/single/{boardSize}', [ScoreBoardController::class, 'globalSinglePlayerScoreboard']);
 Route::get('/scoreboard/multiplayer', [ScoreBoardController::class, 'multiplayerScoreboard']);
 
+// ------Create User ------
+
+Route::post('/users',[UserController::class, 'store']);
+
 
 
 

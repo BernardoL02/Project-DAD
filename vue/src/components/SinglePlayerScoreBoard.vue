@@ -36,7 +36,7 @@ onMounted(() => {
       <h2 class="text-xl font-semibold mb-4">Top 10 Best Single Players for {{ boardSize }} Board</h2>
       <div v-if="loading" class="text-center text-gray-400">Loading...</div>
       <div v-else>
-        <PaginatedTable :columns="columns" :data="scoreboards" />
+        <PaginatedTable :columns="columns" :data="scoreboards" :pagination="false" />
         <!-- Show a message if there are no scores -->
         <div v-if="!loading && scoreboards.length === 0" class="text-center text-gray-400 mt-4">
           No scores available

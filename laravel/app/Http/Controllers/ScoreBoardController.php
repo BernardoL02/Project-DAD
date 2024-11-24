@@ -25,7 +25,6 @@ class ScoreBoardController extends Controller
 
         [$cols, $rows] = $boardDimensions[$boardSize];
 
-        // Query using relationships
         $scoreboards = Game::where('type', 'S')
             ->where('status', 'E') // Completed games
             ->whereHas('board', function ($query) use ($cols, $rows) {
@@ -35,14 +34,15 @@ class ScoreBoardController extends Controller
             ->select('created_user_id', DB::raw('MIN(total_time) as best_time'), DB::raw('MAX(status) as status'))
             ->groupBy('created_user_id')
             ->orderBy('best_time', 'asc')
-            ->limit(100)
+            ->limit(10)
             ->get()
-            ->map(function ($game) {
+            ->map(function ($game) use($cols, $rows) {
+                $minTurns = ($cols * $rows) / 2;
                 return [
                     'nickname' => $game->creator->nickname,
                     'best_time' => $game->best_time,
                     'status' => $game->status,
-                    'min_turns' => 'N/A',
+                    'min_turns' => ($minTurns),
                 ];
             });
 
@@ -61,7 +61,7 @@ class ScoreBoardController extends Controller
             },
         ])
             ->orderByDesc('victories')
-            ->limit(100)
+            ->limit(5)
             ->get(['id', 'nickname', 'victories', 'losses']);
 
         return response()->json(['player_stats' => $topPlayers]);

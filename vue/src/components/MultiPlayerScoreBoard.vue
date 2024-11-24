@@ -3,7 +3,7 @@ import { computed, onMounted } from 'vue';
 import { usescoreBoardStore } from '@/stores/scoreBoard';
 import PaginatedTable from '@/components/StandardTablePaginated.vue'
 
-// Updated columns to include 'Losses'
+
 const columns = ['Rank', 'Player', 'Victories', 'Losses'];
 const scoreBoardStore = usescoreBoardStore();
 
@@ -24,7 +24,7 @@ onMounted(() => {
       <h2 class="text-xl font-semibold mb-4">Top 10 Multi Players with Most Victories and Losses</h2>
       <div v-if="loading" class="text-center text-gray-400">Loading...</div>
       <div v-else>
-        <PaginatedTable :columns="columns" :data="scoreboards" />
+        <PaginatedTable :columns="columns" :data="scoreboards" :pagination="false"/>
         <!-- Show a message if there are no scores -->
         <div v-if="!loading && scoreboards.length === 0" class="text-center text-gray-400 mt-4">
           No scores available
