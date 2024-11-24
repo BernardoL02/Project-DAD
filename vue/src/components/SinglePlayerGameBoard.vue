@@ -2,6 +2,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { useNotificationStore } from '@/stores/notification';
 
 const props = defineProps({
   size: {
@@ -32,8 +33,9 @@ const endTime = ref(null);
 const moves = ref(0);
 const timer = ref(0);
 const timerInterval = ref(null);
-const showModal = ref(false); // Controla se o modal será exibido
-const isLeaving = ref(false); // Controla se o usuário está tentando sair
+const showModal = ref(false);
+const isLeaving = ref(false);
+const notificationStore = useNotificationStore();
 
 const shuffleArray = (array) => {
   return array.sort(() => Math.random() - 0.5);
@@ -86,21 +88,37 @@ const flipCard = (index) => {
   }
 };
 
-const checkMatch = () => {
+const checkMatch = async () => {
   const [firstIndex, secondIndex] = selectedCards.value;
   if (shuffledCards.value[firstIndex].id === shuffledCards.value[secondIndex].id) {
     matchedPairs.value.push(firstIndex, secondIndex);
   }
 
-  setTimeout(() => {
+  setTimeout(async () => {
     selectedCards.value = [];
     if (matchedPairs.value.length === shuffledCards.value.length) {
       endTime.value = new Date();
       clearInterval(timerInterval.value);
-      alert(`Você completou o jogo em ${elapsedTime.value} segundos com ${moves.value} jogadas!`);
+
+      // Calcula o tempo total
+      const totalTime = Math.floor((endTime.value - startTime.value) / 1000);
+
+      // Atualiza o status para 'ended'
+      await sendPostOnGameEnd(totalTime);
+
+      // Permite sair sem exibir o modal
+      isLeaving.value = true;
+
+      // Exibe a notificação de sucesso
+      notificationStore.setSuccessMessage(`Você completou o jogo em ${totalTime} segundos!`, 'Parabéns!');
+
+      // Redireciona para a página de single player
+      router.push('/singlePlayer');
     }
   }, 1000);
 };
+
+
 
 const startGame = () => {
   generateCards();
@@ -121,6 +139,25 @@ const sendPostOnExit = async () => {
     console.error('Erro ao atualizar status do jogo:', error.response?.data || error.message);
   }
 };
+
+const sendPostOnGameEnd = async (totalTime) => {
+  try {
+    if (!props.gameId) {
+      console.error('Game ID não está definido.');
+      return;
+    }
+
+    await axios.patch(`/games/${props.gameId}`, {
+      status: 'E',
+      total_time: totalTime,
+    });
+
+    console.log(`Game atualizado com status "ended" e tempo total de ${totalTime} segundos.`);
+  } catch (error) {
+    console.error('Erro ao atualizar status do jogo:', error.response?.data || error.message);
+  }
+};
+
 
 
 const confirmExit = async () => {
@@ -154,11 +191,10 @@ onMounted(() => {
   startGame();
 });
 
-// Intercepta a navegação antes de sair da página
 router.beforeEach((to, from, next) => {
   if (!isLeaving.value) {
     showModal.value = true;
-    next(false); // Bloqueia a navegação até o usuário confirmar
+    next(false);
   } else {
     next();
   }
