@@ -1,12 +1,8 @@
 <script setup>
-import { defineProps, defineEmits, ref, onMounted, onBeforeUnmount } from 'vue'
+import { defineProps, defineEmits, ref, computed, onMounted, onBeforeUnmount } from 'vue'
 
 // Definir as propriedades que o componente vai receber
 const props = defineProps({
-    buttonText: {
-        type: String,
-        required: true
-    },
     options: {
         type: Array,
         required: true
@@ -19,17 +15,22 @@ const emit = defineEmits(['select'])
 const isOpen = ref(false) // Variável para controlar a visibilidade do dropdown
 const dropdownRef = ref(null) // Referência para o dropdown
 const buttonRef = ref(null) // Referência para o botão
-const selectedOption = ref('') // Variável para armazenar a opção selecionada
+const selectedOption = ref(null) // Inicializamos com null ou vazio
+
+// Computed para garantir que selectedOption não seja null ou undefined
+const displayValue = computed(() => {
+    return selectedOption.value || props.options[0] || 'Selecione uma opção'
+})
 
 // Função para alternar a visibilidade do dropdown
 const toggleDropdown = () => {
     isOpen.value = !isOpen.value
 }
 
-// Função para emitir a seleção de uma opção e fechar o dropdown
+// Função para emitir a seleção e fechar o dropdown
 const handleSelect = (selectedOptionValue) => {
-    selectedOption.value = selectedOptionValue // Armazena o valor selecionado
-    emit('select', selectedOptionValue) // Emite o evento
+    selectedOption.value = selectedOptionValue // Atualiza a opção selecionada
+    emit('select', selectedOptionValue) // Emite o valor selecionado
     isOpen.value = false // Fecha o dropdown
 }
 
@@ -55,11 +56,15 @@ onBeforeUnmount(() => {
 <template>
     <div class="relative inline-block text-left">
         <!-- Botão para abrir o dropdown -->
-        <button type="button" ref="buttonRef" @click="toggleDropdown" class="inline-flex justify-center w-full sm:w-48 rounded-md border border-gray-300 bg-white py-2 px-4
+        <button type="button" ref="buttonRef" @click="toggleDropdown" class="inline-flex justify-between w-full sm:w-48 rounded-md border border-gray-300 bg-white py-2 px-4
             text-sm font-medium text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500
-            focus:border-blue-500" id="menu-button" aria-expanded="true" aria-haspopup="true">
+            focus:border-blue-500">
             <!-- Exibe a opção selecionada ou o texto inicial -->
-            {{ selectedOption.value || options[0] }}
+            <span class="flex items-center">
+                {{ displayValue }}
+            </span>
+            <!-- Ícone da seta para baixo -->
+            <span class="ml-2 text-gray-500">&#x2193;</span>
         </button>
 
         <!-- Dropdown menu -->

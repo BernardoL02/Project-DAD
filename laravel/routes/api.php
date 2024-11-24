@@ -21,7 +21,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // ----- Games -----
     Route::get('/games', [GameController::class, 'index']);
     Route::get('/games/single', [GameController::class, 'mySinglePlayerGames']);
-    Route::get('/games/{game}', [GameController::class, 'show']);
+    //Route::get('/games/{game}', [GameController::class, 'show']);
     Route::post('/games', [GameController::class, 'store']);
     Route::put('/games/{game}', [GameController::class, 'update']);
     Route::delete('/games/{game}', [GameController::class, 'destroy']);

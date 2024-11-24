@@ -17,6 +17,7 @@ const handleLogout = async () => {
     window.location.href = '/testers/laravel';
   }
 };
+
 </script>
 
 <template>
@@ -72,18 +73,16 @@ const handleLogout = async () => {
 
 
         <!-- Brain Coins Section -->
-        <div class="bg-indigo-100 p-5 rounded-lg shadow-lg flex items-center justify-between">
+        <div class="bg-sky-100 p-5 rounded-lg shadow-lg flex items-center justify-between">
           <div class="flex items-center space-x-3">
             <img src="/coin.png" alt="Coin Icon" class="w-10 h-10 object-contain" />
             <div>
-              <p class="text-sm font-semibold text-indigo-600">Brain Coins</p>
-              <p class="text-xl font-bold text-indigo-800">
+              <p class="text-xl">
                 {{ profileStore.userProfile.brain_coins_balance }}
               </p>
             </div>
           </div>
-          <button
-            class="bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-600 transition duration-300 mr-2">
+          <button class="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 transition duration-300 mr-2">
             Buy Coins
           </button>
         </div>

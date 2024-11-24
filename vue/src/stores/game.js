@@ -6,9 +6,10 @@ import { useErrorStore } from '@/stores/error'
 export const useGameStore = defineStore('game', () => {
   const storeError = useErrorStore()
 
-  const games = ref([]) // Todos os jogos
-  const statusFilter = ref('') // Filtro de status
-  const beginDateFilter = ref('') // Filtro de data de início (exemplo)
+  const games = ref([])
+  const statusFilter = ref('')
+  const beginDateFilter = ref('')
+  const boardFilter = ref('All')
 
   const getSinglePlayerGames = async () => {
     storeError.resetMessages()
@@ -17,6 +18,15 @@ export const useGameStore = defineStore('game', () => {
 
       const updatedGames = response.data.data.map((game) => ({
         id: game.id,
+        // Mapeamento do board_id
+        board_id:
+          game.board_id === 1
+            ? '4x3'
+            : game.board_id === 2
+              ? '4x4'
+              : game.board_id === 3
+                ? '6x6'
+                : '-',
         status:
           game.status === 'PE'
             ? 'Pending'
@@ -47,13 +57,18 @@ export const useGameStore = defineStore('game', () => {
     let filtered = games.value
 
     // Filtro por status
-    if (statusFilter.value && statusFilter.value != 'All') {
+    if (statusFilter.value && statusFilter.value !== 'All') {
       filtered = filtered.filter((game) => game.status === statusFilter.value)
     }
 
-    // Filtro por data de início (exemplo de filtro)
+    // Filtro por data de início
     if (beginDateFilter.value) {
       filtered = filtered.filter((game) => game.began_at.includes(beginDateFilter.value))
+    }
+
+    // Filtro por tabuleiro
+    if (boardFilter.value && boardFilter.value !== 'All') {
+      filtered = filtered.filter((game) => game.board_id === boardFilter.value)
     }
 
     return filtered
@@ -64,6 +79,7 @@ export const useGameStore = defineStore('game', () => {
     getSinglePlayerGames,
     statusFilter,
     beginDateFilter,
+    boardFilter, // Adicionado no retorno
     filteredGames
   }
 })

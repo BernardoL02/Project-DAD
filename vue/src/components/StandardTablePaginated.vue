@@ -2,12 +2,12 @@
 import { ref, computed } from 'vue'
 
 // Recebe as propriedades com `defineProps`
-const { columns, data } = defineProps({
-    columns: {
+const { data, columns } = defineProps({
+    data: {
         type: Array,
         required: true,
     },
-    data: {
+    columns: {
         type: Array,
         required: true,
     },
@@ -40,7 +40,6 @@ const previousPage = () => {
         currentPage.value--;
     }
 };
-
 </script>
 
 <template>
@@ -49,6 +48,7 @@ const previousPage = () => {
         <table class="min-w-full text-sm text-left text-gray-600 border-collapse border border-gray-300">
             <thead class="bg-gray-200">
                 <tr>
+                    <!-- Cabeçalho da tabela: criando uma célula para cada nome de coluna vindo de `columns` -->
                     <th v-for="(column, index) in columns" :key="'header-' + index"
                         class="border border-gray-300 px-4 py-2 text-left">
                         {{ column }}
@@ -57,12 +57,13 @@ const previousPage = () => {
             </thead>
 
             <tbody>
+                <!-- Percorre os dados paginados e exibe nas linhas -->
                 <tr v-for="(row, rowIndex) in paginatedData" :key="'row-' + rowIndex"
                     class="odd:bg-white even:bg-gray-100">
-                    <td v-for="(column, colIndex) in columns" :key="'cell-' + rowIndex + '-' + colIndex"
+                    <!-- Cada célula recebe o valor diretamente de cada dado na linha -->
+                    <td v-for="(value, colIndex) in row" :key="'cell-' + rowIndex + '-' + colIndex"
                         class="border border-gray-300 px-4 py-2">
-                        <!-- Acesso dos dados com base no nome da coluna -->
-                        {{ row[column.toLowerCase().replace(/\s+/g, '_')] || row[column] }}
+                        {{ value }}
                     </td>
                 </tr>
             </tbody>
@@ -83,7 +84,6 @@ const previousPage = () => {
             </div>
 
             <span class="text-gray-600 mr-2">
-                <!-- Exibe "Page 0 of 0" quando não há dados -->
                 Page {{ totalPages === 0 ? 0 : currentPage }} of {{ totalPages }}
             </span>
         </div>

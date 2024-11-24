@@ -4,16 +4,22 @@ import { useGameStore } from '@/stores/game'
 import PaginatedTable from '@/components/StandardTablePaginated.vue'
 import DropdownButton from '@/components/ui/DropdownButton.vue'
 
-const tableColumns = ['Id', 'Status', 'Began At', 'Ended At', 'Total Time']
+const tableColumns = ['Id', 'Board', 'Status', 'Began At', 'Ended At', 'Total Time']
 const gameStore = useGameStore()
 
 const isLoading = ref(true)
 
-// Função de filtro por status e data
+// Opções de filtro
 const statusOptions = ['All', 'Pending', 'In Progress', 'Ended', 'Interrupted']
+const boardOptions = ['All', '4x3', '4x4', '6x6']
 
-const handleSelect = (selectedStatus) => {
-  gameStore.statusFilter = selectedStatus
+// Função de filtro que trata tanto o status quanto o tabuleiro
+const handleSelect = (selectedValue, filterType) => {
+  if (filterType === 'status') {
+    gameStore.statusFilter = selectedValue
+  } else if (filterType === 'board') {
+    gameStore.boardFilter = selectedValue
+  }
 }
 
 onMounted(async () => {
@@ -32,19 +38,25 @@ onMounted(async () => {
 
       <div class="bg-white p-6 rounded-lg shadow-md mb-6">
         <!-- Filtros -->
-        <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
+        <div class="flex flex-row sm:flex-row sm:justify-between gap-4">
 
           <!-- Filtro de Data de Início -->
           <div class="w-full sm:w-auto">
             <label for="began_at" class="block text-sm font-medium text-gray-700">Began At</label>
-            <input id="began_at" v-model="gameStore.beginDateFilter" type="text" placeholder="Search by Began At"
-              class="mt-2 w-full sm:w-48 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+            <input id="began_at" v-model="gameStore.beginDateFilter" type="text" placeholder="Date" class="inline-flex justify-between w-full sm:w-48 rounded-md border border-gray-300 bg-white py-2 px-4
+            text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2" />
           </div>
 
-          <!-- Filtro de Status com Dropdown -->
-          <div class="w-full sm:w-auto">
+          <!-- Filtro de Tabuleiro -->
+          <div class=" w-full sm:w-auto">
+            <label for="board" class="block text-sm font-medium text-gray-700 pb-2">Board</label>
+            <DropdownButton :options="boardOptions" @select="(value) => handleSelect(value, 'board')" />
+          </div>
+
+          <!-- Filtro de Status -->
+          <div class=" w-full sm:w-auto">
             <label for="status" class="block text-sm font-medium text-gray-700 pb-2">Status</label>
-            <DropdownButton buttonText="Select Status" :options="statusOptions" @select="handleSelect" />
+            <DropdownButton :options="statusOptions" @select="(value) => handleSelect(value, 'status')" />
           </div>
         </div>
       </div>

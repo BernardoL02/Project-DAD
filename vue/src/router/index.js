@@ -42,7 +42,6 @@ const router = createRouter({
       name: 'single-playerHistory',
       component: PlayerHistory
     },
-
     {
       path: '/scoreBoard/singlePlayer',
       name: 'singlePlayerScore',
@@ -69,7 +68,7 @@ router.beforeEach(async (to, from, next) => {
     handlingFirstRoute = false
     await storeAuth.restoreToken()
   }
-  
+
   if ((to.name == 'single-playerHistory' || to.name == 'Profile') && !storeAuth.user) {
     next({ name: 'login' })
     return

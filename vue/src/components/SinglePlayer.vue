@@ -28,18 +28,18 @@ const startGame = (size, cost) => {
 
         <h1 class="text-3xl font-bold text-center mb-8">Single-Player Mode</h1>
 
-        <div class="bg-gray-100 p-4 rounded shadow-md flex justify-between items-center">
+        <div class="bg-sky-100 p-4 rounded shadow-md flex justify-between items-center">
             <div>
                 <p class="text-lg font-semibold">Welcome, {{ user.username }}</p>
 
                 <div class="flex items-left justify-left pt-2">
                     <img src="/coin.png" alt="Coin Icon" class="w-6 h-6 object-contain mr-2" />
-                    <span class="mr-2">{{ user.brainCoins }}</span>
+                    <span class="mr-2 text-semibold">{{ user.brainCoins }}</span>
                 </div>
             </div>
 
             <RouterLink to="/singlePlayer/history"
-                class="bg-indigo-500 text-white px-6 py-2 rounded-lg hover:bg-indigo-600 transition duration-300">
+                class="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600 transition duration-300">
                 History
             </RouterLink>
         </div>
