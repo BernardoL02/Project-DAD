@@ -59,23 +59,40 @@
               <!-- Dropdown Menu -->
               <div class="absolute left-0 hidden mt-2 space-y-2 bg-white shadow-lg rounded-md w-48 group-hover:block">
                 <RouterLink to="/scoreBoard/singlePlayer"
-                  class="block text-gray-900 hover:bg-gray-100 px-4 py-2 text-sm rounded-md">
+                  class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm rounded-md">
                   Single Player Score
                 </RouterLink>
                 <RouterLink to="/scoreBoard/multiPlayer"
-                  class="block text-gray-900 hover:bg-gray-100 px-4 py-2 text-sm rounded-md">
+                  class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm rounded-md">
                   Multi Player Score
                 </RouterLink>
               </div>
             </div>
           </div>
 
-          <!-- Link Profile separado à direita -->
-          <RouterLink to="/playerProfile"
-            class="text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-            active-class="text-blue-600 font-semibold">
-            Profile
-          </RouterLink>
+          <!-- Link Profile separado à direita com Dropdown -->
+          <div class="relative group flex flex-row items-center">
+            <div v-show="authStore.user">
+              <img :src="profileStore.photoUrl || '/defaultPhotoProfile.jpg'" alt="User Profile Picture"
+                class="w-12 h-12 rounded-full border-1 border-black shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl cursor-pointer" />
+            </div>
+
+            <!-- Dropdown Menu -->
+            <div v-show="authStore.user"
+              class="absolute hidden group-hover:flex flex-col right-[-75px] top-[-1px] mt-14 bg-white shadow-lg rounded-lg w-48 z-10 transition-opacity duration-300">
+              <RouterLink to="/playerProfile"
+                class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm rounded-t-lg">
+                View Profile
+              </RouterLink>
+              <RouterLink to="/updateProfile" class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm">
+                Update Profile
+              </RouterLink>
+              <button @click="handleLogout"
+                class="block text-left w-full text-gray-900 hover:bg-red-100 hover:text-red-600 px-4 py-2 text-sm rounded-b-lg">
+                Log Out
+              </button>
+            </div>
+          </div>
         </nav>
       </div>
     </header>
@@ -118,8 +135,25 @@
 
 <script setup>
 import Toaster from './components/ui/toast/Toaster.vue';
+import { ref, onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { useProfileStore } from '@/stores/profile';
 
-import { ref } from 'vue'
+const profileStore = useProfileStore();
+const authStore = useAuthStore();
+
+const handleLogout = async () => {
+  const success = await authStore.logout();
+  if (success) {
+    window.location.href = '/login';
+  }
+};
+
+onMounted(async () => {
+  if (authStore.user) {
+    await profileStore.fetchProfile();
+  }
+});
 
 const isMenuOpen = ref(false)
 

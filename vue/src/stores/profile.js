@@ -65,22 +65,22 @@ export const useProfileStore = defineStore('profile', () => {
 
   const createTransactionsGames = async (gameId, cost) => {
     try {
-      const datetime = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      const datetime = new Date().toISOString().slice(0, 19).replace('T', ' ')
 
       const response = await axios.post('/transactions', {
-        type: 'I', 
-        game_id: gameId, 
-        brain_coins: -cost, 
-        transaction_datetime: datetime,
-      });
-  
-      console.log('Transaction created successfully:', response.data);
-      return response.data;
+        type: 'I',
+        game_id: gameId,
+        brain_coins: -cost,
+        transaction_datetime: datetime
+      })
+
+      console.log('Transaction created successfully:', response.data)
+      return response.data
     } catch (error) {
-      console.error('Error creating transaction:', error.response?.data || error.message);
-      throw error;
+      console.error('Error creating transaction:', error.response?.data || error.message)
+      throw error
     }
-  };
+  }
 
   return {
     userProfile,
