@@ -17,7 +17,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::post('/auth/refreshtoken', [AuthController::class, 'refreshToken']);
     Route::get('/users/me', [UserController::class , 'showMe']);
-    Route::patch('/users/me/coins', [UserController::class, 'updateCoins']);
 
     // ----- Games -----
     Route::get('/games', [GameController::class, 'index']);

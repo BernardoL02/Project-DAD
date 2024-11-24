@@ -12,13 +12,4 @@ class UserController extends Controller
     {
         return new UserResource($request->user());
     }
-    
-    public function updateCoins(UserRequest $request)
-    {
-        $user = $request->user();
-        $user->update([
-            'brain_coins_balance' => $request->input('brain_coins_balance'),
-        ]);
-        return new UserResource($user);
-    }
 }

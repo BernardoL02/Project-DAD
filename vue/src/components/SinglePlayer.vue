@@ -24,12 +24,20 @@ onMounted(async () => {
 });
 
 const startGame = async (size, cost) => {
-    if (profileStore.coins < cost) {
+    if (profileStore.userProfile) {
+        if (profileStore.coins < cost) {
         alert("You don't have enough brain coins to play on this board!");
-    } else {
-        await profileStore.updateCoins(profileStore.coins - cost);
-        router.push({ name: 'SinglePlayerGameBoard', params: { size } });
+        return;
+        }
+
+        try {
+            //await profileStore.createTransactions(cost);
+        } catch (error) {
+            console.error("Error updating coins or creating the game:", error);
+            return;
+        }
     }
+    router.push({ name: 'SinglePlayerGameBoard', params: { size } });
 };
 
 const onBoardClick = (size) => {
