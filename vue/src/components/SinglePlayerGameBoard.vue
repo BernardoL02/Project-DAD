@@ -1,9 +1,13 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useRoute } from 'vue-router';
 
-const route = useRoute();
-const size = ref(route.params.size || '3x4');
+const props = defineProps({
+    size: {
+        type: String,
+        required: true
+    }
+})
+
 
 const availableCards = [
   'c1.png', 'c2.png', 'c3.png', 'c4.png', 'c5.png', 'c6.png', 'c7.png', 'c11.png', 'c12.png', 'c13.png',
@@ -27,8 +31,8 @@ const shuffleArray = (array) => {
 };
 
 const totalCards = computed(() => {
-  if (!size.value || !size.value.includes('x')) return 16;
-  const [rows, cols] = size.value.split('x').map(Number);
+  if (!props.size || !props.size.includes('x')) return 16;
+  const [rows, cols] = props.size.split('x').map(Number);
   return Math.min(rows * cols, availableCards.length * 2);
 });
 
@@ -101,7 +105,7 @@ onUnmounted(() => {
 });
 
 onMounted(() => {
-  if (!size.value || !size.value.includes('x')) size.value = '3x4';
+  if (!props.size || !props.size.includes('x')) props.size = '3x4';
   startGame();
 });
 </script>
@@ -113,8 +117,8 @@ onMounted(() => {
       <!-- Tabuleiro -->
       <div class="game-board grid gap-2 bg-gray-100 p-4 rounded-lg shadow-md"
            :style="{
-             gridTemplateRows: `repeat(${size.split('x')[0] || 4}, 1fr)`,
-             gridTemplateColumns: `repeat(${size.split('x')[1] || 4}, 1fr)`
+             gridTemplateRows: `repeat(${props.size.split('x')[0] || 4}, 1fr)`,
+             gridTemplateColumns: `repeat(${props.size.split('x')[1] || 4}, 1fr)`
            }"
       >
         <div

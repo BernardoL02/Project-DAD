@@ -53,7 +53,7 @@ class User extends Authenticatable
      // Relationships
      public function transactions()
      {
-         return $this->hasMany(Transaction::class);
+         return $this->hasMany(Transaction::class, 'user_id');
      }
 
      public function multiplayerGames()

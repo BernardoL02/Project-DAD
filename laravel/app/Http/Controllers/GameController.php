@@ -15,8 +15,8 @@ class GameController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-
-        return GameResource::collection($user->games);
+    
+        return GameResource::collection($games);
     }
 
     /**
@@ -24,8 +24,11 @@ class GameController extends Controller
      */
     public function store(StoreGameRequest $request)
     {
-        $game = Game::create($request->validated());  // Pass array of validated attributes
-
+        $gameData = $request->validated();
+        $gameData['created_user_id'] = $request->user()->id;
+    
+        $game = Game::create($gameData);
+    
         return new GameResource($game);
     }
 
@@ -72,9 +75,25 @@ class GameController extends Controller
     public function mySinglePlayerGames(Request $request)
     {
         $user = $request->user();
-
-        $singlePlayerGames = $user->games()->where('type', 'S')->get();
-
+        
+        $singlePlayerGames = $user->games()
+            ->where('type', 'S')
+            ->orderBy('began_at', 'desc')
+            ->get();
+    
         return GameResource::collection($singlePlayerGames);
+    }
+
+    public function updateGameStatus(Request $request, Game $game)
+    {
+        $validated = $request->validate([
+            'status' => 'required|string|in:E,I',
+            'ended_at' => 'nullable|date|after_or_equal:began_at',
+            'total_time' => 'nullable|numeric|min:0',
+        ]);
+
+        $game->update($validated);
+
+        return new GameResource($game);
     }
 }

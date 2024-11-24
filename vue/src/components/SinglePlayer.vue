@@ -15,20 +15,13 @@ const boardStore = useBoardStore()
 const selectedBoard = ref("3x4");
 const tableColumns = ['Id', 'Board', 'Status', 'Began At', 'Total Time']
 
-const boards = [
-    { size: "3x4", coinsRequired: 0 },
-    { size: "4x4", coinsRequired: 1 },
-    { size: "6x6", coinsRequired: 1 },
-];
-
-
 onMounted(async () => {
     await profileStore.fetchProfile();
     await gameStore.getSinglePlayerGames();
     await boardStore.getBoards();
 });
 
-const startGame = async (size, cost) => {
+const startGame = async (size, cost, board_id) => {
     if (profileStore.userProfile) {
         if (profileStore.coins < cost) {
             alert("You don't have enough brain coins to play on this board!");
@@ -36,9 +29,12 @@ const startGame = async (size, cost) => {
         }
 
         try {
-            //await profileStore.createTransactions(cost);
+            const gameId = await gameStore.createSinglePlayer(board_id);
+            if(0 < cost){
+                await profileStore.createTransactionsGames(gameId, cost);
+            }
         } catch (error) {
-            console.error("Error updating coins or creating the game:", error);
+            console.error('Error starting the game:', error.message || error.response?.data);
             return;
         }
     }
@@ -85,7 +81,7 @@ const onBoardClick = (size) => {
                     <button class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600 transition mt-8"
                         :class="{ 'opacity-50': profileStore.coins < board.coinsRequired }"
                         :disabled="profileStore.coins < board.coinsRequired"
-                        @click="startGame(board.id, board.coinsRequired)">
+                        @click="startGame(`${board.board_cols}x${board.board_rows}`, board.coinsRequired, board.id)">
                         Play
                     </button>
                 </div>
@@ -104,11 +100,12 @@ const onBoardClick = (size) => {
 
                 <div class="flex justify-center pt-2">
                     <div class="flex flex-row gap-8">
-                        <button v-for="board in boards" :key="board.size" @click="onBoardClick(board.size)" :class="{
-                            'bg-sky-600 text-white': board.size == selectedBoard,
-                            'bg-sky-500 hover:bg-sky-600 text-white': board.size != selectedBoard
-                        }" class="px-4 py-1 rounded-md border transition-all duration-300">
-                            {{ board.size }}
+                        <button v-for="board in boardStore.boards" :key="board.id"
+                            @click="onBoardClick(board.board_cols + 'x' + board.board_rows)" :class="{
+                                'bg-sky-600 text-white': board.board_cols + 'x' + board.board_rows == selectedBoard,
+                                'bg-sky-500 hover:bg-sky-600 text-white': board.board_cols + 'x' + board.board_rows != selectedBoard
+                            }" class="px-4 py-1 rounded-md border transition-all duration-300">
+                            {{ board.board_cols + 'x' + board.board_rows }}
                         </button>
                     </div>
                 </div>

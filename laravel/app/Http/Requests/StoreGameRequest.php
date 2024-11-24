@@ -26,16 +26,15 @@ class StoreGameRequest extends FormRequest
     public function rules()
     {
         return [
-            'created_user_id' => 'required|exists:users,id',  // User ID who created the game must exist in the `users` table
-            'winner_user_id' => 'nullable|exists:users,id',  // Winner's user ID (can be null)
-            'type' => 'required|string|in:S,E',  // Game type, only 'S' or 'E' are allowed
-            'status' => 'required|string|in:E,S',  // Game status, only 'E' or 'S' are allowed
-            'began_at' => 'required|date',  // Game start date must be a valid date
-            'ended_at' => 'nullable|date|after_or_equal:began_at',  // Game end date (must be after or equal to `began_at`)
-            'total_time' => 'required|numeric|min:0',  // Total time must be a numeric value greater than or equal to 0
-            'board_id' => 'required|exists:boards,id',  // Board ID must exist in the `boards` table
+            'winner_user_id' => 'nullable|exists:users,id',  // Pode ser nulo
+            'type' => 'required|string|in:S,M',  // 'S' para single-player, 'M' para multiplayer
+            'status' => 'required|string|in:PL,E,I',  // 'PL' (In Progress), 'E' (Ended), 'I' (Interrupted)
+            'began_at' => 'required|date',  // Data de início obrigatória
+            'ended_at' => 'nullable|date|after_or_equal:began_at',  // Data de término opcional
+            'total_time' => 'nullable|numeric|min:0',  // Total time opcional
+            'board_id' => 'required|exists:boards,id',  // ID do tabuleiro obrigatório
         ];
-    }
+    }    
 
     /**
      * Get custom messages for validator errors.
@@ -45,24 +44,22 @@ class StoreGameRequest extends FormRequest
     public function messages()
     {
         return [
-            'created_user_id.required' => 'The creator user ID is required.',
-            'created_user_id.exists' => 'The creator user ID does not exist.',
-            'winner_user_id.exists' => 'The winner user ID does not exist.',
-            'type.required' => 'The game type is required.',
-            'type.in' => 'The game type must be either "S" or "E".',
-            'status.required' => 'The game status is required.',
-            'status.in' => 'The game status must be either "E" or "S".',
-            'began_at.required' => 'The start date is required.',
-            'began_at.date' => 'The start date must be a valid date.',
-            'ended_at.date' => 'The end date must be a valid date.',
-            'ended_at.after_or_equal' => 'The end date must be after or equal to the start date.',
-            'total_time.required' => 'Total time is required.',
-            'total_time.numeric' => 'Total time must be a number.',
-            'total_time.min' => 'Total time cannot be less than 0.',
-            'board_id.required' => 'The board ID is required.',
-            'board_id.exists' => 'The board ID does not exist.',
+            'winner_user_id.exists' => 'The specified winner user ID does not exist in the system.',
+            'type.required' => 'The game type field is mandatory.',
+            'type.in' => 'The game type must be one of the following: "S" (Single-player) or "M" (Multiplayer).',
+            'status.required' => 'The game status field is mandatory.',
+            'status.in' => 'The game status must be one of the following: "PL" (In Progress), "E" (Ended), or "I" (Interrupted).',
+            'began_at.required' => 'The start date (began_at) is required.',
+            'began_at.date' => 'The start date (began_at) must be a valid date in the format YYYY-MM-DD HH:MM:SS.',
+            'ended_at.date' => 'The end date (ended_at) must be a valid date in the format YYYY-MM-DD HH:MM:SS.',
+            'ended_at.after_or_equal' => 'The end date (ended_at) must be on or after the start date (began_at).',
+            'total_time.numeric' => 'The total time (total_time) must be a numeric value.',
+            'total_time.min' => 'The total time (total_time) must be at least 0.',
+            'board_id.required' => 'The board ID (board_id) field is mandatory.',
+            'board_id.exists' => 'The specified board ID (board_id) does not exist in the system.',
         ];
     }
+
 
     /**
      * Get custom attributes for validator errors.

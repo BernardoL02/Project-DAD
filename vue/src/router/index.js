@@ -60,7 +60,7 @@ const router = createRouter({
       path: '/game/:size',
       name: 'SinglePlayerGameBoard',
       component: SinglePlayerGameBoard,
-      props: true
+      props: route => ({ size: route.params.size })
     },
     {
       path: '/login',

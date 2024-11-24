@@ -8,6 +8,7 @@ use App\Http\Controllers\GameController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\ScoreBoardController;
+use App\Http\Controllers\TransactionController;
 
 Route::post('/auth/login', [AuthController::class, "login"]);
 
@@ -26,9 +27,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/games', [GameController::class, 'store']);
     Route::put('/games/{game}', [GameController::class, 'update']);
     Route::delete('/games/{game}', [GameController::class, 'destroy']);
+    Route::patch('/games/{game}', [GameController::class, 'updateGameStatus']);
+
 
      // ----- Boards -----
      Route::get('/boards', [BoardController::class, 'index']);
+
+    // ----- Transactions -----
+    Route::post('/transactions', [TransactionController::class, 'store']);
+    Route::get('/transactions', [TransactionController::class, 'index']);
 
 });
 

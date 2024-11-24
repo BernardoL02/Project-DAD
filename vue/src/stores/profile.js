@@ -63,37 +63,31 @@ export const useProfileStore = defineStore('profile', () => {
     }
   }
 
-  const updateCoins = async (newCoins) => {
-    loading.value = true;
-    error.value = null;
-  
+  const createTransactionsGames = async (gameId, cost) => {
     try {
-      const response = await axios.patch('/users/me/coins', {
-        brain_coins_balance: newCoins,
-      });
-      userProfile.value = response.data.data;
-    } catch (err) {
-      error.value = 'Failed to update coins. Please try again.';
-  
-      storeError.setErrorMessages(
-        err.response?.data?.message,
-        err.response?.data?.errors,
-        err.response?.data?.status,
-        'Update Coins Error'
-      );
-      console.error('Error updating coins:', err);
-    } finally {
-      loading.value = false;
-    }
-  }
+      const datetime = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-  // Retorna os valores da store
+      const response = await axios.post('/transactions', {
+        type: 'I', 
+        game_id: gameId, 
+        brain_coins: -cost, 
+        transaction_datetime: datetime,
+      });
+  
+      console.log('Transaction created successfully:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('Error creating transaction:', error.response?.data || error.message);
+      throw error;
+    }
+  };
+
   return {
     userProfile,
     loading,
     error,
     fetchProfile,
-    updateCoins,
+    createTransactionsGames,
     name,
     email,
     nickname,

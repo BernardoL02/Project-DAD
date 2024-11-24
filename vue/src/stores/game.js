@@ -23,7 +23,6 @@ export const useGameStore = defineStore('game', () => {
 
       const updatedGames = response.data.data.map((game) => ({
         id: game.id,
-        // Mapeamento do board_id
         board_id:
           game.board_id === 1
             ? '3x4'
@@ -79,24 +78,45 @@ export const useGameStore = defineStore('game', () => {
   })
 
   const bestResults = computed(() => {
-    const filtered = games.value.filter(
-      (game) =>
-        game.status === 'Ended' &&
-        (game.board_id === boardFilter.value || boardFilter.value === 'All')
-    )
-
-    const sorted = filtered.sort((a, b) => {
-      const timeA = parseInt(a.total_time) || 0
-      const timeB = parseInt(b.total_time) || 0
+    const endedGames = games.value.filter((game) => game.status === 'Ended')
+  
+    const sorted = endedGames.sort((a, b) => {
+      const timeA = parseFloat(a.total_time.replace('s', '')) || 0
+      const timeB = parseFloat(b.total_time.replace('s', '')) || 0
       return timeA - timeB
     })
-
+  
     return sorted.slice(0, 10)
   })
+
+  const createSinglePlayer = async (board_id) => {
+    try {
+      const beganAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+      const response = await axios.post('games', {
+        type: 'S',
+        status: 'PL',
+        began_at: beganAt,
+        board_id: board_id
+      });
+      const createdGame = response.data.data;
+      return createdGame.id; // Retorna o ID do jogo criado
+    } catch (e) {
+      console.error('Error creating single-player game:', e);
+      storeError.setErrorMessages(
+        e.response?.data?.message || 'An error occurred while creating the game',
+        e.response?.data?.errors || [],
+        e.response?.status || 500
+      );
+      throw new Error('Failed to create single-player game');
+    }
+  };
+  
 
   return {
     games,
     getSinglePlayerGames,
+    createSinglePlayer,
     statusFilter,
     beginDateFilter,
     boardFilter,
