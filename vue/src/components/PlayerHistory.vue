@@ -11,7 +11,7 @@ const isLoading = ref(true)
 
 // Opções de filtro
 const statusOptions = ['All', 'Pending', 'In Progress', 'Ended', 'Interrupted']
-const boardOptions = ['All', '4x3', '4x4', '6x6']
+const boardOptions = ['All', '3x4', '4x4', '6x6']
 
 // Função de filtro que trata tanto o status quanto o tabuleiro
 const handleSelect = (selectedValue, filterType) => {
@@ -44,7 +44,7 @@ onMounted(async () => {
           <div class="w-full sm:w-auto">
             <label for="began_at" class="block text-sm font-medium text-gray-700">Began At</label>
             <input id="began_at" v-model="gameStore.beginDateFilter" type="text" placeholder="Date" class="inline-flex justify-between w-full sm:w-48 rounded-md border border-gray-300 bg-white py-2 px-4
-            text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mt-2" />
+            text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 mt-2" />
           </div>
 
           <!-- Filtro de Tabuleiro -->

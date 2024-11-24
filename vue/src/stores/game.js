@@ -21,12 +21,12 @@ export const useGameStore = defineStore('game', () => {
         // Mapeamento do board_id
         board_id:
           game.board_id === 1
-            ? '4x3'
+            ? '3x4'
             : game.board_id === 2
               ? '4x4'
               : game.board_id === 3
                 ? '6x6'
-                : '-',
+                : 'N/A',
         status:
           game.status === 'PE'
             ? 'Pending'
@@ -36,10 +36,10 @@ export const useGameStore = defineStore('game', () => {
                 ? 'Ended'
                 : game.status === 'I'
                   ? 'Interrupted'
-                  : '-',
-        began_at: game.began_at || '-',
-        ended_at: game.ended_at || '-',
-        total_time: game.total_time || '-'
+                  : 'N/A',
+        began_at: game.began_at || 'N/A',
+        ended_at: game.ended_at || 'N/A',
+        total_time: game.total_time || 'N/A'
       }))
       games.value = updatedGames
     } catch (e) {
