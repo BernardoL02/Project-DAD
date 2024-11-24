@@ -26,11 +26,13 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::put('/games/{game}', [GameController::class, 'update']);
     Route::delete('/games/{game}', [GameController::class, 'destroy']);
 
-    // ------ Score Boards ----
 
-    Route::get('/scoreboard/single/{boardSize}', [ScoreBoardController::class, 'globalSinglePlayerScoreboard']);
-    Route::get('/scoreboard/multiplayer', [ScoreBoardController::class, 'multiplayerScoreboard']);
 });
+
+// ------ Score Boards ----
+
+Route::get('/scoreboard/single/{boardSize}', [ScoreBoardController::class, 'globalSinglePlayerScoreboard']);
+Route::get('/scoreboard/multiplayer', [ScoreBoardController::class, 'multiplayerScoreboard']);
 
 
 
