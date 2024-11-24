@@ -2,8 +2,10 @@
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { RouterLink } from 'vue-router';
+import { useProfileStore } from '@/stores/profile';
 
 const authStore = useAuthStore();
+const profileStore = useProfileStore();
 
 const email = ref('');
 const password = ref('');
@@ -17,6 +19,9 @@ const submitLogin = async () => {
         });
 
         responseData.value = `Hello, ${user.data.name}!`;
+
+        await profileStore.fetchProfile();
+
     } catch (error) {
         responseData.value = 'Login failed. Please check your credentials.';
     }
@@ -32,41 +37,26 @@ const submitLogin = async () => {
                     <label for="email" class="block text-sm font-medium text-gray-600 mb-1">
                         Email:
                     </label>
-                    <input
-                        type="text"
-                        id="email"
-                        v-model="email"
-                        placeholder="Enter your email"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <input type="text" id="email" v-model="email" placeholder="Enter your email"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </div>
 
                 <div>
                     <label for="password" class="block text-sm font-medium text-gray-600 mb-1">
                         Password:
                     </label>
-                    <input
-                        type="password"
-                        id="password"
-                        v-model="password"
-                        placeholder="Enter your password"
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
+                    <input type="password" id="password" v-model="password" placeholder="Enter your password"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </div>
 
-                <button
-                    @click.prevent="submitLogin"
-                    class="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-                >
+                <button @click.prevent="submitLogin"
+                    class="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
                     Log In
                 </button>
             </form>
 
             <div class="mt-4 text-center">
-                <RouterLink
-                    to="/registration"
-                    class="text-blue-500 hover:underline"
-                >
+                <RouterLink to="/registration" class="text-blue-500 hover:underline">
                     Create an Account
                 </RouterLink>
             </div>

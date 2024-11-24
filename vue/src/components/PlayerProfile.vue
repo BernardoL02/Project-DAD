@@ -1,21 +1,12 @@
 <script setup>
 import { onMounted } from 'vue';
 import { useProfileStore } from '@/stores/profile';
-import { useAuthStore } from '@/stores/auth'; // Import the auth store for logout
 
 const profileStore = useProfileStore();
-const authStore = useAuthStore();
 
 onMounted(async () => {
   await profileStore.fetchProfile();
 });
-
-const handleLogout = async () => {
-  const success = await authStore.logout();
-  if (success) {
-    window.location.href = '/testers/laravel';
-  }
-};
 
 </script>
 
@@ -90,13 +81,6 @@ const handleLogout = async () => {
             Buy Coins
           </button>
         </div>
-      </div>
-
-      <div class="text-center mt-8">
-        <button @click="handleLogout"
-          class="px-6 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 transition duration-200">
-          Log Out
-        </button>
       </div>
     </div>
   </div>

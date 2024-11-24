@@ -7,6 +7,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import SinglePlayerScoreBoard from '@/components/SinglePlayerScoreBoard.vue'
 import MultiPlayerScoreBoard from '@/components/MultiPlayerScoreBoard.vue'
 import SinglePlayerGameBoard from '@/components/SinglePlayerGameBoard.vue'
+import UpdateProfile from '@/components/UpdateProfile.vue'
 
 import { useAuthStore } from '@/stores/auth'
 import MultiPlayer from '@/components/MultiPlayer.vue'
@@ -61,6 +62,11 @@ const router = createRouter({
       name: 'SinglePlayerGameBoard',
       component: SinglePlayerGameBoard,
       props: route => ({ size: route.params.size, gameId: Number(route.params.gameId) })
+    },
+    {
+      path: '/updateProfile',
+      name: 'ProfileUpdate',
+      component: UpdateProfile
     },
     {
       path: '/login',
