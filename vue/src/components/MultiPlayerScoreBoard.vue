@@ -7,7 +7,7 @@ import PaginatedTable from '@/components/StandardTablePaginated.vue'
 const columns = ['Rank', 'Player', 'Victories', 'Losses'];
 const scoreBoardStore = usescoreBoardStore();
 
-// Computed properties for scoreboards and loading state
+
 const scoreboards = computed(() => scoreBoardStore.scoreboards);
 const loading = computed(() => scoreBoardStore.loading);
 

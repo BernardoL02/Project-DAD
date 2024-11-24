@@ -1,5 +1,4 @@
 import HomeComponent from '@/components/HomeComponent.vue'
-import LaravelTester from '@/components/LaravelTester.vue'
 import PlayerHistory from '@/components/PlayerHistory.vue'
 import PlayerProfile from '@/components/PlayerProfile.vue'
 import SinglePlayer from '@/components/SinglePlayer.vue'
@@ -11,6 +10,8 @@ import SinglePlayerGameBoard from '@/components/SinglePlayerGameBoard.vue'
 
 import { useAuthStore } from '@/stores/auth'
 import MultiPlayer from '@/components/MultiPlayer.vue'
+import UserLogin from '@/components/UserLogin.vue'
+import UserRegistration from '@/components/UserRegistration.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,18 +22,9 @@ const router = createRouter({
       component: HomeComponent
     },
     {
-      path: '/testers',
-      children: [
-        {
-          path: 'laravel',
-          name: 'login',
-          component: LaravelTester
-        },
-        {
-          path: 'websocket',
-          component: WebSocketTester
-        }
-      ]
+      path: '/websocket',
+      name: 'websocket',
+      component: WebSocketTester
     },
     {
       path: '/singleplayer',
@@ -69,6 +61,16 @@ const router = createRouter({
       name: 'SinglePlayerGameBoard',
       component: SinglePlayerGameBoard,
       props: true
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: UserLogin
+    },
+    {
+      path: '/registration',
+      name: 'registration',
+      component: UserRegistration
     }
   ]
 })
