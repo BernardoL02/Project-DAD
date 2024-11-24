@@ -22,11 +22,12 @@ onMounted(async () => {
     await gameStore.getSinglePlayerGames()
 });
 
-const startGame = (size, cost) => {
+const startGame = async (size, cost) => {
     if (profileStore.coins < cost) {
         alert("You don't have enough brain coins to play on this board!");
     } else {
-        router.push({ name: 'gameBoard', params: { size } });
+        await profileStore.updateCoins(profileStore.coins - cost);
+        router.push({ name: 'SinglePlayerGameBoard', params: { size } });
     }
 };
 

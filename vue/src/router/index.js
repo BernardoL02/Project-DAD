@@ -7,7 +7,7 @@ import WebSocketTester from '@/components/WebSocketTester.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import SinglePlayerScoreBoard from '@/components/SinglePlayerScoreBoard.vue'
 import MultiPlayerScoreBoard from '@/components/MultiPlayerScoreBoard.vue'
-import GameBoard from '@/components/GameBoard.vue'
+import SinglePlayerGameBoard from '@/components/SinglePlayerGameBoard.vue'
 
 import { useAuthStore } from '@/stores/auth'
 
@@ -60,8 +60,8 @@ const router = createRouter({
     },
     {
       path: '/game/:size',
-      name: 'gameBoard',
-      component: GameBoard,
+      name: 'SinglePlayerGameBoard',
+      component: SinglePlayerGameBoard,
       props: true
     } 
   ]

@@ -63,12 +63,37 @@ export const useProfileStore = defineStore('profile', () => {
     }
   }
 
+  const updateCoins = async (newCoins) => {
+    loading.value = true;
+    error.value = null;
+  
+    try {
+      const response = await axios.patch('/users/me/coins', {
+        brain_coins_balance: newCoins,
+      });
+      userProfile.value = response.data.data;
+    } catch (err) {
+      error.value = 'Failed to update coins. Please try again.';
+  
+      storeError.setErrorMessages(
+        err.response?.data?.message,
+        err.response?.data?.errors,
+        err.response?.data?.status,
+        'Update Coins Error'
+      );
+      console.error('Error updating coins:', err);
+    } finally {
+      loading.value = false;
+    }
+  }
+
   // Retorna os valores da store
   return {
     userProfile,
     loading,
     error,
     fetchProfile,
+    updateCoins,
     name,
     email,
     nickname,
