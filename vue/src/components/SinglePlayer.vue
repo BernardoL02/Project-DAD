@@ -1,7 +1,9 @@
 <script setup>
 import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { useProfileStore } from '@/stores/profile';
 
+const router = useRouter();
 const profileStore = useProfileStore();
 
 const boardSizes = [
@@ -18,7 +20,7 @@ const startGame = (size, cost) => {
     if (profileStore.coins < cost) {
         alert("You don't have enough brain coins to play on this board!");
     } else {
-        alert(`Game started on the ${size} board`);
+        router.push({ name: 'gameBoard', params: { size } });
     }
 };
 
