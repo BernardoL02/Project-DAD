@@ -8,7 +8,6 @@ const authStore = useAuthStore();
 
 onMounted(async () => {
   await profileStore.fetchProfile();
-  console.log(profileStore.photoUrl)
 });
 
 const handleLogout = async () => {
@@ -52,16 +51,25 @@ const handleLogout = async () => {
 
           <!-- User Name -->
           <div class="flex flex-col items-center ml-4">
-            <p class="text-lg font-bold text-black">User Name</p>
-            <p class="text-lg font-semibold text-gray-500">
+            <p class="text-lg font-bold text-black">Nickname</p>
+            <p class="text-base  font-semibold text-gray-500">
               {{ profileStore.nickname }}
             </p>
           </div>
 
+          <!-- User Email -->
+          <div class="flex flex-col items-center ml-4">
+            <p class="text-lg font-bold text-black">Email</p>
+            <p class="text-base font-semibold text-gray-500">
+              {{ profileStore.email }}
+            </p>
+          </div>
+
+
           <!-- Account Type -->
           <div class="flex flex-col items-center mr-4">
             <p class="text-lg font-bold text-black">Account Type</p>
-            <p class="text-lg font-semibold text-gray-500">
+            <p class="text-base  font-semibold text-gray-500">
               {{ profileStore.type === 'P' ? 'Player' :
                 (profileStore.type === 'A' ? 'Administrator' : 'Unknown') }}
             </p>

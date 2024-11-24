@@ -17,7 +17,7 @@ export const useProfileStore = defineStore('profile', () => {
     return userProfile.value ? userProfile.value.name : ''
   })
 
-  const userEmail = computed(() => {
+  const email = computed(() => {
     return userProfile.value ? userProfile.value.email : ''
   })
 
@@ -70,7 +70,7 @@ export const useProfileStore = defineStore('profile', () => {
     error,
     fetchProfile,
     name,
-    userEmail,
+    email,
     nickname,
     type,
     photoUrl,
