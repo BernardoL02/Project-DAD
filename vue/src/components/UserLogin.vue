@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref,onMounted } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { RouterLink } from 'vue-router';
 import { useProfileStore } from '@/stores/profile';
@@ -26,6 +26,12 @@ const submitLogin = async () => {
         responseData.value = 'Login failed. Please check your credentials.';
     }
 };
+
+onMounted(async () => {
+  if (authStore.user) {
+    await profileStore.fetchProfile();
+  }
+});
 </script>
 
 <template>
