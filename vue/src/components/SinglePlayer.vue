@@ -3,13 +3,16 @@ import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useProfileStore } from '@/stores/profile';
 import { useGameStore } from '@/stores/game'
+import { useBoardStore } from '@/stores/board'
+
 import PaginatedTable from '@/components/StandardTablePaginated.vue'
 
 const router = useRouter();
 const profileStore = useProfileStore();
 const gameStore = useGameStore()
-const selectedBoard = ref("3x4");
+const boardStore = useBoardStore()
 
+const selectedBoard = ref("3x4");
 const tableColumns = ['Id', 'Board', 'Status', 'Began At', 'Total Time']
 
 const boards = [
@@ -18,16 +21,18 @@ const boards = [
     { size: "6x6", coinsRequired: 1 },
 ];
 
+
 onMounted(async () => {
     await profileStore.fetchProfile();
     await gameStore.getSinglePlayerGames();
+    await boardStore.getBoards();
 });
 
 const startGame = async (size, cost) => {
     if (profileStore.userProfile) {
         if (profileStore.coins < cost) {
-        alert("You don't have enough brain coins to play on this board!");
-        return;
+            alert("You don't have enough brain coins to play on this board!");
+            return;
         }
 
         try {
@@ -71,16 +76,16 @@ const onBoardClick = (size) => {
         <div class="bg-white p-4 rounded shadow-md">
             <h2 class="text-2xl font-semibold mb-4 text-center">Select Board</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div v-for="board in boards" :key="board.size"
+                <div v-for="board in boardStore.boards" :key="board.id"
                     class="p-6 border rounded-lg flex flex-col items-center justify-between bg-gray-100 shadow-sm">
-                    <p class="text-lg font-bold">{{ board.size }}</p>
+                    <p class="text-lg font-bold">{{ board.board_cols + "x" + board.board_rows }}</p>
                     <p class="text-sm text-gray-500 mt-2">
                         Required Coins - <span class="font-semibold">{{ board.coinsRequired }}</span>
                     </p>
                     <button class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600 transition mt-8"
                         :class="{ 'opacity-50': profileStore.coins < board.coinsRequired }"
                         :disabled="profileStore.coins < board.coinsRequired"
-                        @click="startGame(board.size, board.coinsRequired)">
+                        @click="startGame(board.id, board.coinsRequired)">
                         Play
                     </button>
                 </div>
