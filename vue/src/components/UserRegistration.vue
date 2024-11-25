@@ -43,7 +43,7 @@ const submitRegister = async () => {
 </script>
 
 <template>
-    <div class="min-h-screen flex items-center justify-center ">
+    <div class="flex items-center justify-center ">
         <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-6">
           
             <!-- Register Form -->
@@ -136,6 +136,12 @@ const submitRegister = async () => {
                         Register
                     </button>
                 </form>
+
+                <div class="mt-4 text-center">
+                    <RouterLink to="login" class="text-blue-500 hover:underline">
+                       Login
+                    </RouterLink>
+                </div>
 
                 <div v-if="responseData" class="mt-4 text-center text-gray-700">
                     <p>{{ responseData }}</p>
