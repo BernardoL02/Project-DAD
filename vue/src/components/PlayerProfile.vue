@@ -72,9 +72,11 @@ const profileStore = useProfileStore();
               </p>
             </div>
           </div>
-          <button class="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 transition duration-300 mr-2">
+          <RouterLink
+              :to="{ name: 'store' }" 
+              class="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 transition duration-300 mr-2">
             Buy Coins
-          </button>
+          </RouterLink>
         </div>
       </div>
     </div>

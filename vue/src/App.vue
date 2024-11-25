@@ -26,30 +26,53 @@
           <!-- Links à esquerda -->
           <div :class="{ 'hidden lg:flex': true, 'flex flex-col lg:flex-row lg:space-x-8': true }">
             <RouterLink to="/"
-              class="text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              :class="[
+                        'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                        route.path === '/' ? 'text-blue-600 font-semibold' : 'text-gray-900 hover:text-sky-600'
+                      ]"
               active-class="text-blue-600 font-semibold">
               Home
             </RouterLink>
             <RouterLink to="/login"
-              class="text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              :class="[
+                        'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                        route.path === '/login' ? 'text-blue-600 font-semibold' : 'text-gray-900 hover:text-sky-600'
+                      ]"
               active-class="text-blue-600 font-semibold">
               Login
             </RouterLink>
             <RouterLink to="/websocket"
-              class="text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              :class="[
+                        'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                        route.path === '/websocket' ? 'text-blue-600 font-semibold' : 'text-gray-900 hover:text-sky-600'
+                      ]"
               active-class="text-blue-600 font-semibold">
               WebSockets Tester
             </RouterLink>
             <RouterLink to="/singlePlayer"
-              class="text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              :class="[
+                        'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                        route.path === '/singlePlayer' ? 'text-blue-600 font-semibold' : 'text-gray-900 hover:text-sky-600'
+                      ]"
               active-class="text-blue-600 font-semibold">
               Single-Player
             </RouterLink>
 
             <RouterLink to="/multiplayer"
-              class="text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+              :class="[
+                        'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                        route.path === '/multiplayer' ? 'text-blue-600 font-semibold' : 'text-gray-900 hover:text-sky-600'
+                      ]"
               active-class="text-blue-600 font-semibold">
               Multi-Player
+            </RouterLink>
+            <RouterLink to="/Store"
+                  :class="[
+                        'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                        route.path === '/Store' ? 'text-blue-600 font-semibold' : 'text-gray-900 hover:text-sky-600'
+                      ]"
+                  active-class="text-blue-600 font-semibold">
+                  Store
             </RouterLink>
 
             <!-- Dropdown Score Board -->
@@ -141,17 +164,19 @@ import Toaster from './components/ui/toast/Toaster.vue';
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useProfileStore } from '@/stores/profile';
+import { useRoute, useRouter  } from 'vue-router';
 
 const profileStore = useProfileStore();
 const authStore = useAuthStore();
+const route = useRoute();
+const router = useRouter();
 
 const handleLogout = async () => {
   const success = await authStore.logout();
   if (success) {
-    window.location.href = '/login';
+    router.push('/login');
   }
 };
-
 
 const isMenuOpen = ref(false)
 
