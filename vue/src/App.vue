@@ -164,19 +164,19 @@ import Toaster from './components/ui/toast/Toaster.vue';
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useProfileStore } from '@/stores/profile';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter  } from 'vue-router';
 
 const profileStore = useProfileStore();
 const authStore = useAuthStore();
 const route = useRoute();
+const router = useRouter();
 
 const handleLogout = async () => {
   const success = await authStore.logout();
   if (success) {
-    window.location.href = '/login';
+    router.push('/login');
   }
 };
-
 
 const isMenuOpen = ref(false)
 
