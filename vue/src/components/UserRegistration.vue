@@ -1,10 +1,14 @@
 <script setup>
-import { ref } from 'vue';
+import { ref,onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
+import { useProfileStore } from '@/stores/profile';
+import { useAuthStore } from '@/stores/auth';
 
 const userStore = useUserStore();
+const profileStore = useProfileStore();
 const router = useRouter();
+const authStore = useAuthStore();
 
 const email = ref('');
 const name = ref('');
@@ -40,10 +44,16 @@ const submitRegister = async () => {
         console.error('Registration failed:', error);
     }
 };
+
+onMounted(async () => {
+  if (authStore.user) {
+    await profileStore.fetchProfile();
+  }
+});
 </script>
 
 <template>
-    <div class="flex items-center justify-center ">
+    <div class="flex items-center justify-center mt-14">
         <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-6">
           
             <!-- Register Form -->
