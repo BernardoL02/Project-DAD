@@ -111,12 +111,48 @@ export const useGameStore = defineStore('game', () => {
       throw new Error('Failed to create single-player game');
     }
   };
+
+  const sendPostOnExit = async (gameId) => {
+    try {
+      if (!gameId) {
+        console.error('Game ID não está definido.');
+        return;
+      }
+  
+      await axios.patch(`/games/${gameId}`, {
+        status: 'I',
+      });
+      console.log('Game status atualizado para "interrupted".');
+    } catch (error) {
+      console.error('Erro ao atualizar status do jogo:', error.response?.data || error.message);
+    }
+  };
+  
+  const sendPostOnGameEnd = async (totalTime, gameId) => {
+    try {
+      if (!gameId) {
+        console.error('Game ID não está definido.');
+        return;
+      }
+  
+      await axios.patch(`/games/${gameId}`, {
+        status: 'E',
+        total_time: totalTime,
+      });
+  
+      console.log(`Game atualizado com status "ended" e tempo total de ${totalTime} segundos.`);
+    } catch (error) {
+      console.error('Erro ao atualizar status do jogo:', error.response?.data || error.message);
+    }
+  };
   
 
   return {
     games,
     getSinglePlayerGames,
     createSinglePlayer,
+    sendPostOnExit,
+    sendPostOnGameEnd,
     statusFilter,
     beginDateFilter,
     boardFilter,

@@ -3,6 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
 import { useNotificationStore } from '@/stores/notification';
+import { useGameStore } from '@/stores/game';
 
 const props = defineProps({
   size: {
@@ -36,6 +37,7 @@ const timerInterval = ref(null);
 const showModal = ref(false);
 const isLeaving = ref(false);
 const notificationStore = useNotificationStore();
+const gameStore = useGameStore()
 
 const shuffleArray = (array) => {
   return array.sort(() => Math.random() - 0.5);
@@ -100,19 +102,14 @@ const checkMatch = async () => {
       endTime.value = new Date();
       clearInterval(timerInterval.value);
 
-      // Calcula o tempo total
       const totalTime = Math.floor((endTime.value - startTime.value) / 1000);
 
-      // Atualiza o status para 'ended'
-      await sendPostOnGameEnd(totalTime);
+      await gameStore.sendPostOnGameEnd(totalTime, props.gameId);
 
-      // Permite sair sem exibir o modal
       isLeaving.value = true;
 
-      // Exibe a notificação de sucesso
       notificationStore.setSuccessMessage(`Você completou o jogo em ${totalTime} segundos!`, 'Parabéns!');
 
-      // Redireciona para a página de single player
       router.push('/singlePlayer');
     }
   }, 1000);
@@ -124,44 +121,9 @@ const startGame = () => {
   generateCards();
 };
 
-const sendPostOnExit = async () => {
-  try {
-    if (!props.gameId) {
-      console.error('Game ID não está definido.');
-      return;
-    }
-
-    await axios.patch(`/games/${props.gameId}`, {
-      status: 'I',
-    });
-    console.log('Game status atualizado para "interrupted".');
-  } catch (error) {
-    console.error('Erro ao atualizar status do jogo:', error.response?.data || error.message);
-  }
-};
-
-const sendPostOnGameEnd = async (totalTime) => {
-  try {
-    if (!props.gameId) {
-      console.error('Game ID não está definido.');
-      return;
-    }
-
-    await axios.patch(`/games/${props.gameId}`, {
-      status: 'E',
-      total_time: totalTime,
-    });
-
-    console.log(`Game atualizado com status "ended" e tempo total de ${totalTime} segundos.`);
-  } catch (error) {
-    console.error('Erro ao atualizar status do jogo:', error.response?.data || error.message);
-  }
-};
-
-
 
 const confirmExit = async () => {
-  await sendPostOnExit();
+  await gameStore.sendPostOnExit(props.gameId);
   isLeaving.value = true;
   showModal.value = false;
   router.push('/');
@@ -175,7 +137,7 @@ const cancelExit = () => {
 
 const handleBeforeUnload = (event) => {
   event.preventDefault();
-  sendPostOnExit();
+  gameStore.sendPostOnExit(props.gameId);
   event.returnValue = ''; 
 };
 
