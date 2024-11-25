@@ -28,7 +28,7 @@
             <RouterLink to="/"
               :class="[
                         'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                        route.path === '/' ? 'text-blue-600 font-semibold' : 'text-gray-900 hover:text-sky-600'
+                        route.path === '/' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
                       ]"
               active-class="text-blue-600 font-semibold">
               Home
@@ -36,7 +36,7 @@
             <RouterLink to="/login"
               :class="[
                         'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                        route.path === '/login' ? 'text-blue-600 font-semibold' : 'text-gray-900 hover:text-sky-600'
+                        route.path === '/login' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
                       ]"
               active-class="text-blue-600 font-semibold">
               Login
@@ -44,7 +44,7 @@
             <RouterLink to="/websocket"
               :class="[
                         'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                        route.path === '/websocket' ? 'text-blue-600 font-semibold' : 'text-gray-900 hover:text-sky-600'
+                        route.path === '/websocket' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
                       ]"
               active-class="text-blue-600 font-semibold">
               WebSockets Tester
@@ -52,7 +52,7 @@
             <RouterLink to="/singlePlayer"
               :class="[
                         'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                        route.path === '/singlePlayer' ? 'text-blue-600 font-semibold' : 'text-gray-900 hover:text-sky-600'
+                        route.path === '/singlePlayer' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
                       ]"
               active-class="text-blue-600 font-semibold">
               Single-Player
@@ -61,7 +61,7 @@
             <RouterLink to="/multiplayer"
               :class="[
                         'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                        route.path === '/multiplayer' ? 'text-blue-600 font-semibold' : 'text-gray-900 hover:text-sky-600'
+                        route.path === '/multiplayer' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
                       ]"
               active-class="text-blue-600 font-semibold">
               Multi-Player
@@ -69,7 +69,7 @@
             <RouterLink to="/Store"
                   :class="[
                         'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                        route.path === '/Store' ? 'text-blue-600 font-semibold' : 'text-gray-900 hover:text-sky-600'
+                        route.path === '/Store' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
                       ]"
                   active-class="text-blue-600 font-semibold">
                   Store
