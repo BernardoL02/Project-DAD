@@ -13,6 +13,7 @@ import { useAuthStore } from '@/stores/auth'
 import MultiPlayer from '@/components/MultiPlayer.vue'
 import UserLogin from '@/components/UserLogin.vue'
 import UserRegistration from '@/components/UserRegistration.vue'
+import Store from '@/components/Store.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,7 +35,7 @@ const router = createRouter({
     },
     {
       path: '/singleplayer/history',
-      name: 'single-playerHistory',
+      name: 'singlePlayerHistory',
       component: PlayerHistory
     },
     {
@@ -77,6 +78,11 @@ const router = createRouter({
       path: '/registration',
       name: 'registration',
       component: UserRegistration
+    },
+    {
+      path: '/Store',
+      name: 'store',
+      component: Store
     }
   ]
 })
@@ -95,7 +101,7 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
-  if ((to.name == 'single-playerHistory' || to.name == 'Profile') && !storeAuth.user) {
+  if ((to.name == 'singlePlayerHistory' || to.name == 'Profile') && !storeAuth.user) {
     next({ name: 'login' })
     return
   }

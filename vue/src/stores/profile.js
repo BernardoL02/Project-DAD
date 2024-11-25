@@ -95,7 +95,6 @@ export const useProfileStore = defineStore('profile', () => {
     }
   }
 
-
   return {
     userProfile,
     loading,
