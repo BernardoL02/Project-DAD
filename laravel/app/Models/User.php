@@ -50,6 +50,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function isAdmin()
+    {
+        return $this->type === 'A'; // Verifica se o tipo é 'A' para administrador
+    }
+
      // Relationships
      public function transactions()
      {

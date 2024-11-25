@@ -14,8 +14,8 @@ class GameController extends Controller
      */
     public function index(Request $request)
     {
-        $user = $request->user();
-    
+        $games = Game::orderBy('began_at', 'desc')->get();
+
         return GameResource::collection($games);
     }
 
@@ -26,9 +26,9 @@ class GameController extends Controller
     {
         $gameData = $request->validated();
         $gameData['created_user_id'] = $request->user()->id;
-    
+
         $game = Game::create($gameData);
-    
+
         return new GameResource($game);
     }
 
@@ -75,12 +75,12 @@ class GameController extends Controller
     public function mySinglePlayerGames(Request $request)
     {
         $user = $request->user();
-        
+
         $singlePlayerGames = $user->games()
             ->where('type', 'S')
             ->orderBy('began_at', 'desc')
             ->get();
-    
+
         return GameResource::collection($singlePlayerGames);
     }
 

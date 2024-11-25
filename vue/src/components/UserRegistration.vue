@@ -1,14 +1,11 @@
 <script setup>
-import { ref,onMounted } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
-import { useProfileStore } from '@/stores/profile';
-import { useAuthStore } from '@/stores/auth';
 
 const userStore = useUserStore();
-const profileStore = useProfileStore();
 const router = useRouter();
-const authStore = useAuthStore();
+
 
 const email = ref('');
 const name = ref('');
@@ -45,11 +42,6 @@ const submitRegister = async () => {
     }
 };
 
-onMounted(async () => {
-  if (authStore.user) {
-    await profileStore.fetchProfile();
-  }
-});
 </script>
 
 <template>

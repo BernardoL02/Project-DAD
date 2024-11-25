@@ -23,6 +23,11 @@ class TransactionResource extends JsonResource
             'payment_type' => $this->payment_type,
             'payment_reference' => $this->payment_reference,
             'brain_coins' => $this->brain_coins,
+            'user' => [
+                'id' => $this->user->id,
+                'name' => $this->user->name,
+                'email' => $this->user->email,
+            ],
         ];
     }
 }

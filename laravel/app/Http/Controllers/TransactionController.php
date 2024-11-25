@@ -12,31 +12,37 @@ class TransactionController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $transactions = $user->transactions()->orderBy('transaction_datetime', 'desc')->get();
 
-        // Usar recurso para formatar a resposta
+        if ($user->isAdmin()) {
+            $transactions = Transaction::with('user')->orderBy('transaction_datetime', 'desc')->get();
+        } else {
+
+            $transactions = $user->transactions()->with('user')->orderBy('transaction_datetime', 'desc')->get();
+        }
+
         return TransactionResource::collection($transactions);
     }
-    
+
+
 
     public function store(TransactionRequest $request)
     {
         // Pegue o usuário autenticado a partir do token
         $user = $request->user();
-    
+
         // Validação dos dados da requisição
         $validated = $request->validated();
-    
+
         // Substitua o `user_id` pelo ID do usuário autenticado
         $validated['user_id'] = $user->id;
-    
+
         // Verifique se há saldo suficiente para transações negativas
         if ($validated['brain_coins'] < 0 && ($user->brain_coins_balance + $validated['brain_coins'] < 0)) {
             return response()->json([
                 'message' => 'Insufficient balance to complete the transaction.',
             ], 400);
         }
-    
+
         // Criação da transação
         $transaction = Transaction::create([
             'type' => $validated['type'],
@@ -48,11 +54,11 @@ class TransactionController extends Controller
             'payment_reference' => $validated['payment_reference'] ?? null,
             'brain_coins' => $validated['brain_coins'], // Valor dos brain coins
         ]);
-    
+
         // Atualize o saldo do usuário
         $user->brain_coins_balance += $validated['brain_coins'];
         $user->save();
-    
+
         // Retorna a transação criada com o saldo atualizado
         return response()->json([
             'message' => 'Transaction created successfully.',
@@ -60,7 +66,7 @@ class TransactionController extends Controller
             'current_balance' => $user->brain_coins_balance, // Mostra o saldo atualizado
         ], 201);
     }
-    
+
 
 }
 
