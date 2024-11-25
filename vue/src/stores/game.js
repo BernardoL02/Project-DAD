@@ -78,16 +78,21 @@ export const useGameStore = defineStore('game', () => {
   })
 
   const bestResults = computed(() => {
-    const endedGames = games.value.filter((game) => game.status === 'Ended')
-  
+    const endedGames = games.value.filter((game) => {
+      const isBoardMatch =
+        !boardFilter.value || boardFilter.value === 'All' || game.board_id === boardFilter.value;
+      return game.status === 'Ended' && isBoardMatch;
+    });
+
     const sorted = endedGames.sort((a, b) => {
-      const timeA = parseFloat(a.total_time.replace('s', '')) || 0
-      const timeB = parseFloat(b.total_time.replace('s', '')) || 0
-      return timeA - timeB
-    })
-  
-    return sorted.slice(0, 10)
-  })
+      const timeA = parseFloat(a.total_time.replace('s', '')) || 0;
+      const timeB = parseFloat(b.total_time.replace('s', '')) || 0;
+      return timeA - timeB;
+    });
+
+    return sorted.slice(0, 10);
+  });
+
 
   const createSinglePlayer = async (board_id) => {
     try {
