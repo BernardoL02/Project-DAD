@@ -22,8 +22,8 @@ const updateUserInfo = async () => {
     responseMessage.value = '';
 
     try {
-        const response = await axios.put('/users/me', updatedData); // API call to update user info
-        userStore.userProfile = response.data.data; // Update the store with the latest info
+        const response = await axios.put('/users/me', updatedData);
+        userStore.userProfile = response.data.data;
         responseMessage.value = 'Your information has been updated successfully!';
     } catch (err) {
         responseMessage.value = 'Failed to update information. Please try again.';
@@ -32,6 +32,9 @@ const updateUserInfo = async () => {
         loading.value = false;
     }
 };
+
+
+
 </script>
 
 <template>

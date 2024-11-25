@@ -2,23 +2,18 @@
 import { computed, onMounted } from 'vue';
 import { usescoreBoardStore } from '@/stores/scoreBoard';
 import PaginatedTable from '@/components/StandardTablePaginated.vue'
-import { useAuthStore } from '@/stores/auth'
-import { useProfileStore } from '@/stores/profile';
 
 const columns = ['Rank', 'Player', 'Best Time', 'Min Turns', 'Status'];
 const scoreBoardStore = usescoreBoardStore();
 const scoreboards = computed(() => scoreBoardStore.scoreboards);
 const loading = computed(() => scoreBoardStore.loading);
 const boardSize = computed(() => scoreBoardStore.boardSize);
-const profileStore = useProfileStore();
-const authStore = useAuthStore();
+
 
 // Fetch the scoreboard on mount
 onMounted(async () => {
   scoreBoardStore.fetchSinglePlayerScoreboard(boardSize.value);
-  if (authStore.user) {
-    await profileStore.fetchProfile();
-  }
+
 });
 </script>
 

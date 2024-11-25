@@ -16,7 +16,6 @@ const selectedBoard = ref("3x4");
 const tableColumns = ['Id', 'Board', 'Status', 'Began At', 'Total Time']
 
 onMounted(async () => {
-    await profileStore.fetchProfile();
     await gameStore.getSinglePlayerGames();
     await boardStore.getBoards();
 });

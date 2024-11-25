@@ -15,7 +15,6 @@ const boards = [
 ];
 
 onMounted(async () => {
-    await profileStore.fetchProfile();
     await gameStore.getSinglePlayerGames()
 });
 

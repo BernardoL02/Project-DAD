@@ -138,7 +138,7 @@
 
 <script setup>
 import Toaster from './components/ui/toast/Toaster.vue';
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useProfileStore } from '@/stores/profile';
 
@@ -152,11 +152,6 @@ const handleLogout = async () => {
   }
 };
 
-onMounted(async () => {
-  if (authStore.user) {
-    await profileStore.fetchProfile();
-  }
-});
 
 const isMenuOpen = ref(false)
 
