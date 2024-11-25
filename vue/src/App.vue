@@ -6,8 +6,11 @@
         <nav class="flex items-center justify-between h-16 space-x-8">
           <!-- Logo ou título -->
           <div class="flex-shrink-0">
-            <RouterLink to="/" class="text-2xl font-semibold text-gray-900">
-              My App
+            <RouterLink to="/"
+              class="text-2xl font-semibold text-gray-900 hover:text-sky-600 transition-all duration-300 ease-in-out transform hover:scale-105">
+              <span class="bg-gradient-to-r from-sky-500 to-indigo-500 text-transparent bg-clip-text">
+                Memory Game
+              </span>
             </RouterLink>
           </div>
 
