@@ -84,6 +84,18 @@ class GameController extends Controller
         return GameResource::collection($singlePlayerGames);
     }
 
+    public function myMultiPlayerGames(Request $request)
+    {
+        $user = $request->user();
+
+        $singlePlayerGames = $user->games()
+            ->where('type', 'M')
+            ->orderBy('began_at', 'desc')
+            ->get();
+
+        return GameResource::collection($singlePlayerGames);
+    }
+
     public function updateGameStatus(Request $request, Game $game)
     {
         $validated = $request->validate([

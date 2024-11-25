@@ -26,6 +26,11 @@ class GameResource extends JsonResource
             'board_id' => $this->board_id,
             'created_user' => new UserResource($this->whenLoaded('createdUser')),
             'winner_user' => new UserResource($this->whenLoaded('winnerUser')),
+            'user' => [
+                'id' => $this->user->id,
+                'name' => $this->user->name,
+                'email' => $this->user->email,
+            ],
         ];
     }
 }
