@@ -82,7 +82,7 @@
 
             <!-- Dropdown Menu -->
             <div v-show="authStore.user"
-              class="absolute hidden group-hover:flex flex-col right-[-75px] top-[-1px] mt-14 bg-white shadow-lg rounded-lg w-48 z-10 transition-opacity duration-300">
+              class="absolute hidden group-hover:flex flex-col right-[-75px] top-[-2px] mt-14 bg-white shadow-lg rounded-lg w-48 z-10 transition-opacity duration-300">
               <RouterLink to="/playerProfile"
                 class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm rounded-t-lg">
                 View Profile

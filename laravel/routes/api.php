@@ -29,13 +29,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('/games/{game}', [GameController::class, 'destroy']);
     Route::patch('/games/{game}', [GameController::class, 'updateGameStatus']);
 
-
-     // ----- Boards -----
-     Route::get('/boards', [BoardController::class, 'index']);
+    // ----- Boards -----
+    Route::get('/boards', [BoardController::class, 'index']);
 
     // ----- Transactions -----
+    Route::get('/transactions', [TransactionController::class, 'index']); //Get All Transactions
     Route::post('/transactions', [TransactionController::class, 'store']);
-    Route::get('/transactions', [TransactionController::class, 'index']);
 
 });
 
