@@ -9,11 +9,9 @@ const gameStore = useGameStore()
 
 const isLoading = ref(true)
 
-// Opções de filtro
 const statusOptions = ['All', 'Pending', 'In Progress', 'Ended', 'Interrupted']
 const boardOptions = ['All', '3x4', '4x4', '6x6']
 
-// Função de filtro que trata tanto o status quanto o tabuleiro
 const handleSelect = (selectedValue, filterType) => {
   if (filterType === 'status') {
     gameStore.statusFilter = selectedValue
@@ -25,6 +23,10 @@ const handleSelect = (selectedValue, filterType) => {
 onMounted(async () => {
   await gameStore.getSinglePlayerGames()
   isLoading.value = false
+
+  gameStore.beginDateFilter = ""
+  gameStore.statusFilter = "All"
+  gameStore.boardFilter = "All"
 })
 </script>
 

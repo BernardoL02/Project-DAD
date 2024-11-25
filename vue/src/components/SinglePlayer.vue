@@ -20,6 +20,8 @@ const tableColumns = ['Id', 'Board', 'Status', 'Began At', 'Total Time']
 onMounted(async () => {
     await gameStore.getSinglePlayerGames();
     await boardStore.getBoards();
+
+    gameStore.boardFilter = "3x4"
 });
 
 const startGame = async (size, cost, board_id) => {
@@ -32,7 +34,7 @@ const startGame = async (size, cost, board_id) => {
 
         try {
             gameId = await gameStore.createSinglePlayer(board_id);
-            if(0 < cost){
+            if (0 < cost) {
                 await transactionStore.createTransactionsGames(gameId, cost);
             }
         } catch (error) {
