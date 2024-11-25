@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router';
 import { useProfileStore } from '@/stores/profile';
 import { useGameStore } from '@/stores/game'
 import { useBoardStore } from '@/stores/board'
+import { useTransactionStore } from '@/stores/transaction';
 
 import PaginatedTable from '@/components/StandardTablePaginated.vue'
 
@@ -11,12 +12,12 @@ const router = useRouter();
 const profileStore = useProfileStore();
 const gameStore = useGameStore()
 const boardStore = useBoardStore()
+const transactionStore = useTransactionStore();
 
 const selectedBoard = ref("3x4");
 const tableColumns = ['Id', 'Board', 'Status', 'Began At', 'Total Time']
 
 onMounted(async () => {
-    await profileStore.fetchProfile();
     await gameStore.getSinglePlayerGames();
     await boardStore.getBoards();
 });
@@ -32,7 +33,7 @@ const startGame = async (size, cost, board_id) => {
         try {
             gameId = await gameStore.createSinglePlayer(board_id);
             if(0 < cost){
-                await profileStore.createTransactionsGames(gameId, cost);
+                await transactionStore.createTransactionsGames(gameId, cost);
             }
         } catch (error) {
             console.error('Error starting the game:', error.message || error.response?.data);

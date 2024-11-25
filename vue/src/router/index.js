@@ -8,7 +8,7 @@ import SinglePlayerScoreBoard from '@/components/SinglePlayerScoreBoard.vue'
 import MultiPlayerScoreBoard from '@/components/MultiPlayerScoreBoard.vue'
 import SinglePlayerGameBoard from '@/components/SinglePlayerGameBoard.vue'
 import UpdateProfile from '@/components/UpdateProfile.vue'
-
+import { useProfileStore } from '@/stores/profile';
 import { useAuthStore } from '@/stores/auth'
 import MultiPlayer from '@/components/MultiPlayer.vue'
 import UserLogin from '@/components/UserLogin.vue'
@@ -83,11 +83,14 @@ const router = createRouter({
 
 let handlingFirstRoute = true
 
+
 router.beforeEach(async (to, from, next) => {
   const storeAuth = useAuthStore()
+  const profileStore = useProfileStore()
   if (handlingFirstRoute) {
     handlingFirstRoute = false
     await storeAuth.restoreToken()
+    await profileStore.fetchProfile();
   }
 
   if ((to.name == 'single-playerHistory' || to.name == 'Profile') && !storeAuth.user) {
