@@ -61,7 +61,7 @@ onMounted(async () => {
         <p class="text-lg font-semibold">Hello, {{ profileStore.nickname }}</p>
         <div class="flex items-center">
           <img src="/coin.png" alt="Coin Icon" class="w-6 h-6 object-contain mr-2" />
-          <span class="text-lg font-bold">{{ profileStore.coins }} Coins</span>
+          <span class="text-lg font-bold">{{ profileStore.coins }} </span>
         </div>
       </div>
     </div>

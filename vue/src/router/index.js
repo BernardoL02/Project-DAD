@@ -94,8 +94,7 @@ router.beforeEach(async (to, from, next) => {
   const storeAuth = useAuthStore()
   const profileStore = useProfileStore()
   if (handlingFirstRoute) {
-    handlingFirstRoute = false
-    
+    handlingFirstRoute = false 
     if(storeAuth.user){
       await storeAuth.restoreToken()
       await profileStore.fetchProfile();
