@@ -95,13 +95,6 @@ export const useProfileStore = defineStore('profile', () => {
     }
   }
 
-  const createTransactionsGames = async (gameId, cost) => {
-    try {
-      const datetime = new Date().toISOString().slice(0, 19).replace('T', ' ')
-
-
-
-
   return {
     userProfile,
     loading,

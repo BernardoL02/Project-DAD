@@ -59,13 +59,21 @@ const onBoardClick = (size) => {
             <div>
                 <p class="text-lg font-semibold">Welcome, {{ profileStore.nickname }}</p>
 
-                <div class="flex items-left justify-left pt-2">
-                    <img src="/coin.png" alt="Coin Icon" class="w-6 h-6 object-contain mr-2" />
-                    <span class="mr-2 text-semibold">{{ profileStore.coins }}</span>
+                <div class="flex items-center pt-2 space-x-2">
+                    <img src="/coin.png" alt="Coin Icon" class="w-6 h-6 object-contain" />
+                    <span class="text-semibold">{{ profileStore.coins }}</span>
+
+                    <RouterLink
+                        :to="{ name: 'store' }"
+                        class="bg-sky-500 text-white px-2 py-1 rounded-md hover:bg-sky-600 text-sm transition duration-300 inline-block text-center"
+                        >
+                        Buy Coins
+                    </RouterLink>
                 </div>
             </div>
 
-            <RouterLink to="/singlePlayer/history"
+
+            <RouterLink :to="{ name: 'singlePlayerHistory' }"
                 class="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600 transition duration-300">
                 History
             </RouterLink>

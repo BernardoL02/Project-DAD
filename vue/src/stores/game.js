@@ -91,7 +91,7 @@ export const useGameStore = defineStore('game', () => {
     });
 
     return sorted.slice(0, 10);
-  });
+  });   
 
 
   const createSinglePlayer = async (board_id) => {
