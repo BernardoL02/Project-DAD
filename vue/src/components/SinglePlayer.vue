@@ -62,13 +62,6 @@ const onBoardClick = (size) => {
                 <div class="flex items-center pt-2 space-x-2">
                     <img src="/coin.png" alt="Coin Icon" class="w-6 h-6 object-contain" />
                     <span class="text-semibold">{{ profileStore.coins }}</span>
-
-                    <RouterLink
-                        :to="{ name: 'store' }"
-                        class="bg-sky-500 text-white px-2 py-1 rounded-md hover:bg-sky-600 text-sm transition duration-300 inline-block text-center"
-                        >
-                        Buy Coins
-                    </RouterLink>
                 </div>
             </div>
 
