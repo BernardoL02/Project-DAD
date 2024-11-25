@@ -39,7 +39,7 @@ const startGame = (size, cost) => {
 
                 <div class="flex items-left justify-left pt-2">
                     <img src="/coin.png" alt="Coin Icon" class="w-6 h-6 object-contain mr-2" />
-                    <span class="mr-2 text-semibold">{{ profileStore.coins }}</span>
+                    <span class="mr-2 text-semibold font-bold">{{ profileStore.coins }}</span>
                 </div>
             </div>
 
