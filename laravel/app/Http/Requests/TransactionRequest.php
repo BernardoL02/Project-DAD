@@ -26,7 +26,7 @@ class TransactionRequest extends FormRequest
             'game_id' => 'nullable|exists:games,id', // ID do jogo é opcional
             'type' => 'required|in:B,P,I', // Tipos permitidos: B (bônus), P (pagamento), I (interno)
             'euros' => 'nullable|numeric|min:0', // Valor em euros (opcional)
-            'payment_type' => 'nullable|in:MBWAY,IBAN,MB,VISA', // Formas de pagamento permitidas
+            'payment_type' => 'nullable|in:MBWAY,IBAN,MB,VISA,PAYPAL', // Formas de pagamento permitidas
             'payment_reference' => 'nullable|string', // Referência do pagamento (opcional)
         ];
     }
