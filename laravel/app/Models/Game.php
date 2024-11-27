@@ -47,12 +47,22 @@ class Game extends Model
 
     public function multiplayerGamesPlayed()
     {
-        return $this->hasMany(MultiplayerGame::class);
+        return $this->hasMany(MultiplayerGame::class, 'game_id');
     }
 
     public function user()
     {
         return $this->belongsTo(User::class, 'created_user_id', 'id');
+    }
+
+    public function createdUser()
+    {
+        return $this->belongsTo(User::class, 'created_user_id');
+    }
+
+    public function winnerUser()
+    {
+        return $this->belongsTo(User::class, 'winner_user_id');
     }
 
     public function player()

@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useProfileStore } from '@/stores/profile';
 import { useGameStore } from '@/stores/game'
@@ -14,14 +14,15 @@ const gameStore = useGameStore()
 const boardStore = useBoardStore()
 const transactionStore = useTransactionStore();
 
-const selectedBoard = ref("3x4");
-const tableColumns = ['Id', 'Board', 'Status', 'Began At', 'Total Time']
+const tableColumns = ['Id', 'Board', 'Status', 'Began At', 'Total Time', 'Turns']
 
 onMounted(async () => {
     await gameStore.getSinglePlayerGames();
     await boardStore.getBoards();
 
-    gameStore.boardFilter = "3x4"
+    if (gameStore.boardFilter === "All") {
+        gameStore.boardFilter = "3x4"
+    }
 });
 
 const startGame = async (size, cost, board_id) => {
@@ -46,7 +47,6 @@ const startGame = async (size, cost, board_id) => {
 };
 
 const onBoardClick = (size) => {
-    selectedBoard.value = size;
     gameStore.handleBoardSizeChange(size);
 };
 
@@ -94,29 +94,43 @@ const onBoardClick = (size) => {
         </div>
 
         <div class="pt-8">
-            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <div>
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                    <div class="text-center mb-6">
+                        <p class="text-lg text-gray-700 font-semibold">Your Top 10 Single-Player Games</p>
+                        <p class="text-sm text-gray-500 mt-2">
+                            This table shows your best performance across different board sizes.
+                        </p>
+                    </div>
 
-                <div class="text-center mb-6">
-                    <p class="text-lg text-gray-700 font-semibold">Your Top 10 Single-Player Games
-                    </p>
-                    <p class="text-sm text-gray-500 mt-2">This table shows your best performance across different board
-                        sizes.</p>
-                </div>
-
-                <div class="flex justify-center pt-2">
-                    <div class="flex flex-row gap-8">
-                        <button v-for="board in boardStore.boards" :key="board.id"
-                            @click="onBoardClick(board.board_cols + 'x' + board.board_rows)" :class="{
-                                'bg-sky-600 text-white': board.board_cols + 'x' + board.board_rows == selectedBoard,
-                                'bg-sky-500 hover:bg-sky-600 text-white': board.board_cols + 'x' + board.board_rows != selectedBoard
-                            }" class="px-4 py-1 rounded-md border transition-all duration-300">
-                            {{ board.board_cols + 'x' + board.board_rows }}
-                        </button>
+                    <div class="flex justify-center pt-2">
+                        <div class="flex flex-row gap-8">
+                            <button v-for="board in boardStore.boards" :key="board.id"
+                                @click="onBoardClick(board.board_cols + 'x' + board.board_rows)" :class="{
+                                    'bg-sky-600 text-white': board.board_cols + 'x' + board.board_rows == gameStore.boardFilter,
+                                    'bg-sky-500 hover:bg-sky-600 text-white': board.board_cols + 'x' + board.board_rows != gameStore.boardFilter
+                                }" class="px-4 py-1 rounded-md border transition-all duration-300">
+                                {{ board.board_cols + 'x' + board.board_rows }}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <PaginatedTable :columns="tableColumns" :data="gameStore.bestResults" :pagination="false" />
+
+            <PaginatedTable :columns="tableColumns" :data="gameStore.bestResultsSinglePlayer" :pagination="false" />
+
+            <div class="bg-white p-6 rounded-lg shadow-md mt-6">
+                <p class=" text-sm text-gray-700 font-semibold mb-1">
+                    Sorting Criteria
+                </p>
+                <p class="text-xs text-gray-500">
+                    1. <strong>Best Time</strong> - The fastest time you achieved for completing games on
+                    each board size.
+                    <br>2. <strong>Turns</strong> - The total number of moves you made to complete a game on each board
+                    size.
+                </p>
+            </div>
         </div>
     </div>
 

@@ -1,0 +1,15 @@
+[90m= [39m[34;4mApp\Models\Game[39;24m {#5976
+    [34mid[39m: [35m2164[39m,
+    [34mcreated_user_id[39m: [35m7[39m,
+    [34mwinner_user_id[39m: [36mnull[39m,
+    [34mtype[39m: "[32mS[39m",
+    [34mstatus[39m: "[32mE[39m",
+    [34mbegan_at[39m: "[32m2024-01-26 02:13:42[39m",
+    [34mended_at[39m: "[32m2024-01-26 02:14:20[39m",
+    [34mtotal_time[39m: "[32m41.21[39m",
+    [34mboard_id[39m: [35m1[39m,
+    [34mcustom[39m: [36mnull[39m,
+    [34mcreated_at[39m: "[32m2024-01-26 19:51:20[39m",
+    [34mupdated_at[39m: "[32m2024-11-27 20:07:56[39m",
+  }
+

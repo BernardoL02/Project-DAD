@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreGameRequest;
 use App\Models\Game;
 use Illuminate\Http\Request;
 use App\Http\Resources\GameResource;
+use App\Http\Requests\StoreGameRequest;
+use App\Http\Resources\MultiPlayerGameResource;
 
 class GameController extends Controller
 {
@@ -88,13 +89,18 @@ class GameController extends Controller
     {
         $user = $request->user();
 
-        $singlePlayerGames = $user->games()
+        $multiPlayerGames = Game::with(['createdUser', 'winnerUser', 'multiplayerGamesPlayed'])
+            ->withCount('multiplayerGamesPlayed')
+            ->whereHas('multiplayerGamesPlayed', function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                })
             ->where('type', 'M')
-            ->orderBy('began_at', 'desc')
+            ->orderBy('began_at', 'asc')
             ->get();
 
-        return GameResource::collection($singlePlayerGames);
+        return MultiPlayerGameResource::collection($multiPlayerGames);
     }
+
 
     public function updateGameStatus(Request $request, Game $game)
     {

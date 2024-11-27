@@ -14,6 +14,8 @@ class GameResource extends JsonResource
      */
     public function toArray($request)
     {
+        $customData = json_decode($this->custom, true);
+
         return [
             'id' => $this->id,
             'created_user_id' => $this->created_user_id,
@@ -26,11 +28,13 @@ class GameResource extends JsonResource
             'board_id' => $this->board_id,
             'created_user' => new UserResource($this->whenLoaded('createdUser')),
             'winner_user' => new UserResource($this->whenLoaded('winnerUser')),
+            'participants_count' => $this->participants_count,
             'user' => [
                 'id' => $this->user->id,
                 'name' => $this->user->name,
                 'email' => $this->user->email,
             ],
+            'turns' => $customData['turns'] ?? null,
         ];
     }
 }
