@@ -66,8 +66,6 @@ const onBoardClick = (size) => {
                     <span class="text-semibold font-bold">{{ profileStore.coins }}</span>
                 </div>
             </div>
-
-
             <RouterLink :to="{ name: 'singlePlayerHistory' }"
                 class="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600 transition duration-300">
                 History
@@ -75,23 +73,41 @@ const onBoardClick = (size) => {
         </div>
 
         <div class="bg-white p-4 rounded shadow-md">
-            <h2 class="text-2xl font-semibold mb-4 text-center">Select Board</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div v-for="board in boardStore.boards" :key="board.id"
-                    class="p-6 border rounded-lg flex flex-col items-center justify-between bg-gray-100 shadow-sm">
-                    <p class="text-lg font-bold">{{ board.board_cols + "x" + board.board_rows }}</p>
-                    <p class="text-sm text-gray-500 mt-2">
-                        Required Coins - <span class="font-semibold">{{ board.coinsRequired }}</span>
-                    </p>
-                    <button class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600 transition mt-8"
-                        :class="{ 'opacity-50': profileStore.coins < board.coinsRequired }"
-                        :disabled="profileStore.coins < board.coinsRequired"
-                        @click="startGame(`${board.board_cols}x${board.board_rows}`, board.coinsRequired, board.id)">
-                        Play
-                    </button>
-                </div>
+        <h2 class="text-2xl font-semibold mb-4 text-center">Select Board</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div
+            v-for="board in boardStore.boards"
+            :key="board.id"
+            class="p-6 border rounded-lg flex flex-col items-center justify-between bg-gray-100 shadow-sm"
+            >
+            <p class="text-lg font-bold">
+                {{ board.board_cols + "x" + board.board_rows }}
+            </p>
+            <p class="text-sm text-gray-500 mt-2">
+                Required Coins - <span class="font-semibold">{{ board.coinsRequired }}</span>
+            </p>
+
+            <div class="mt-8">
+                <button
+                v-if="profileStore.coins >= board.coinsRequired"
+                class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600 transition"
+                @click="startGame(`${board.board_cols}x${board.board_rows}`, board.coinsRequired, board.id)"
+                >
+                Play
+                </button>
+
+                <RouterLink
+                v-else
+                :to="{ name: 'store' }"
+                class="bg-yellow-400 text-white px-4 py-1 rounded hover:bg-yellow-500 transition"
+                >
+                Buy Coins
+                </RouterLink>
+            </div>
             </div>
         </div>
+        </div>
+
 
         <div class="pt-8">
             <div>

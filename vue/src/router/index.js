@@ -14,6 +14,7 @@ import MultiPlayer from '@/components/MultiPlayer.vue'
 import UserLogin from '@/components/UserLogin.vue'
 import UserRegistration from '@/components/UserRegistration.vue'
 import Store from '@/components/Store.vue'
+import PlayerTransactionHistory from '@/components/PlayerTransactionHistory.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -80,9 +81,14 @@ const router = createRouter({
       component: UserRegistration
     },
     {
-      path: '/Store',
+      path: '/store',
       name: 'store',
       component: Store
+    },
+    {
+      path: '/PlayerTransactionHistory',
+      name: 'PlayerTransactionHistory',
+      component: PlayerTransactionHistory
     }
   ]
 })

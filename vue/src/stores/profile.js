@@ -66,18 +66,16 @@ export const useProfileStore = defineStore('profile', () => {
 
   const updateUserInfo = async (user) => {
     loading.value = true
-    responseMessage.value = '' // Reset messages on each new attempt
+    responseMessage.value = '' 
     error.value = null
 
     try {
-      // Sending the updated user information to the server
       const response = await axios.put('/users/me', {
         name: user.name,
         email: user.email,
         nickname: user.nickname
       })
 
-      // Update the local `userProfile` with the server's response
       userProfile.value = response.data.data
       responseMessage.value = 'Your information has been updated successfully!'
     } catch (err) {

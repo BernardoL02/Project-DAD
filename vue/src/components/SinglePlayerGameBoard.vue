@@ -25,6 +25,7 @@ const availableCards = [
   'p1.png', 'p2.png', 'p3.png', 'p4.png', 'p5.png', 'p6.png', 'p7.png', 'p11.png', 'p12.png', 'p13.png',
 ];
 
+const gameStartedAnimation = ref(false);
 const shuffledCards = ref([]);
 const selectedCards = ref([]);
 const matchedPairs = ref([]);
@@ -119,6 +120,10 @@ const checkMatch = async () => {
 
 const startGame = () => {
   generateCards();
+
+  setTimeout(() => {
+    gameStartedAnimation.value = true;
+  }, 100);
 };
 
 
@@ -165,43 +170,45 @@ router.beforeEach((to, from, next) => {
 
 <template>
   <div>
-    <div class="game-container flex justify-center gap-10">
-      <!-- Tabuleiro -->
-      <div class="game-board grid gap-2 bg-gray-100 p-4 rounded-lg shadow-md"
-           :style="{
-             gridTemplateRows: `repeat(${props.size.split('x')[0] || 4}, 1fr)`,
-             gridTemplateColumns: `repeat(${props.size.split('x')[1] || 4}, 1fr)`
-           }"
-      >
-        <div
-          v-for="(card, index) in shuffledCards"
-          :key="index"
-          class="relative cursor-pointer"
-          :class="{ 'pointer-events-none': matchedPairs.includes(index) }"
-          @click="flipCard(index)"
+    <transition name="fade-in-scale" appear>
+      <div v-if="gameStartedAnimation" class="game-container flex justify-center gap-10">
+        <!-- Tabuleiro -->
+        <div class="game-board grid gap-2 bg-gray-100 p-4 rounded-lg shadow-md"
+             :style="{
+               gridTemplateRows: `repeat(${props.size.split('x')[0] || 4}, 1fr)`,
+               gridTemplateColumns: `repeat(${props.size.split('x')[1] || 4}, 1fr)`
+             }"
         >
-          <!-- Carta -->
           <div
-            class="w-24 h-36 transform-style-preserve-3d transition-transform duration-500 rotate-y-180"
-            :class="{ 'rotate-y-0': matchedPairs.includes(index) || selectedCards.includes(index) }"
+            v-for="(card, index) in shuffledCards"
+            :key="index"
+            class="relative cursor-pointer"
+            :class="{ 'pointer-events-none': matchedPairs.includes(index) }"
+            @click="flipCard(index)"
           >
-            <div class="absolute w-full h-full backface-hidden bg-white rounded-lg">
-              <img :src="`/Cards/${card.image}`" alt="Card" class="w-full h-full rounded-lg" />
-            </div>
+            <!-- Carta -->
+            <div
+              class="w-24 h-36 transform-style-preserve-3d transition-transform duration-500 rotate-y-180"
+              :class="{ 'rotate-y-0': matchedPairs.includes(index) || selectedCards.includes(index) }"
+            >
+              <div class="absolute w-full h-full backface-hidden bg-white rounded-lg">
+                <img :src="`/Cards/${card.image}`" alt="Card" class="w-full h-full rounded-lg" />
+              </div>
 
-            <div class="absolute w-full h-full backface-hidden transform rotate-y-180 bg-red-500 rounded-lg">
-              <img src="/Cards/semFace.png" alt="Card Back" class="w-full h-full rounded-lg" />
+              <div class="absolute w-full h-full backface-hidden transform rotate-y-180 bg-red-500 rounded-lg">
+                <img src="/Cards/semFace.png" alt="Card Back" class="w-full h-full rounded-lg" />
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Informações do Jogo -->
-      <div class="game-info p-4 bg-gray-50 border border-gray-300 rounded-lg shadow-md sticky top-4 w-64">
-        <p class="text-lg font-medium">Tempo: {{ elapsedTime }} seg</p>
-        <p class="text-lg font-medium">Jogadas: {{ moves }}</p>
+        <!-- Informações do Jogo -->
+        <div class="game-info p-4 bg-gray-50 border border-gray-300 rounded-lg shadow-md sticky top-4 w-64">
+          <p class="text-lg font-medium">Tempo: {{ elapsedTime }} seg</p>
+          <p class="text-lg font-medium">Jogadas: {{ moves }}</p>
+        </div>
       </div>
-    </div>
+    </transition>
 
     <!-- Modal de Confirmação -->
     <div
@@ -231,6 +238,33 @@ router.beforeEach((to, from, next) => {
 </template>
 
 <style scoped>
+/* Transição de entrada e saída */
+.fade-in-scale-enter-active,
+.fade-in-scale-leave-active {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.fade-in-scale-enter-from {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+.fade-in-scale-enter-to {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.fade-in-scale-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.fade-in-scale-leave-to {
+  opacity: 0;
+  transform: scale(0.8);
+}
+
+/* Outras classes do tabuleiro */
 .card {
   perspective: 1000px;
 }
@@ -255,3 +289,4 @@ router.beforeEach((to, from, next) => {
   max-height: fit-content;
 }
 </style>
+

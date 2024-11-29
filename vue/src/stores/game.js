@@ -102,21 +102,17 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
-  // Computed property para filtrar os jogos
   const filteredGames = computed(() => {
     let filtered = games.value
 
-    // Filtro por status
     if (statusFilter.value && statusFilter.value !== 'All') {
       filtered = filtered.filter((game) => game.status === statusFilter.value)
     }
 
-    // Filtro por data de início
     if (beginDateFilter.value) {
       filtered = filtered.filter((game) => game.began_at.includes(beginDateFilter.value))
     }
 
-    // Filtro por tabuleiro
     if (boardFilter.value && boardFilter.value !== 'All') {
       filtered = filtered.filter((game) => game.board_id === boardFilter.value)
     }

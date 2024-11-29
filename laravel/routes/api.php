@@ -35,7 +35,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/boards', [BoardController::class, 'index']);
 
     // ----- Transactions -----
-    Route::get('/transactions', [TransactionController::class, 'index']); //Get All Transactions
+    Route::get('/transactions', [TransactionController::class, 'index']);
     Route::post('/transactions', [TransactionController::class, 'store']);
 
 });

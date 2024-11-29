@@ -66,7 +66,7 @@
               active-class="text-blue-600 font-semibold">
               Multi-Player
             </RouterLink>
-            <RouterLink to="/Store"
+            <RouterLink :to="{ name: 'store' }"
                   :class="[
                         'px-3 py-2 rounded-md text-sm font-medium transition-colors',
                         route.path === '/Store' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'

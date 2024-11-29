@@ -16,7 +16,6 @@ class TransactionController extends Controller
         if ($user->isAdmin()) {
             $transactions = Transaction::with('user')->orderBy('transaction_datetime', 'desc')->get();
         } else {
-
             $transactions = $user->transactions()->with('user')->orderBy('transaction_datetime', 'desc')->get();
         }
 
@@ -27,43 +26,36 @@ class TransactionController extends Controller
 
     public function store(TransactionRequest $request)
     {
-        // Pegue o usuário autenticado a partir do token
         $user = $request->user();
 
-        // Validação dos dados da requisição
         $validated = $request->validated();
 
-        // Substitua o `user_id` pelo ID do usuário autenticado
         $validated['user_id'] = $user->id;
 
-        // Verifique se há saldo suficiente para transações negativas
         if ($validated['brain_coins'] < 0 && ($user->brain_coins_balance + $validated['brain_coins'] < 0)) {
             return response()->json([
                 'message' => 'Insufficient balance to complete the transaction.',
             ], 400);
         }
 
-        // Criação da transação
         $transaction = Transaction::create([
             'type' => $validated['type'],
-            'transaction_datetime' => now(), // Insere automaticamente a data/hora atual
-            'user_id' => $validated['user_id'], // ID do usuário autenticado
+            'transaction_datetime' => now(),
+            'user_id' => $validated['user_id'],
             'game_id' => $validated['game_id'] ?? null,
             'euros' => $validated['euros'] ?? null,
             'payment_type' => $validated['payment_type'] ?? null,
             'payment_reference' => $validated['payment_reference'] ?? null,
-            'brain_coins' => $validated['brain_coins'], // Valor dos brain coins
+            'brain_coins' => $validated['brain_coins'],
         ]);
 
-        // Atualize o saldo do usuário
         $user->brain_coins_balance += $validated['brain_coins'];
         $user->save();
 
-        // Retorna a transação criada com o saldo atualizado
         return response()->json([
             'message' => 'Transaction created successfully.',
             'data' => $transaction,
-            'current_balance' => $user->brain_coins_balance, // Mostra o saldo atualizado
+            'current_balance' => $user->brain_coins_balance,
         ], 201);
     }
 
