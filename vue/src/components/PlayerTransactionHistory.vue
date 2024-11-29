@@ -73,7 +73,6 @@ onMounted(async () => {
     }
   } catch (error) {
     console.error('Failed to fetch transactions:', error);
-    alert('Unable to load transactions. Please try again later.');
   } finally {
     isLoading.value = false;
   }
