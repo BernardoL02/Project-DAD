@@ -95,7 +95,7 @@ onMounted(async () => {
       <div class="relative">
         <RouterLink :to="{ name: 'PlayerTransactionHistory' }"
                     class="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600 transition duration-300">
-                    Transactions
+                    My Transactions
         </RouterLink>
       </div>
 
