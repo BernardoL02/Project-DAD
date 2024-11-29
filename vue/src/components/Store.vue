@@ -93,10 +93,9 @@ onMounted(async () => {
 
 
       <div class="relative">
-        <span class="absolute -top-6 left-0 text-xs text-gray-600 ">Transaction:</span>
         <RouterLink :to="{ name: 'PlayerTransactionHistory' }"
                     class="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600 transition duration-300">
-                    History
+                    Transactions
         </RouterLink>
       </div>
 

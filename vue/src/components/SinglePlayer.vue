@@ -68,7 +68,7 @@ const onBoardClick = (size) => {
             </div>
             <RouterLink :to="{ name: 'singlePlayerHistory' }"
                 class="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600 transition duration-300">
-                History
+                My Games
             </RouterLink>
         </div>
 
