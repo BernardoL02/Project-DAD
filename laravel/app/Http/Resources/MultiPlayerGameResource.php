@@ -24,15 +24,15 @@ class MultiPlayerGameResource extends JsonResource
             'board_id' => $this->board_id,
             'participants_count' => $this->multiplayer_games_played_count,
             'created_user' => [
-                'id' => $this->createdUser->id,
-                'nickname' => $this->createdUser->nickname,
+                'id' => $this->createdUser?->id,
+                'nickname' => $this->createdUser?->nickname,
             ],
 
             'winner_user' => [
-                'id' => $this->winnerUser->id,
-                'nickname' => $this->winnerUser->nickname,
+                'id' => $this->winnerUser?->id,
+                'nickname' => $this->winnerUser?->nickname,
             ],
-            'pairs_discovered' => $this->multiplayerGamesPlayed->first()->pairs_discovered ?? 0,
+            'pairs_discovered' => $this->multiplayerGamesPlayed->first()?->pairs_discovered ?? 0,
         ];
     }
 }

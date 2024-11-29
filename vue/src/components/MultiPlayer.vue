@@ -116,12 +116,12 @@ const onBoardClick = (size) => {
                             </span>
 
                             <span
-                                class="absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col right-[-330px] top-[-85px] mt-14 w-[300px] z-10 transition-all duration-300 ease-in-out">
+                                class="absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col right-[-335px] top-[-85px] mt-14 w-[300px] z-10 transition-all duration-300 ease-in-out">
                                 <div class="bg-white p-4 rounded-lg shadow-md mb-12 text-left">
                                     <h2 class="text-lg font-bold text-gray-700">Multiplayer Stats</h2>
                                     <p class="text-sm text-gray-500">Track your multiplayer performance.</p>
 
-                                    <div class="mt-4 grid grid-cols-1">
+                                    <div class="mt-3 grid grid-cols-1">
                                         <div>
                                             <p class="text-sm text-gray-700">Total Victories -
                                                 <span class="text-sm text-green-500">{{
