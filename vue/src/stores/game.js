@@ -10,7 +10,7 @@ export const useGameStore = defineStore('game', () => {
 
   const games = ref([])
   const statusFilter = ref('')
-  const beginDateFilter = ref('')
+  const beginDateFilter = ref([null, null])
   const boardFilter = ref('All')
 
   const handleBoardSizeChange = (boardSize) => {
@@ -109,8 +109,14 @@ export const useGameStore = defineStore('game', () => {
       filtered = filtered.filter((game) => game.status === statusFilter.value)
     }
 
-    if (beginDateFilter.value) {
-      filtered = filtered.filter((game) => game.began_at.includes(beginDateFilter.value))
+    if (beginDateFilter.value && beginDateFilter.value[0] && beginDateFilter.value[1]) {
+      const [startDate, endDate] = beginDateFilter.value
+      filtered = filtered.filter((game) => {
+        const gameDate = new Date(game.began_at)
+        const start = new Date(startDate)
+        const end = new Date(endDate)
+        return gameDate >= start && gameDate <= end
+      })
     }
 
     if (boardFilter.value && boardFilter.value !== 'All') {

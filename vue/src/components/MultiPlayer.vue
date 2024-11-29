@@ -95,43 +95,62 @@ const onBoardClick = (size) => {
         </div>
 
         <div class="pt-6">
-            <div class="bg-white p-4 rounded-lg shadow-md mb-12">
-                <h2 class="text-lg font-bold text-gray-700">Multiplayer Stats</h2>
-                <p class="text-sm text-gray-500">Track your multiplayer performance.</p>
-
-                <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-0">
-                    <div>
-                        <p class="text-sm  text-gray-700">Total Victories -
-                            <span class="text-sm text-green-500">{{ gameStore.totalMultiplayerVictorys }}</span>
-                        </p>
-                        <p class="text-sm text-gray-700">Total Losses -
-                            <span class="text-sm text-red-500">{{ gameStore.totalMultiplayerLosses }}</span>
-                        </p>
-                    </div>
-                    <div>
-                        <p class="text-sm  text-gray-700">
-                            Win/Loss Ratio -
-                            <span class="text-sm text-gray-500">
-                                {{ ((gameStore.totalMultiplayerVictorys / gameStore.totalMultiplayerLosses).toFixed(2))
-                                || 0 }}
-                            </span>
-                        </p>
-                        <p class="text-sm text-gray-700">
-                            Total Game Time Playe -
-                            <span class="text-sm text-gray-500">
-                                {{ gameStore.totalTimePlayedMultiPlayer }} minutes
-                            </span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
             <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-                <div class="text-center mb-6">
-                    <p class="text-lg text-gray-700 font-semibold">Your Top 10 Multi-Player Games
-                    </p>
+                <div class="relative text-center mb-6 mr-4">
+                    <p class="text-lg text-gray-700 font-semibold">Your Top 10 Multi-Player Games</p>
+
                     <p class="text-sm text-gray-500 mt-2">This table shows your best performance across different board
                         sizes.</p>
+
+                    <span class="absolute right-0 top-0 transform translate-x-4 translate-y-1">
+                        <span class="relative inline-block group">
+                            <span
+                                class="flex items-center justify-center w-6 h-6 bg-gray-400 text-white rounded-full text-center cursor-pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="w-6 h-6 text-white">
+
+                                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                                    <line x1="12" y1="8" x2="12" y2="8"></line>
+                                </svg>
+                            </span>
+
+                            <span
+                                class="absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col right-[-330px] top-[-85px] mt-14 w-[300px] z-10 transition-all duration-300 ease-in-out">
+                                <div class="bg-white p-4 rounded-lg shadow-md mb-12 text-left">
+                                    <h2 class="text-lg font-bold text-gray-700">Multiplayer Stats</h2>
+                                    <p class="text-sm text-gray-500">Track your multiplayer performance.</p>
+
+                                    <div class="mt-4 grid grid-cols-1">
+                                        <div>
+                                            <p class="text-sm text-gray-700">Total Victories -
+                                                <span class="text-sm text-green-500">{{
+                                                    gameStore.totalMultiplayerVictorys }}</span>
+                                            </p>
+                                            <p class="text-sm text-gray-700">Total Losses -
+                                                <span class="text-sm text-red-500">{{ gameStore.totalMultiplayerLosses
+                                                    }}</span>
+                                            </p>
+
+                                            <p class="text-sm text-gray-700">
+                                                Win/Loss Ratio -
+                                                <span class="text-sm text-gray-500">
+                                                    {{ ((gameStore.totalMultiplayerVictorys /
+                                                        gameStore.totalMultiplayerLosses).toFixed(2)) || 0 }}
+                                                </span>
+                                            </p>
+                                            <p class="text-sm text-gray-700">
+                                                Total Game Time Played -
+                                                <span class="text-sm text-gray-500">
+                                                    {{ gameStore.totalTimePlayedMultiPlayer }} minutes
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </span>
+                        </span>
+                    </span>
                 </div>
 
                 <div class="flex justify-center pt-2">

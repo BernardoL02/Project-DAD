@@ -55,19 +55,15 @@ onBeforeUnmount(() => {
 
 <template>
     <div class="relative inline-block text-left">
-        <!-- Botão para abrir o dropdown -->
         <button type="button" ref="buttonRef" @click="toggleDropdown" class="inline-flex justify-between w-full sm:w-48 rounded-md border border-gray-300 bg-white py-2 px-4
             text-sm font-medium text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500
             focus:border-sky-500">
-            <!-- Exibe a opção selecionada ou o texto inicial -->
             <span class="flex items-center">
                 {{ displayValue }}
             </span>
-            <!-- Ícone da seta para baixo -->
             <span class="ml-2 text-gray-500">&#x2193;</span>
         </button>
 
-        <!-- Dropdown menu -->
         <div v-if="isOpen" ref="dropdownRef" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black
             ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button">
             <div class="py-1" role="none">

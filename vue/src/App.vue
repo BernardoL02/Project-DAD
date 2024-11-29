@@ -25,54 +25,42 @@
 
           <!-- Links à esquerda -->
           <div :class="{ 'hidden lg:flex': true, 'flex flex-col lg:flex-row lg:space-x-8': true }">
-            <RouterLink to="/"
-              :class="[
-                        'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                        route.path === '/' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
-                      ]"
-              active-class="text-blue-600 font-semibold">
+            <RouterLink to="/" :class="[
+              'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+              route.path === '/' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
+            ]" active-class="text-blue-600 font-semibold">
               Home
             </RouterLink>
-            <RouterLink to="/login"
-              :class="[
-                        'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                        route.path === '/login' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
-                      ]"
-              active-class="text-blue-600 font-semibold">
+            <RouterLink to="/login" :class="[
+              'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+              route.path === '/login' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
+            ]" active-class="text-blue-600 font-semibold">
               Login
             </RouterLink>
-            <RouterLink to="/websocket"
-              :class="[
-                        'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                        route.path === '/websocket' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
-                      ]"
-              active-class="text-blue-600 font-semibold">
+            <RouterLink to="/websocket" :class="[
+              'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+              route.path === '/websocket' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
+            ]" active-class="text-blue-600 font-semibold">
               WebSockets Tester
             </RouterLink>
-            <RouterLink to="/singlePlayer"
-              :class="[
-                        'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                        route.path === '/singlePlayer' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
-                      ]"
-              active-class="text-blue-600 font-semibold">
+            <RouterLink to="/singlePlayer" :class="[
+              'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+              route.path === '/singlePlayer' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
+            ]" active-class="text-blue-600 font-semibold">
               Single-Player
             </RouterLink>
 
-            <RouterLink to="/multiplayer"
-              :class="[
-                        'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                        route.path === '/multiplayer' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
-                      ]"
-              active-class="text-blue-600 font-semibold">
+            <RouterLink to="/multiplayer" :class="[
+              'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+              route.path === '/multiplayer' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
+            ]" active-class="text-blue-600 font-semibold">
               Multi-Player
             </RouterLink>
-            <RouterLink :to="{ name: 'store' }"
-                  :class="[
-                        'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                        route.path === '/Store' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
-                      ]"
-                  active-class="text-blue-600 font-semibold">
-                  Store
+            <RouterLink :to="{ name: 'store' }" :class="[
+              'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+              route.path === '/Store' ? 'text-indigo-500 font-semibold' : 'text-gray-900 hover:text-sky-600'
+            ]" active-class="text-blue-600 font-semibold">
+              Store
             </RouterLink>
 
             <!-- Dropdown Score Board -->
@@ -83,14 +71,15 @@
                 Score Board
               </label>
               <!-- Dropdown Menu -->
-              <div class="absolute left-0 hidden mt-2 space-y-2 bg-white shadow-lg rounded-md w-48 group-hover:block">
+              <div
+                class="absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col bg-white shadow-lg rounded-lg w-40 z-10 mt-2 transition-all duration-300 ease-in-out">
                 <RouterLink to="/scoreBoard/singlePlayer"
                   class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm rounded-md">
-                  Single Player Score
+                  Single Player
                 </RouterLink>
                 <RouterLink to="/scoreBoard/multiPlayer"
                   class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm rounded-md">
-                  Multi Player Score
+                  Multi Player
                 </RouterLink>
               </div>
             </div>
@@ -105,7 +94,7 @@
 
             <!-- Dropdown Menu -->
             <div v-show="authStore.user"
-              class="absolute hidden group-hover:flex flex-col right-[-75px] top-[-2px] mt-14 bg-white shadow-lg rounded-lg w-48 z-10 transition-opacity duration-300">
+              class="absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col right-[-60px] top-[2px] mt-14 bg-white shadow-lg rounded-lg w-40 z-10 transition-all duration-300 ease-in-out">
               <RouterLink to="/playerProfile"
                 class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm rounded-t-lg">
                 View Profile
@@ -119,6 +108,7 @@
               </button>
             </div>
           </div>
+
         </nav>
       </div>
     </header>
@@ -164,7 +154,7 @@ import Toaster from './components/ui/toast/Toaster.vue';
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useProfileStore } from '@/stores/profile';
-import { useRoute, useRouter  } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 const profileStore = useProfileStore();
 const authStore = useAuthStore();
