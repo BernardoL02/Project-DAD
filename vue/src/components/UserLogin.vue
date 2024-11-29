@@ -1,40 +1,43 @@
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
-import { RouterLink } from 'vue-router';
+import { RouterLink, useRouter } from 'vue-router';
 import { useProfileStore } from '@/stores/profile';
 
 const authStore = useAuthStore();
 const profileStore = useProfileStore();
+const router = useRouter();
 
 const email = ref('p1@mail.pt');
 const password = ref('123');
 const responseData = ref('');
 
 const submitLogin = async () => {
+  responseData.value = "";
     try {
         const user = await authStore.login({
             email: email.value,
             password: password.value,
         });
-
-        responseData.value = `Hello, ${user.data.name}!`;
+        
+        if (user.data.name) {
+            console.log('Login bem-sucedido');
+        }
 
         await profileStore.fetchProfile();
 
+        router.push('/playerProfile');
     } catch (error) {
         responseData.value = 'Login failed. Please check your credentials.';
     }
 };
-
-
 </script>
 
 <template>
     <div class="flex items-center justify-center mt-40">
       <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-6">
         <h2 class="text-2xl font-bold text-center text-blue-700">Account Login</h2>
-        <form class="space-y-4">
+        <form class="space-y-4" @submit.prevent="submitLogin">
           <div>
             <label for="email" class="block text-sm font-medium text-gray-600 mb-1">
               Email:
@@ -62,7 +65,7 @@ const submitLogin = async () => {
           </div>
   
           <button
-            @click.prevent="submitLogin"
+            type="submit"
             class="w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
           >
             Log In
@@ -80,5 +83,4 @@ const submitLogin = async () => {
         </div>
       </div>
     </div>
-  </template>
-  
+</template>
