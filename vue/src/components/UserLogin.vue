@@ -21,7 +21,6 @@ const submitLogin = async () => {
         });
         
         if (user.data.name) {
-            console.log('Login bem-sucedido');
         }
 
         await profileStore.fetchProfile();
