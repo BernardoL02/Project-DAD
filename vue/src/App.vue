@@ -76,8 +76,7 @@
             <div v-if="authStore.user">
               <!-- Foto do Perfil -->
               <img :src="profileStore.photoUrl || '/defaultPhotoProfile.jpg'" alt="User Profile Picture"
-                class="w-12 h-12 rounded-full border-1 border-black shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl cursor-pointer" />
-
+                class="mr-2 ml-16 w-12 h-12 rounded-full border-1 border-black shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl cursor-pointer" />
               <!-- Dropdown Menu -->
               <div
                 class="absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col right-[-60px] top-[2px] mt-14 bg-white shadow-lg rounded-lg w-40 z-10 transition-all duration-300 ease-in-out">
