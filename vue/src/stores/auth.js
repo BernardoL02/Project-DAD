@@ -67,11 +67,52 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (e) {
       clearUser()
       storeError.setErrorMessages(
-        e.response.data.message,
+        'Login failed. Please check your credentials.',
         e.response.data.errors,
         e.response.status,
         'Authentication Error!'
       )
+      return false
+    }
+  }
+
+  const register = async (userData) => {
+    storeError.resetMessages()
+    try {
+      const response = await axios.post('auth/register', userData)
+
+      if (response.data) {
+        storeError.setSuccessMessages(
+          'Your account has been created successfully!',
+          {},
+          201,
+          'Registration Success'
+        )
+      }
+
+      return response.data
+    } catch (error) {
+      if (error.response?.status === 422) {
+        const errorData = error.response?.data
+        const errorMessages = errorData?.errors || {}
+
+        const formattedMessages = Object.entries(errorMessages)
+          .map(([field, messages]) => `${field}: ${messages.join(', ')}`)
+          .join('\n')
+
+        const detailedMessage =
+          formattedMessages || errorData?.message || 'Validation errors occurred:'
+
+        const title = 'Register Error'
+
+        storeError.setErrorMessages(detailedMessage, errorMessages, error.response.status, title)
+      } else {
+        const status = error.response?.status || 500
+        const message = error.response?.data?.message || 'An unexpected error occurred'
+        const title = error.response?.data?.title || 'Error'
+        storeError.setErrorMessages(message, error.response?.data?.errors || [], status, title)
+      }
+
       return false
     }
   }
@@ -159,6 +200,7 @@ export const useAuthStore = defineStore('auth', () => {
     userPhotoUrl,
     login,
     logout,
-    restoreToken
+    restoreToken,
+    register
   }
 })

@@ -16,6 +16,7 @@ import UserRegistration from '@/components/UserRegistration.vue'
 import Store from '@/components/Store.vue'
 import PlayerTransactionHistory from '@/components/PlayerTransactionHistory.vue'
 import PlayerHistoryMultiPlayer from '@/components/PlayerHistoryMultiPlayer.vue'
+import ChangePassword from '@/components/ChangePassword.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -75,6 +76,11 @@ const router = createRouter({
       path: '/updateProfile',
       name: 'ProfileUpdate',
       component: UpdateProfile
+    },
+    {
+      path: '/changePassword',
+      name: 'changePassword',
+      component: ChangePassword
     },
     {
       path: '/login',

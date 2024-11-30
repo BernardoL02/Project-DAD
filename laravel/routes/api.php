@@ -10,7 +10,7 @@ use App\Http\Controllers\BoardController;
 use App\Http\Controllers\ScoreBoardController;
 use App\Http\Controllers\TransactionController;
 
-Route::post('/users',[UserController::class, 'store']);
+Route::post('/auth/register',[UserController::class, 'store']);
 Route::post('/auth/login', [AuthController::class, "login"]);
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -20,7 +20,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/auth/refreshtoken', [AuthController::class, 'refreshToken']);
     Route::get('/users/me', [UserController::class , 'showMe']);
     Route::put('/users/me', [UserController::class, 'update']);
-
+    Route::patch('/users/me', [UserController::class, 'updatePassword']);
 
     // ----- Games -----
     Route::get('/games', [GameController::class, 'index']);

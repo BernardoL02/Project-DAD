@@ -41,34 +41,61 @@ export const useErrorStore = defineStore('error', () => {
     _title.value = titleMessage
 
     let toastMessage = mainMessage
+
     switch (status) {
-      case 401:
-        toastMessage = 'You are not authorized to access the server API!'
-        break
       case 403:
         toastMessage = 'You are forbidden to access the server resource!'
         break
       case 404:
         toastMessage = 'Server resource not found!'
         break
-      case 422:
-        toastMessage = 'Data is invalid. Check the fields!'
-        break
       default:
-        toastMessage = `An error occurred! Message from the server: "${mainMessage}"`
+        if (typeof fieldMessages === 'object' && Object.keys(fieldMessages).length > 0) {
+          toastMessage = Object.entries(fieldMessages)
+            .map(([, messages]) => messages.join(', '))
+            .join('\n')
+        } else {
+          toastMessage = mainMessage || 'Data is invalid. Check the fields!'
+        }
     }
+
     toast({
       title: titleMessage,
       description: toastMessage,
       variant: 'destructive'
     })
   }
+
+  const setSuccessMessages = (mainMessage, fieldMessages = {}, status = 200, titleMessage = '') => {
+    _message.value = mainMessage
+    _fieldErrorMessages.value = fieldMessages
+    _statusCode.value = status
+    _title.value = titleMessage
+
+    let toastMessage = mainMessage
+
+    if (typeof fieldMessages === 'object' && Object.keys(fieldMessages).length > 0) {
+      toastMessage = Object.entries(fieldMessages)
+        .map(([, messages]) => messages.join(', '))
+        .join('\n')
+    } else {
+      toastMessage = mainMessage || 'Operation completed successfully!'
+    }
+
+    toast({
+      title: titleMessage,
+      description: toastMessage,
+      variant: 'success'
+    })
+  }
+
   return {
     message,
     statusCode,
     title,
     fieldMessage,
     resetMessages,
-    setErrorMessages
+    setErrorMessages,
+    setSuccessMessages
   }
 })

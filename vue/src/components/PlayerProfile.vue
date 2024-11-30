@@ -1,8 +1,12 @@
 <script setup>
 import { useProfileStore } from '@/stores/profile';
+import { onMounted } from 'vue';
 
 const profileStore = useProfileStore();
 
+onMounted(async () => {
+  await profileStore.fetchProfile();
+});
 </script>
 
 <template>
@@ -18,9 +22,9 @@ const profileStore = useProfileStore();
 
     <!-- Profile data -->
     <div v-else-if="profileStore.userProfile" class="space-y-6">
-      <div class="text-center">
+      <div class="text-center pb-6">
         <!-- Profile Picture -->
-        <img :src="profileStore.photoUrl || '/defaultPhotoProfile.jpg'" alt="User Profile Picture"
+        <img :src="profileStore.photoUrl" alt="User Profile Picture"
           class="w-60 h-60 rounded-full mx-auto border-4 border-white shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl" />
       </div>
 
@@ -72,9 +76,8 @@ const profileStore = useProfileStore();
               </p>
             </div>
           </div>
-          <RouterLink
-              :to="{ name: 'store' }" 
-              class="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 transition duration-300 mr-2">
+          <RouterLink :to="{ name: 'store' }"
+            class="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 transition duration-300 mr-2">
             Buy Coins
           </RouterLink>
         </div>

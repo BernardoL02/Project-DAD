@@ -75,7 +75,7 @@
           <div class="relative group flex flex-row items-center">
             <div v-if="authStore.user">
               <!-- Foto do Perfil -->
-              <img :src="profileStore.photoUrl || '/defaultPhotoProfile.jpg'" alt="User Profile Picture"
+              <img :src="profileStore.photoUrl" alt="User Profile Picture"
                 class="mr-2 ml-16 w-12 h-12 rounded-full border-1 border-black shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl cursor-pointer" />
               <!-- Dropdown Menu -->
               <div
@@ -86,6 +86,9 @@
                 </RouterLink>
                 <RouterLink to="/updateProfile" class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm">
                   Update Profile
+                </RouterLink>
+                <RouterLink to="/changePassword" class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm">
+                  Change Password
                 </RouterLink>
                 <button @click="handleLogout"
                   class="block text-left w-full text-gray-900 hover:bg-red-100 hover:text-red-600 px-4 py-2 text-sm rounded-b-lg">

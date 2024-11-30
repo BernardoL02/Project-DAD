@@ -14,21 +14,14 @@ const responseData = ref('');
 
 const submitLogin = async () => {
   responseData.value = "";
-  try {
-    const user = await authStore.login({
-      email: email.value,
-      password: password.value,
-    });
+  const user = await authStore.login({
+    email: email.value,
+    password: password.value,
+  });
 
-    if (user.data.name) {
-      console.log('Login bem-sucedido');
-    }
-
+  if (user.data.name) {
     await profileStore.fetchProfile();
-
     router.push('/playerProfile');
-  } catch (error) {
-    responseData.value = 'Login failed. Please check your credentials.';
   }
 };
 </script>
@@ -43,7 +36,7 @@ const submitLogin = async () => {
             Email
           </label>
           <input type="text" id="email" v-model="email" placeholder="Enter your email"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500" />
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" />
         </div>
 
         <div class="pb-5">
@@ -51,10 +44,11 @@ const submitLogin = async () => {
             Password
           </label>
           <input type="password" id="password" v-model="password" placeholder="Enter your password"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500" />
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" />
         </div>
 
-        <button type="submit" class="w-full py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition">
+        <button type="submit"
+          class="w-full py-2 bg-sky-500 text-white rounded-lg transition focus:ring-4 focus:ring-gray-400 focus:outline-none">
           Log In
         </button>
       </form>

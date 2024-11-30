@@ -66,28 +66,53 @@ export const useProfileStore = defineStore('profile', () => {
 
   const updateUserInfo = async (user) => {
     loading.value = true
-    responseMessage.value = '' 
+    responseMessage.value = ''
     error.value = null
 
     try {
-      const response = await axios.put('/users/me', {
-        name: user.name,
-        email: user.email,
-        nickname: user.nickname
-      })
+      const response = await axios.put('/users/me', user)
 
       userProfile.value = response.data.data
-      responseMessage.value = 'Your information has been updated successfully!'
+
+      storeError.setSuccessMessages(
+        'Your information has been updated successfully!',
+        {},
+        200,
+        'Profile Update Success'
+      )
     } catch (err) {
       error.value = 'Failed to update information. Please try again.'
-
       storeError.setErrorMessages(
-        err.response?.data?.message,
-        err.response?.data?.errors,
-        err.response?.data?.status,
+        err.response?.data?.message || 'Error occurred.',
+        err.response?.data?.errors || {},
+        err.response?.status || 500,
         'Profile Update Error'
       )
-      console.error('Error updating profile:', err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const updatePassword = async (password, confirmPassword) => {
+    loading.value = true
+
+    try {
+      const data = {
+        password: password,
+        confirm_password: confirmPassword
+      }
+
+      const response = await axios.patch('/users/me', data)
+
+      console.log(response.data)
+
+      storeError.setSuccessMessages(response.data.message, {}, 200, response.data.title)
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'Error occurred.'
+      const errorTitle = err.response?.data?.title || 'Password Update Error'
+      const errorStatus = err.response?.status || 500
+
+      storeError.setErrorMessages(errorMessage, {}, errorStatus, errorTitle)
     } finally {
       loading.value = false
     }
@@ -98,6 +123,7 @@ export const useProfileStore = defineStore('profile', () => {
     loading,
     error,
     updateUserInfo,
+    updatePassword,
     fetchProfile,
     name,
     email,

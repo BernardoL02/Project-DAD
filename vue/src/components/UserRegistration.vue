@@ -1,12 +1,12 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { useUserStore } from '@/stores/user';
-import { useErrorStore } from '@/stores/error';
+import { useAuthStore } from '@/stores/auth';
+import { useErrorStore } from '@/stores/error'
 
-const userStore = useUserStore();
+const storeError = useErrorStore()
+const authStore = useAuthStore();
 const router = useRouter();
-const errorStore = useErrorStore();
 
 const email = ref('');
 const name = ref('');
@@ -28,25 +28,18 @@ const submitRegister = async () => {
     formData.append('email', email.value);
     formData.append('nickname', nickname.value);
     formData.append('password', password.value);
+
     if (avatarFile.value) {
         formData.append('photo_filename', avatarFile.value.name);
     }
 
-    try {
-        const newUser = await userStore.register(formData);
-        if (newUser) {
-            responseData.value = `User ${newUser.data.nickname} registered successfully!`;
-            router.push('/login');
-        }
-    } catch (error) {
-        if (error.response?.status === 422) {
-            errorStore.setErrorMessages(null, error.response?.data?.errors || [], 422);
-        } else {
-            const status = error.response?.status || 500;
-            const message = error.response?.data?.message || 'An unexpected error occurred';
-            const title = error.response?.data?.title || 'Error';
-            errorStore.setErrorMessages(message, error.response?.data?.errors || [], status, title);
-        }
+    const newUser = await authStore.register(formData);
+
+    if (newUser) {
+        router.push('/login');
+    }
+    else {
+        storeError.setErrorMessages("Please try again later.", {}, 0, "Registration Error");
     }
 };
 
@@ -54,7 +47,7 @@ const submitRegister = async () => {
 
 <template>
     <div class="flex items-center justify-center mt-14">
-        <div class="w-full max-w-md bg-white rounded-xl shadow-lg p-6">
+        <div class="w-full max-w-lg bg-white rounded-xl shadow-lg p-6">
             <div class="space-y-4">
                 <h2 class="text-2xl font-bold text-center text-gray-800">Create an Account</h2>
                 <form @submit.prevent="handleRegister" class="space-y-4">
@@ -63,7 +56,7 @@ const submitRegister = async () => {
                             Name
                         </label>
                         <input type="name" id="register-name" v-model="name" placeholder="Enter your name"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" />
                     </div>
 
                     <div>
@@ -71,7 +64,7 @@ const submitRegister = async () => {
                             Email
                         </label>
                         <input type="email" id="register-email" v-model="email" placeholder="Enter your email"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" />
                     </div>
 
                     <div>
@@ -79,7 +72,7 @@ const submitRegister = async () => {
                             Nickname
                         </label>
                         <input type="text" id="nickname" v-model="nickname" placeholder="Enter your nickname"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" />
                     </div>
 
                     <div>
@@ -87,7 +80,7 @@ const submitRegister = async () => {
                             Password
                         </label>
                         <input type="password" id="register-password" v-model="password" placeholder="Create a password"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" />
                     </div>
 
                     <div class="mb-4">
@@ -108,7 +101,7 @@ const submitRegister = async () => {
 
                     <div class="pt-4">
                         <button @click.prevent="submitRegister"
-                            class="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition">
+                            class="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition focus:ring-4 focus:ring-gray-400 focus:outline-none">
                             Register
                         </button>
                     </div>
