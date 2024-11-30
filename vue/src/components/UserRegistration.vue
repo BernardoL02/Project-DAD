@@ -2,10 +2,11 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user';
+import { useErrorStore } from '@/stores/error';
 
 const userStore = useUserStore();
 const router = useRouter();
-
+const errorStore = useErrorStore();
 
 const email = ref('');
 const name = ref('');
@@ -38,7 +39,14 @@ const submitRegister = async () => {
             router.push('/login');
         }
     } catch (error) {
-        console.error('Registration failed:', error);
+        if (error.response?.status === 422) {
+            errorStore.setErrorMessages(null, error.response?.data?.errors || [], 422);
+        } else {
+            const status = error.response?.status || 500;
+            const message = error.response?.data?.message || 'An unexpected error occurred';
+            const title = error.response?.data?.title || 'Error';
+            errorStore.setErrorMessages(message, error.response?.data?.errors || [], status, title);
+        }
     }
 };
 

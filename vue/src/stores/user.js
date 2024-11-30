@@ -31,6 +31,44 @@ export const useUserStore = defineStore('user', () => {
     }
 };
 
+const updateUserProfile = async (updatedData) => {
+  loading.value = true;
+  error.value = null;
+
+  if (!userProfile.value) {
+    throw new Error('User profile is not loaded yet');
+  }
+
+  // Prepare data to send: only include fields that are changed
+  const dataToSend = {};
+
+  // Check if each field has changed, and only include the changed ones
+  if (updatedData.name !== userProfile.value.name) {
+    dataToSend.name = updatedData.name;
+  }
+  if (updatedData.email !== userProfile.value.email) {
+    dataToSend.email = updatedData.email;
+  }
+  if (updatedData.nickname !== userProfile.value.nickname) {
+    dataToSend.nickname = updatedData.nickname;
+  }
+  if (updatedData.photo) {
+    dataToSend.photo_filename = updatedData.photo;
+  }
+
+  try {
+    const response = await axios.put('/users/me', dataToSend); // Update the user with only the changed data
+    userProfile.value = response.data.data; // Update user profile in store
+    return response.data;
+  } catch (err) {
+    error.value = 'Failed to update profile. Please try again.';
+    console.error('Profile update error:', err);
+    throw err;
+  } finally {
+    loading.value = false;
+  }
+};
+
   return {
     userProfile,
     loading,
@@ -39,5 +77,6 @@ export const useUserStore = defineStore('user', () => {
     name,
     email,
     nickname,
+    updateUserProfile,
   }
 })

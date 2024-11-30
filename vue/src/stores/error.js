@@ -52,7 +52,7 @@ export const useErrorStore = defineStore('error', () => {
         toastMessage = 'Server resource not found!'
         break
       case 422:
-        toastMessage = 'Data is invalid. Check field error messages!'
+        toastMessage = 'Data is invalid. Check the fields!'
         break
       default:
         toastMessage = `An error occurred! Message from the server: "${mainMessage}"`
