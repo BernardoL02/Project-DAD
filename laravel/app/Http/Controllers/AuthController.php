@@ -23,6 +23,7 @@ class AuthController extends Controller
     {
         $currentTokenId = $user->currentAccessToken()->id;
         $user->tokens()->where('id', $currentTokenId)->delete();
+
     }
 
     public function login(LoginRequest $request)
