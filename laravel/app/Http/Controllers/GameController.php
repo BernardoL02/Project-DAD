@@ -89,17 +89,29 @@ class GameController extends Controller
     {
         $user = $request->user();
 
-        $multiPlayerGames = Game::with(['createdUser', 'winnerUser', 'multiplayerGamesPlayed'])
+        $multiPlayerGames = Game::with([
+                'createdUser',
+                'winnerUser',
+                'multiplayerGamesPlayed' => function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                }
+            ])
             ->withCount('multiplayerGamesPlayed')
             ->whereHas('multiplayerGamesPlayed', function ($query) use ($user) {
-                    $query->where('user_id', $user->id);
-                })
+                $query->where('user_id', $user->id);
+            })
             ->where('type', 'M')
             ->orderBy('began_at', 'asc')
             ->get();
 
+        $multiPlayerGames->each(function ($game) use ($user) {
+            $playerStats = $game->multiplayerGamesPlayed->firstWhere('user_id', $user->id);
+            $game->pairs_discovered = $playerStats ? (int)$playerStats->pairs_discovered : 0;
+        });
+
         return MultiPlayerGameResource::collection($multiPlayerGames);
     }
+
 
 
     public function updateGameStatus(Request $request, Game $game)

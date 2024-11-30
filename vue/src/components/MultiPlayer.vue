@@ -15,7 +15,7 @@ const boardStore = useBoardStore()
 
 const transactionStore = useTransactionStore();
 
-const tableColumns = ['Id', 'Board', 'Creator', 'Winner', 'Players', 'Status', 'Began At', 'Total Time', 'Turns']
+const tableColumns = ['Id', 'Board', 'Creator', 'Winner', 'Players', 'Status', 'Began At', 'Total Time', 'Pairs Discovered']
 
 onMounted(async () => {
     await gameStore.getMultiPlayerGames();
@@ -69,7 +69,7 @@ const onBoardClick = (size) => {
             </div>
 
 
-            <RouterLink :to="{ name: 'singlePlayerHistory' }"
+            <RouterLink :to="{ name: 'multiPlayerHistory' }"
                 class="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600 transition duration-300">
                 My Games
             </RouterLink>
@@ -94,7 +94,7 @@ const onBoardClick = (size) => {
             </div>
         </div>
 
-        <div class="pt-6">
+        <div class="pt-8">
             <div class="bg-white p-6 rounded-lg shadow-md mb-6">
                 <div class="relative text-center mb-6 mr-4">
                     <p class="text-lg text-gray-700 font-semibold">Your Top 10 Multi-Player Games</p>
@@ -173,10 +173,8 @@ const onBoardClick = (size) => {
                     Sorting Criteria
                 </p>
                 <p class="text-xs text-gray-500">
-                    1. <strong>Best Time</strong> - The fastest time you achieved for completing games on each board
-                    size.
-                    <br>2. <strong>Turns</strong> - The total number of moves you made to complete a game on each board
-                    size.
+                    1. <strong>Best Time</strong> - The fastest time you achieved for completing games.
+                    <br>2. <strong>Pairs Discovered</strong> - The total number of pairs you discovered during the game.
                     <br>3. <strong>Number of Players</strong> - The total number of participants in the game.
                 </p>
             </div>

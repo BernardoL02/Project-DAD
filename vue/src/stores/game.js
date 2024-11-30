@@ -44,7 +44,7 @@ export const useGameStore = defineStore('game', () => {
                   : 'N/A',
         began_at: game.began_at || 'N/A',
         total_time: game.total_time + 's' || 'N/A',
-        turns: game.turns || 'N/A'
+        total_turns_winner: game.total_turns_winner ? game.total_turns_winner : 'N/A'
       }))
       games.value = updatedGames
     } catch (e) {
@@ -89,7 +89,7 @@ export const useGameStore = defineStore('game', () => {
                   : 'N/A',
         began_at: game.began_at || 'N/A',
         total_time: game.total_time + 's' || 'N/A',
-        turns: game.turns || 'N/A'
+        pairs_discovered: game.pairs_discovered || 'N/A'
       }))
       games.value = updatedGames
     } catch (e) {
@@ -137,8 +137,14 @@ export const useGameStore = defineStore('game', () => {
       const timeA = parseFloat(a.total_time.replace('s', '')) || 0
       const timeB = parseFloat(b.total_time.replace('s', '')) || 0
 
-      const turnsA = a.turns === 'N/A' ? Number.MAX_SAFE_INTEGER : parseInt(a.turns, 10) || 0
-      const turnsB = b.turns === 'N/A' ? Number.MAX_SAFE_INTEGER : parseInt(b.turns, 10) || 0
+      const turnsA =
+        a.total_turns_winner === 'N/A'
+          ? Number.MAX_SAFE_INTEGER
+          : parseInt(a.total_turns_winner, 10) || 0
+      const turnsB =
+        b.total_turns_winner === 'N/A'
+          ? Number.MAX_SAFE_INTEGER
+          : parseInt(b.total_turns_winner, 10) || 0
 
       if (timeA !== timeB) {
         return timeA - timeB
@@ -163,23 +169,23 @@ export const useGameStore = defineStore('game', () => {
       const timeB = parseFloat(b.total_time.replace('s', '')) || 0
 
       if (timeA === timeB) {
-        const turnsA = a.turns === 'N/A' ? Infinity : a.turns
-        const turnsB = b.turns === 'N/A' ? Infinity : b.turns
+        const pairsA = a.pairs_discovered === 'N/A' ? 0 : a.pairs_discovered
+        const pairsB = b.pairs_discovered === 'N/A' ? 0 : b.pairs_discovered
 
-        if (turnsA === turnsB) {
+        if (pairsA === pairsB) {
           const playersA = a.participants_count || 0
           const playersB = b.participants_count || 0
 
           return playersB - playersA
         }
 
-        return turnsA - turnsB
+        return pairsB - pairsA
       }
 
       return timeA - timeB
     })
 
-    return sorted.slice(0, 10)
+    return sorted
   })
 
   const totalMultiplayerVictorys = computed(() => {

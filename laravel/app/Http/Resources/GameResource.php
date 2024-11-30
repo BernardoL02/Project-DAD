@@ -34,7 +34,7 @@ class GameResource extends JsonResource
                 'name' => $this->user->name,
                 'email' => $this->user->email,
             ],
-            'turns' => $customData['turns'] ?? null,
+            'total_turns_winner' => $this->total_turns_winner
         ];
     }
 }

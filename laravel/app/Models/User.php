@@ -24,7 +24,7 @@ class User extends Authenticatable
         'password',
         'email_verified_at',
         'nickname',
-        'type', 'blocked', 'photo_filename', 'brain_coins_balance', 'custom', 'deleted_at',
+        'type', 'blocked', 'photo_filename', 'brain_coins_balance', 'custom', 'deleted_at', 'total_turns_winner'
     ];
 
     /**
