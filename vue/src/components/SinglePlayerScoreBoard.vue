@@ -51,17 +51,17 @@ const onBoardClick = (size) => {
                     <div class="flex justify-center pt-2">
                         <div class="flex flex-row gap-8">
                           <button 
-          v-for="board in boardStore.boards" 
-          :key="board.id"
-          @click="onBoardClick(board.board_cols + 'x' + board.board_rows)" 
-          :class="{
-            'bg-sky-600 text-white': board.board_cols + 'x' + board.board_rows == boardSize,
-            'bg-sky-500 hover:bg-sky-600 text-white': board.board_cols + 'x' + board.board_rows != boardSize
-          }" 
-          class="px-4 py-1 rounded-md border transition-all duration-300"
-        >
-          {{ board.board_cols + 'x' + board.board_rows }}
-        </button>
+                            v-for="board in boardStore.boards" 
+                            :key="board.id"
+                            @click="onBoardClick(board.board_cols + 'x' + board.board_rows)" 
+                            :class="{
+                              'bg-sky-600 text-white': board.board_cols + 'x' + board.board_rows == boardSize,
+                              'bg-sky-500 hover:bg-sky-600 text-white': board.board_cols + 'x' + board.board_rows != boardSize
+                            }" 
+                            class="px-4 py-1 rounded-md border transition-all duration-300"
+                          >
+                            {{ board.board_cols + 'x' + board.board_rows }}
+                          </button>
                         </div>
                     </div>
                 </div>
@@ -69,7 +69,7 @@ const onBoardClick = (size) => {
 
     <!-- Scoreboard Table -->
     <div>
-      <h2 class="text-xl font-semibold mb-4">Top 10 Best Single Players for {{ boardSize }} Board</h2>
+   
       <div v-if="loading" class="text-center text-gray-400">Loading...</div>
       <div v-else>
         <PaginatedTable :columns="columns" :data="scoreboards" :pagination="false" />
