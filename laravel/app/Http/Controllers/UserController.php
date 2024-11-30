@@ -18,21 +18,26 @@ class UserController extends Controller
 
     public function store(RegistrationRequest $request)
     {
-        $user = User::create($request->validated());
+        // Validate the request data, this will return errors if validation fails
+        $validated = $request->validated();
+
+        // Proceed with creating the user only if validation passes
+        $user = User::create($validated);
+
+        $user->brain_coins_balance = 0;
+        $user->type = 'P';
 
         return new UserResource($user);
     }
 
-    public function update(UpdateUserRequest $request)
+
+    public function update(UpdateUserRequest $request, User $user)
     {
-
-        $user = $request->user();
-
-        $user->fill($request->validated());
-
-        $user->save();
+        // Atualiza os dados do usuário com os dados validados
+        $user->update($request->validated());
 
         return new UserResource($user);
     }
+
 }
 

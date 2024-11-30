@@ -21,10 +21,6 @@ const submitLogin = async () => {
     });
 
     if (user.data.name) {
-      console.log("ola")
-    }
-
-    if (user.data.name) {
       console.log('Login bem-sucedido');
     }
 
@@ -64,7 +60,7 @@ const submitLogin = async () => {
       </form>
 
       <div class="mt-4 text-center pt-1">
-        <RouterLink to="registration" class="text-gray-700 hover:underline">
+        <RouterLink to="registration" class="text-gray-700 hover:underline text-sm">
           Create an Account
         </RouterLink>
       </div>

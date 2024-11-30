@@ -10,8 +10,8 @@ use App\Http\Controllers\BoardController;
 use App\Http\Controllers\ScoreBoardController;
 use App\Http\Controllers\TransactionController;
 
+Route::post('/users',[UserController::class, 'store']);
 Route::post('/auth/login', [AuthController::class, "login"]);
-
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
@@ -19,7 +19,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
     Route::post('/auth/refreshtoken', [AuthController::class, 'refreshToken']);
     Route::get('/users/me', [UserController::class , 'showMe']);
-    Route::put('/users/me/milouca', [UserController::class, 'update']);
+    Route::put('/users/me', [UserController::class, 'update']);
 
     // ----- Games -----
     Route::get('/games', [GameController::class, 'index']);
@@ -45,9 +45,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::get('/scoreboard/single/{boardSize}', [ScoreBoardController::class, 'globalSinglePlayerScoreboard']);
 Route::get('/scoreboard/multiplayer', [ScoreBoardController::class, 'multiplayerScoreboard']);
 
-// ------Create User ------
 
-Route::post('/users',[UserController::class, 'store']);
 
 
 
