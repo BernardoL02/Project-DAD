@@ -16,7 +16,7 @@ export const usescoreBoardStore = defineStore('scoreBoard', () => {
         Rank: index + 1,
         Player: score.nickname,
         'Best Time': `${score.best_time}s`,
-        'Min Turns': score.min_turns || 'N/A',
+        'Num Turns': score.min_turns || 'N/A',
         Status: score.status === 'E' ? 'Ended' : score.status
       }))
     } catch (error) {

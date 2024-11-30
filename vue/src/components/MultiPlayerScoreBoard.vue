@@ -17,11 +17,19 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="max-w-2xl mx-auto py-8 space-y-6">
-    <h1 class="text-3xl font-bold text-center">Multi-Player Score Board</h1>
 
-    <div>
-      <h2 class="text-xl font-semibold mb-4">Top 10 Multi Players with Most Victories and Losses</h2>
+<div class="pt-8">
+            <div>
+                <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                    <div class="text-center mb-6">
+                        <p class="text-lg text-gray-700 font-semibold">Multi-Player Global Score Board</p>
+                        <p class="text-sm text-gray-500 mt-2">
+                            This table shows top 5 players with the most victories in any board.
+                        </p>
+                      </div>
+                </div>
+              </div>
+    
       <div v-if="loading" class="text-center text-gray-400">Loading...</div>
       <div v-else>
         <PaginatedTable :columns="columns" :data="scoreboards" :pagination="false"/>
@@ -31,5 +39,5 @@ onMounted(() => {
         </div>
       </div>
     </div>
-  </div>
+
 </template>
