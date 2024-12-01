@@ -86,17 +86,20 @@ class UserController extends Controller
 
         $user = $request->user();
 
+        if ($user->isAdmin()) {
+            return response()->json(['message' => 'Administrators cannot delete their own accounts.'], 403);
+        }
+
         if (!Hash::check($request->password, $user->password)) {
             return response()->json(['message' => 'Incorrect password.'], 400);
         }
 
+        $authController = new AuthController();
+        $authController->logout($request);
+
         if ($user->transactions()->exists() || $user->games()->exists()) {
             $user->delete();
         } else {
-
-            //Remocer Coins
-
-
             $user->forceDelete();
         }
 
@@ -104,9 +107,5 @@ class UserController extends Controller
             'message' => 'Your account was permanently deleted.'
         ], 200);
     }
-
-
-
-
 }
 

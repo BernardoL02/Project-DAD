@@ -2,9 +2,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '@/stores/auth';
-import { useErrorStore } from '@/stores/error'
 
-const storeError = useErrorStore()
 const authStore = useAuthStore();
 const router = useRouter();
 
@@ -37,9 +35,6 @@ const submitRegister = async () => {
 
     if (newUser) {
         router.push('/login');
-    }
-    else {
-        storeError.setErrorMessages("Please try again later.", {}, 0, "Registration Error");
     }
 };
 

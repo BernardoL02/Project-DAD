@@ -2,7 +2,9 @@
 import { useProfileStore } from '@/stores/profile';
 import { useRouter } from 'vue-router';
 import { onMounted, ref } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 
+const authStore = useAuthStore();
 const profileStore = useProfileStore();
 const router = useRouter();
 
@@ -14,6 +16,7 @@ onMounted(async () => {
 });
 
 const showDeleteAccount = () => {
+  password.value = ''
   deleteAccountVisible.value = true;
 };
 
@@ -23,15 +26,15 @@ const hideDeleteAccount = () => {
 
 const confirmDelete = async () => {
 
-  //await profileStore.deleteAccount();
+  const accountDeleted = await profileStore.deleteAccount(password.value);
 
-  try {
+  if (accountDeleted) {
+    authStore.clearUser();
     router.push('/login');
-  } catch (error) {
-    alert('Failed to delete account. Please try again.');
   }
 
   hideDeleteAccount();
+  password.value = ''
 };
 
 </script>

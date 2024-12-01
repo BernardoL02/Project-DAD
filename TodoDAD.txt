@@ -3,7 +3,8 @@ REMOVAL
 
 [] - Verificar se a autenticação está a 100% (tokens a dar refresh etc..)
 [] - Update da foto
-[] - Create transaction when deleting account
+[x] - Create transaction when deleting account (Não faz sentido)
+[] - Verifica se tudo funciona como admin, e eles apenas nao podem remover a sua conta
 
 G2. BRAIN COINS AND TRANSACTIONS
 

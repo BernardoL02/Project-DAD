@@ -78,17 +78,26 @@ export const useAuthStore = defineStore('auth', () => {
 
   const register = async (userData) => {
     storeError.resetMessages()
+
     try {
       const response = await axios.post('auth/register', userData)
 
-      if (response.data) {
-        storeError.setSuccessMessages(
-          'Your account has been created successfully!',
-          {},
-          201,
-          'Registration Success'
-        )
+      if (response.data?.errors) {
+        const errorMessages = response.data.errors
+
+        const title = 'Register Error'
+        const message = response.data.message || 'There were issues with your registration.'
+
+        storeError.setErrorMessages(message, errorMessages, 422, title)
+        return false
       }
+
+      storeError.setSuccessMessages(
+        'Your account has been created successfully!',
+        {},
+        201,
+        'Registration Success'
+      )
 
       return response.data
     } catch (error) {
@@ -201,6 +210,7 @@ export const useAuthStore = defineStore('auth', () => {
     login,
     logout,
     restoreToken,
-    register
+    register,
+    clearUser
   }
 })

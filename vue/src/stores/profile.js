@@ -104,8 +104,6 @@ export const useProfileStore = defineStore('profile', () => {
 
       const response = await axios.patch('/users/me', data)
 
-      console.log(response.data)
-
       storeError.setSuccessMessages(response.data.message, {}, 200, response.data.title)
     } catch (err) {
       const errorMessage = err.response?.data?.message || 'Error occurred.'
@@ -113,6 +111,34 @@ export const useProfileStore = defineStore('profile', () => {
       const errorStatus = err.response?.status || 500
 
       storeError.setErrorMessages(errorMessage, {}, errorStatus, errorTitle)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const deleteAccount = async (password) => {
+    storeError.resetMessages()
+    loading.value = true
+
+    try {
+      const data = {
+        password: password
+      }
+
+      const response = await axios.delete('/users/me', { data })
+
+      storeError.setSuccessMessages(response.data.message, {}, 200, response.data.title)
+
+      return true
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || 'An error occurred while deleting your account.'
+      const errorTitle = err.response?.data?.title || 'Account Deletion Error'
+      const errorStatus = err.response?.status || 500
+
+      storeError.setErrorMessages(errorMessage, {}, errorStatus, errorTitle)
+
+      return false
     } finally {
       loading.value = false
     }
@@ -130,6 +156,7 @@ export const useProfileStore = defineStore('profile', () => {
     nickname,
     type,
     photoUrl,
-    coins
+    coins,
+    deleteAccount
   }
 })
