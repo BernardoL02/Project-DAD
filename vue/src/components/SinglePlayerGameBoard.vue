@@ -140,11 +140,12 @@ const checkMatch = async () => {
     selectedCards.value = [];
     if (matchedPairs.value.length === shuffledCards.value.length) {
       endTime.value = new Date();
+      const totalTurns = moves.value;
       clearInterval(timerInterval.value);
 
       const totalTime = Math.floor((endTime.value - startTime.value) / 1000);
 
-      await gameStore.sendPostOnGameEnd(totalTime, props.gameId);
+      await gameStore.sendPostOnGameEnd(totalTime, totalTurns, props.gameId);
 
       isLeaving.value = true;
 

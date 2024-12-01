@@ -60,19 +60,14 @@ class GameController extends Controller
 
         return new GameResource($game);
     }
-    /**
-     * Remove the specified resource from storage.
-     */
+
     public function destroy(Game $game)
     {
-        // Perform a soft delete
         $game->delete();
 
-        // Return a success response with HTTP 204 No Content
         return response()->json(null, 204);
     }
 
-    //Other Functions
     public function mySinglePlayerGames(Request $request)
     {
         $user = $request->user();
@@ -120,10 +115,13 @@ class GameController extends Controller
             'status' => 'required|string|in:E,I',
             'ended_at' => 'nullable|date|after_or_equal:began_at',
             'total_time' => 'nullable|numeric|min:0',
+            'total_turns_winner' => 'nullable|integer|min:0',
         ]);
-
+    
         $game->update($validated);
-
+    
         return new GameResource($game);
     }
+    
+    
 }

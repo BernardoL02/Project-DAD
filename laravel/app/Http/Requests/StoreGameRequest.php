@@ -26,13 +26,13 @@ class StoreGameRequest extends FormRequest
     public function rules()
     {
         return [
-            'winner_user_id' => 'nullable|exists:users,id',  // Pode ser nulo
-            'type' => 'required|string|in:S,M',  // 'S' para single-player, 'M' para multiplayer
-            'status' => 'required|string|in:PL,E,I',  // 'PL' (In Progress), 'E' (Ended), 'I' (Interrupted)
-            'began_at' => 'required|date',  // Data de início obrigatória
-            'ended_at' => 'nullable|date|after_or_equal:began_at',  // Data de término opcional
-            'total_time' => 'nullable|numeric|min:0',  // Total time opcional
-            'board_id' => 'required|exists:boards,id',  // ID do tabuleiro obrigatório
+            'winner_user_id' => 'nullable|exists:users,id', 
+            'type' => 'required|string|in:S,M', 
+            'status' => 'required|string|in:PL,E,I', 
+            'began_at' => 'required|date', 
+            'ended_at' => 'nullable|date|after_or_equal:began_at', 
+            'total_time' => 'nullable|numeric|min:0', 
+            'board_id' => 'required|exists:boards,id', 
         ];
     }    
 

@@ -18,6 +18,7 @@ class Game extends Model
         'ended_at',
         'total_time',
         'board_id',
+        'total_turns_winner'
     ];
 
     protected $casts = [

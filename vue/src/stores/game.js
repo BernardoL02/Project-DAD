@@ -261,23 +261,28 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
-  const sendPostOnGameEnd = async (totalTime, gameId) => {
+  const sendPostOnGameEnd = async (totalTime, totalTurns, gameId) => {
     try {
-      if (!gameId) {
-        console.error('Game ID não está definido.')
-        return
-      }
+        if (!gameId) {
+            console.error('Game ID não está definido.');
+            return;
+        }
 
-      await axios.patch(`/games/${gameId}`, {
-        status: 'E',
-        total_time: totalTime
-      })
+        const ended = new Date().toISOString().slice(0, 19).replace('T', ' ')
 
-      console.log(`Game atualizado com status "ended" e tempo total de ${totalTime} segundos.`)
+        await axios.patch(`/games/${gameId}`, {
+            status: 'E',
+            ended_at: ended,
+            total_time: totalTime,
+            total_turns_winner: totalTurns,
+        });
+
+        console.log(`Game atualizado com status "ended", tempo total de ${totalTime} segundos, e ${totalTurns} jogadas.`);
     } catch (error) {
-      console.error('Erro ao atualizar status do jogo:', error.response?.data || error.message)
+        console.error('Erro ao atualizar status do jogo:', error.response?.data || error.message);
     }
-  }
+};
+
 
   return {
     games,

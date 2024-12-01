@@ -116,7 +116,7 @@ const onBoardClick = (size) => {
 
 
             <RouterLink :to="{ name: 'singlePlayerHistory' }"
-                class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-300 transform hover:scale-105 shadow-md">
+                class="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600 transition duration-300">
                 My Games
             </RouterLink>
         </div>
@@ -128,7 +128,7 @@ const onBoardClick = (size) => {
                 <div
                     v-for="board in boardStore.boards"
                     :key="board.id"
-                    class="p-6 border rounded-lg flex flex-col items-center justify-between bg-gray-50 shadow-md transition transform hover:scale-105 hover:shadow-lg"
+                    class="p-6 border rounded-lg flex flex-col items-center justify-between bg-gray-50 shadow-md hover:shadow-lg"
                 >
                     <p class="text-lg font-bold">
                         {{ board.board_cols + "x" + board.board_rows }}
@@ -140,7 +140,7 @@ const onBoardClick = (size) => {
                     <div class="mt-8">
                         <button
                             v-if="profileStore.coins >= board.coinsRequired"
-                            class="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition duration-300 transform hover:scale-105 shadow-md"
+                            class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600 transition mt-8"
                             @click="startGame(`${board.board_cols}x${board.board_rows}`, board.coinsRequired, board.id)"
                         >
                             Play
@@ -149,7 +149,7 @@ const onBoardClick = (size) => {
                         <RouterLink
                             v-else
                             :to="{ name: 'store' }"
-                            class="bg-yellow-400 text-white px-6 py-2 rounded-lg hover:bg-yellow-500 transition duration-300 transform hover:scale-105 shadow-md"
+                            class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600 transition mt-8"
                         >
                             Buy Coins
                         </RouterLink>
@@ -172,11 +172,10 @@ const onBoardClick = (size) => {
                     <div class="flex justify-center pt-2">
                         <div class="flex flex-row gap-8">
                             <button v-for="board in boardStore.boards" :key="board.id"
-                                    @click="onBoardClick(board.board_cols + 'x' + board.board_rows)" 
-                                    :class="[ 
-                                        'px-4 py-1 rounded-md border transition-all duration-300 transform hover:scale-105', 
-                                        board.board_cols + 'x' + board.board_rows == gameStore.boardFilter ? 'bg-blue-600 text-white shadow-md' : 'bg-blue-200 hover:bg-blue-300 text-gray-700' 
-                                    ]">
+                                @click="onBoardClick(board.board_cols + 'x' + board.board_rows)" :class="{
+                                    'bg-sky-600 text-white': board.board_cols + 'x' + board.board_rows == gameStore.boardFilter,
+                                    'bg-sky-500 hover:bg-sky-600 text-white': board.board_cols + 'x' + board.board_rows != gameStore.boardFilter
+                                }" class="px-4 py-1 rounded-md border transition-all duration-300">
                                 {{ board.board_cols + 'x' + board.board_rows }}
                             </button>
                         </div>
