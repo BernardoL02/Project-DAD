@@ -14,12 +14,12 @@ const responseData = ref('');
 
 const submitLogin = async () => {
   responseData.value = "";
-  const user = await authStore.login({
+  await authStore.login({
     email: email.value,
     password: password.value,
   });
 
-  if (user.data.name) {
+  if (authStore.user) {
     await profileStore.fetchProfile();
     router.push('/playerProfile');
   }

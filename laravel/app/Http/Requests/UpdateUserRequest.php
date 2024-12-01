@@ -25,7 +25,7 @@ class UpdateUserRequest extends FormRequest
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255|unique:users,email,' . $this->user()->id,
             'nickname' => 'nullable|string|max:255|unique:users,nickname,' . $this->user()->id,
-            'photo_filename' => 'nullable|string|max:1024',
+            'photo_filename' => 'nullable|string|max:4096',
         ];
     }
 
