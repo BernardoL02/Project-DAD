@@ -30,21 +30,19 @@ const updateUserInfo = async () => {
 
         <form @submit.prevent="updateUserInfo">
           <div class="space-y-6 pt-6">
-            <!-- Name Input -->
             <div>
               <label for="name" class="block text-sm font-medium text-gray-600 mb-2">Password</label>
               <input type="password" id="register-password" v-model="password" placeholder="New Password"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" />
             </div>
 
-            <!-- Email Input -->
             <div>
               <label for="email" class="block text-sm font-medium text-gray-600 mb-2">Confirm Password</label>
               <input type="password" id="register-password" v-model="confirmPassword" placeholder="New Password"
                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" />
             </div>
           </div>
-          <!-- Submit Button -->
+
           <div class="pt-10">
             <button type="submit" :disabled="profileStore.loading"
               class="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition focus:ring-4 focus:ring-gray-400 focus:outline-none">

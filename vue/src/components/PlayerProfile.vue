@@ -1,12 +1,39 @@
 <script setup>
 import { useProfileStore } from '@/stores/profile';
-import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+import { onMounted, ref } from 'vue';
 
 const profileStore = useProfileStore();
+const router = useRouter();
+
+let deleteAccountVisible = ref(false);
+const password = ref('');
 
 onMounted(async () => {
   await profileStore.fetchProfile();
 });
+
+const showDeleteAccount = () => {
+  deleteAccountVisible.value = true;
+};
+
+const hideDeleteAccount = () => {
+  deleteAccountVisible.value = false;
+};
+
+const confirmDelete = async () => {
+
+  //await profileStore.deleteAccount();
+
+  try {
+    router.push('/login');
+  } catch (error) {
+    alert('Failed to delete account. Please try again.');
+  }
+
+  hideDeleteAccount();
+};
+
 </script>
 
 <template>
@@ -71,7 +98,7 @@ onMounted(async () => {
           <div class="flex items-center space-x-3">
             <img src="/coin.png" alt="Coin Icon" class="w-10 h-10 object-contain" />
             <div>
-              <p class="text-xl">
+              <p class="text-xl font-semibold">
                 {{ profileStore.coins }}
               </p>
             </div>
@@ -82,6 +109,40 @@ onMounted(async () => {
           </RouterLink>
         </div>
       </div>
+
+      <div class="flex justify-end mr-4">
+        <button @click="showDeleteAccount"
+          class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300 mr-2"
+          type="button">
+          Delete Account
+        </button>
+      </div>
     </div>
   </div>
+
+  <div v-if="deleteAccountVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-auto">
+      <h2 class="text-lg font-bold text-gray-800 mb-1">Do you really want to delete your account? </h2>
+      <p class="text-gray-600 mb-6">
+        This action is irreversible.
+      </p>
+      <div class="flex justify-center space-x-4 flex-col">
+
+        <div>
+          <input type="password" id="register-password" v-model="password" placeholder="Password"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" />
+        </div>
+
+        <div class="flex flex-row justify-center mt-8 space-x-5">
+          <button @click="hideDeleteAccount" class="bg-gray-500 text-white px-4 py-1 rounded hover:bg-gray-600">
+            Cancel
+          </button>
+          <button @click="confirmDelete" class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </template>

@@ -21203,3 +21203,7 @@
 #28 /home/tex/DAD/Project/laravel/artisan(13): Illuminate\\Foundation\\Application->handleCommand()
 #29 {main}
 "} 
+[2024-12-01 16:53:30] local.ERROR: Trait "App\Models\SoftDeletes" not found {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Trait \"App\\Models\\SoftDeletes\" not found at /Users/josedelgado/Desktop/Universidade/Licenciatura/3 - Ano/1 - Semestre/Desenvolvimento de Aplicações Distribuídas/Project-DAD/laravel/app/Models/User.php:11)
+[stacktrace]
+#0 {main}
+"} 

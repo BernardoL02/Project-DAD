@@ -21,6 +21,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/users/me', [UserController::class , 'showMe']);
     Route::put('/users/me', [UserController::class, 'update']);
     Route::patch('/users/me', [UserController::class, 'updatePassword']);
+    Route::delete('/users/me', [UserController::class, 'destroy']);
 
     // ----- Games -----
     Route::get('/games', [GameController::class, 'index']);

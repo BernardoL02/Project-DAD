@@ -58,7 +58,7 @@ const onBoardClick = (size) => {
 
         <h1 class="text-3xl font-bold text-center mb-8">Multi-Player Mode</h1>
 
-        <div class="bg-sky-100 p-4 rounded shadow-md flex justify-between items-center">
+        <div class="bg-sky-100 p-6 rounded shadow-md flex justify-between items-center">
             <div>
                 <p class="text-lg font-semibold">Welcome, {{ profileStore.nickname }}</p>
 
@@ -104,12 +104,12 @@ const onBoardClick = (size) => {
 
                     <span class="absolute right-0 top-0 transform translate-x-4 translate-y-1">
                         <span class="relative inline-block group">
-                            <span
-                                class="flex items-center justify-center w-6 h-6 bg-gray-400 text-white rounded-full text-center cursor-pointer">
+                            <span>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                     stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="w-6 h-6 text-white">
-
+                                    stroke-linejoin="round"
+                                    class="w-6 h-6 text-gray-600 group-hover:text-gray-800 transition duration-200">
+                                    <circle cx="12" cy="12" r="10"></circle>
                                     <line x1="12" y1="16" x2="12" y2="12"></line>
                                     <line x1="12" y1="8" x2="12" y2="8"></line>
                                 </svg>

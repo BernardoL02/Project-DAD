@@ -77,5 +77,36 @@ class UserController extends Controller
             'title' => 'Success'
         ],200);
     }
+
+    public function destroy(Request $request)
+    {
+        $request->validate([
+            'password' => 'required'
+        ]);
+
+        $user = $request->user();
+
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->json(['message' => 'Incorrect password.'], 400);
+        }
+
+        if ($user->transactions()->exists() || $user->games()->exists()) {
+            $user->delete();
+        } else {
+
+            //Remocer Coins
+
+
+            $user->forceDelete();
+        }
+
+        return response()->json([
+            'message' => 'Your account was permanently deleted.'
+        ], 200);
+    }
+
+
+
+
 }
 
