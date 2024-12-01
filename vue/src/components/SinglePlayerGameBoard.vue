@@ -51,17 +51,35 @@ const totalCards = computed(() => {
 });
 
 const generateCards = () => {
-  const pairsCount = totalCards.value / 2;
+  let pairsCount;
+
+  if (gameStore.difficulty === 'hard') {
+    pairsCount = Math.floor(totalCards.value / 3);
+  } else {
+    pairsCount = Math.floor(totalCards.value / 2);
+  }
+
   const shuffledAvailableCards = shuffleArray([...availableCards]);
 
   const cards = [];
   for (let i = 0; i < pairsCount; i++) {
     const cardImage = shuffledAvailableCards[i % shuffledAvailableCards.length];
-    cards.push({ id: i + 1, image: cardImage }, { id: i + 1, image: cardImage });
+    if (gameStore.difficulty === 'hard') {
+      cards.push(
+        { id: i + 1, image: cardImage },
+        { id: i + 1, image: cardImage },
+        { id: i + 1, image: cardImage }
+      );
+    } else {
+      cards.push({ id: i + 1, image: cardImage }, { id: i + 1, image: cardImage });
+    }
   }
 
   shuffledCards.value = shuffleArray(cards);
 };
+
+
+
 
 const elapsedTime = computed(() => {
   if (startTime.value && endTime.value) {
@@ -81,20 +99,41 @@ const flipCard = (index) => {
     }, 1000);
   }
 
-  if (selectedCards.value.length < 2 && !selectedCards.value.includes(index)) {
-    selectedCards.value.push(index);
+  if (gameStore.difficulty === 'hard') {
+    if (selectedCards.value.length < 3 && !selectedCards.value.includes(index)) {
+      selectedCards.value.push(index);
 
-    if (selectedCards.value.length === 2) {
-      moves.value++;
-      checkMatch();
+      if (selectedCards.value.length === 3) {
+        moves.value++;
+        checkMatch();
+      }
+    }
+  } else {
+    if (selectedCards.value.length < 2 && !selectedCards.value.includes(index)) {
+      selectedCards.value.push(index);
+
+      if (selectedCards.value.length === 2) {
+        moves.value++;
+        checkMatch();
+      }
     }
   }
 };
 
 const checkMatch = async () => {
-  const [firstIndex, secondIndex] = selectedCards.value;
-  if (shuffledCards.value[firstIndex].id === shuffledCards.value[secondIndex].id) {
-    matchedPairs.value.push(firstIndex, secondIndex);
+  if (gameStore.difficulty === 'hard') {
+    const [firstIndex, secondIndex, thirdIndex] = selectedCards.value;
+    if (
+      shuffledCards.value[firstIndex].id === shuffledCards.value[secondIndex].id &&
+      shuffledCards.value[firstIndex].id === shuffledCards.value[thirdIndex].id
+    ) {
+      matchedPairs.value.push(firstIndex, secondIndex, thirdIndex);
+    }
+  } else {
+    const [firstIndex, secondIndex] = selectedCards.value;
+    if (shuffledCards.value[firstIndex].id === shuffledCards.value[secondIndex].id) {
+      matchedPairs.value.push(firstIndex, secondIndex);
+    }
   }
 
   setTimeout(async () => {

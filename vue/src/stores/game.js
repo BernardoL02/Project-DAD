@@ -13,6 +13,12 @@ export const useGameStore = defineStore('game', () => {
   const beginDateFilter = ref([null, null])
   const boardFilter = ref('All')
 
+  const difficulty = ref('normal');
+
+  const setDifficulty = (level) => {
+    difficulty.value = level;
+  };
+
   const handleBoardSizeChange = (boardSize) => {
     boardFilter.value = boardSize
   }
@@ -289,6 +295,8 @@ export const useGameStore = defineStore('game', () => {
     handleBoardSizeChange,
     totalMultiplayerVictorys,
     totalMultiplayerLosses,
-    totalTimePlayedMultiPlayer
+    totalTimePlayedMultiPlayer,
+    difficulty,
+    setDifficulty
   }
 })
