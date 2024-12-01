@@ -42,9 +42,9 @@ class UserController extends Controller
                 'photo_filename' => 'image|max:4096',
             ]);
 
-            $path = $request->photo_file->store('public/photos');
+            $path = $request->file('photo_filename')->store('public/photos');
 
-            $user->photo_filename = basename($path);
+            $user->photo_filename = 'storage/photos/' . basename($path);
         }
 
         $user->save();
