@@ -1,0 +1,53 @@
+G1. USER REGISTRATION, AUTHENTICATION, PROFILE, END SESSION, ACCOUNT
+REMOVAL
+
+[] - Verificar se a autenticação está a 100% (tokens a dar refresh etc..)
+[] - Update da foto
+[] - Create transaction when deleting account
+
+G2. BRAIN COINS AND TRANSACTIONS
+
+[] - Bonus de 1 coin quando acaba o jogo
+
+
+G4. MULTIPLAYER GAMES
+
+[] - Tudo
+
+G5. GAME HISTORY AND SCORING BOARDS
+
+[] - ver os dados das tabelas(validar)
+[] - Ver os jogadores involvidos no game multiplayer
+
+G6. Administrator
+
+
+[]- Tudo
+
++
+
+[] - Administrators cannot create, modify,
+or delete transactions; they can only view them
+
+[] - Administrators can access the history
+of all games from all players on the platform
+
+[] - Administrators will also have access to their own profile, where they can view and perform all the
+same actions as any other user, except for the option to remove their own account
+
+
+G7. STATISTICS
+
+[] - Tudo
+
+
+
+G8. CUSTOM FEATURES AND IMPLEMENTATION DETAILS
+
+[] - Eager Loading (+performace)
+
+[x] - Dificuldade no single player
+
+[+-] - Implementamos diversos extras relacionados com os jogos (ratio w/l, etc..)
+
+[] - Adding sound effects to the game
