@@ -113,9 +113,10 @@ router.beforeEach(async (to, from, next) => {
     handlingFirstRoute = false
 
     if (authStore.user) {
-      await authStore.restoreToken()
       await authStore.fetchProfile()
     }
+
+    await authStore.restoreToken()
   }
 
   if ((to.name == 'singlePlayerHistory' || to.name == 'Profile') && !authStore.user) {
