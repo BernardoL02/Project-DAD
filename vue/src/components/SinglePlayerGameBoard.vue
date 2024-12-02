@@ -121,7 +121,6 @@ const flipCard = (index) => {
 };
 
 const checkMatch = async () => {
-  // Delay para permitir que as cartas terminem de virar
   await new Promise((resolve) => setTimeout(resolve, 800));
 
   if (gameStore.difficulty === 'hard') {
@@ -139,10 +138,8 @@ const checkMatch = async () => {
     }
   }
 
-  // Limpar cartas selecionadas após o delay
   selectedCards.value = [];
 
-  // Verificar se o jogo terminou
   if (matchedPairs.value.length === shuffledCards.value.length) {
     endTime.value = new Date();
     const totalTurns = moves.value;

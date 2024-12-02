@@ -222,18 +222,27 @@ export const useGameStore = defineStore('game', () => {
     return (totalTimeInSeconds / 60).toFixed(2)
   })
 
-  const createSinglePlayer = async (board_id) => {
+  const createSinglePlayer = async (board_id, difficulty = null) => {
     try {
       const beganAt = new Date().toISOString().slice(0, 19).replace('T', ' ')
 
-      const response = await axios.post('games', {
+      const payload = {
         type: 'S',
         status: 'PL',
         began_at: beganAt,
         board_id: board_id
-      })
+      }
+
+      if (difficulty === 'hard') {
+        payload.difficulty = 'hard'
+      }
+
+      console.log(payload)
+
+      const response = await axios.post('games', payload)
+
       const createdGame = response.data.data
-      return createdGame.id // Retorna o ID do jogo criado
+      return createdGame.id
     } catch (e) {
       console.error('Error creating single-player game:', e)
       storeError.setErrorMessages(
