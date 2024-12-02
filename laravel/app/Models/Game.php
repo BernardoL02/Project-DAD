@@ -28,12 +28,12 @@ class Game extends Model
     // Relacionamentos
     public function creator()
     {
-        return $this->belongsTo(User::class, 'created_user_id');
+        return $this->belongsTo(User::class, 'created_user_id')->withTrashed();
     }
 
     public function winner()
     {
-        return $this->belongsTo(User::class, 'winner_user_id');
+        return $this->belongsTo(User::class, 'winner_user_id')->withTrashed();
     }
 
     public function board()

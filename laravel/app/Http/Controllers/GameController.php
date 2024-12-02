@@ -85,8 +85,12 @@ class GameController extends Controller
         $user = $request->user();
 
         $multiPlayerGames = Game::with([
-                'createdUser',
-                'winnerUser',
+                'createdUser' => function ($query) {
+                    $query->withTrashed();
+                },
+                'winnerUser' => function ($query) {
+                    $query->withTrashed();
+                },
                 'multiplayerGamesPlayed' => function ($query) use ($user) {
                     $query->where('user_id', $user->id);
                 }
@@ -107,8 +111,6 @@ class GameController extends Controller
         return MultiPlayerGameResource::collection($multiPlayerGames);
     }
 
-
-
     public function updateGameStatus(Request $request, Game $game)
     {
         $validated = $request->validate([
@@ -117,11 +119,11 @@ class GameController extends Controller
             'total_time' => 'nullable|numeric|min:0',
             'total_turns_winner' => 'nullable|integer|min:0',
         ]);
-    
+
         $game->update($validated);
-    
+
         return new GameResource($game);
     }
-    
-    
+
+
 }
