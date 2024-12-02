@@ -1,19 +1,13 @@
 <script setup>
-import { useProfileStore } from '@/stores/profile';
 import { useRouter } from 'vue-router';
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 
 const authStore = useAuthStore();
-const profileStore = useProfileStore();
 const router = useRouter();
 
 let deleteAccountVisible = ref(false);
 const password = ref('');
-
-onMounted(async () => {
-  await profileStore.fetchProfile();
-});
 
 const showDeleteAccount = () => {
   password.value = ''
@@ -26,7 +20,7 @@ const hideDeleteAccount = () => {
 
 const confirmDelete = async () => {
 
-  const accountDeleted = await profileStore.deleteAccount(password.value);
+  const accountDeleted = await authStore.deleteAccount(password.value);
 
   if (accountDeleted) {
     authStore.clearUser();
@@ -42,25 +36,25 @@ const confirmDelete = async () => {
 <template>
   <div class="max-w-2xl mx-auto py-10 px-6 space-y-8">
     <!-- Loading and error states -->
-    <div v-if="profileStore.loading" class="text-center text-gray-600 animate-pulse">
+    <div v-if="authStore.loading" class="text-center text-gray-600 animate-pulse">
       <span class="text-xl font-medium">Loading profile...</span>
     </div>
 
-    <div v-if="profileStore.error" class="text-center text-red-600">
-      <span class="text-xl font-medium">Error: {{ profileStore.error }}</span>
+    <div v-if="authStore.error" class="text-center text-red-600">
+      <span class="text-xl font-medium">Error: {{ authStore.error }}</span>
     </div>
 
     <!-- Profile data -->
-    <div v-else-if="profileStore.userProfile" class="space-y-6">
+    <div v-else-if="authStore.user" class="space-y-6">
       <div class="text-center pb-6">
         <!-- Profile Picture -->
-        <img :src="profileStore.photoUrl" alt="User Profile Picture"
+        <img :src="authStore.userPhotoUrl" alt="User Profile Picture"
           class="w-60 h-60 rounded-full mx-auto border-4 border-white shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl" />
       </div>
 
       <!-- User Name and Nickname -->
       <div class="text-center">
-        <h2 class="text-3xl font-semibold text-gray-800">{{ profileStore.name }}</h2>
+        <h2 class="text-3xl font-semibold text-gray-800">{{ authStore.name }}</h2>
       </div>
 
       <!-- Brain Coins and Type -->
@@ -73,7 +67,7 @@ const confirmDelete = async () => {
           <div class="flex flex-col items-center ml-4">
             <p class="text-lg font-bold text-black">Nickname</p>
             <p class="text-base  font-semibold text-gray-500">
-              {{ profileStore.nickname }}
+              {{ authStore.nickname }}
             </p>
           </div>
 
@@ -81,7 +75,7 @@ const confirmDelete = async () => {
           <div class="flex flex-col items-center ml-4">
             <p class="text-lg font-bold text-black">Email</p>
             <p class="text-base font-semibold text-gray-500">
-              {{ profileStore.email }}
+              {{ authStore.email }}
             </p>
           </div>
 
@@ -90,8 +84,8 @@ const confirmDelete = async () => {
           <div class="flex flex-col items-center mr-4">
             <p class="text-lg font-bold text-black">Account Type</p>
             <p class="text-base  font-semibold text-gray-500">
-              {{ profileStore.type === 'P' ? 'Player' :
-                (profileStore.type === 'A' ? 'Administrator' : 'Unknown') }}
+              {{ authStore.type === 'P' ? 'Player' :
+                (authStore.type === 'A' ? 'Administrator' : 'Unknown') }}
             </p>
           </div>
         </div>
@@ -102,7 +96,7 @@ const confirmDelete = async () => {
             <img src="/coin.png" alt="Coin Icon" class="w-10 h-10 object-contain" />
             <div>
               <p class="text-xl font-semibold">
-                {{ profileStore.coins }}
+                {{ authStore.coins }}
               </p>
             </div>
           </div>

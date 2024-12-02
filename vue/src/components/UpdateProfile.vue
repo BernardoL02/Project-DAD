@@ -1,14 +1,8 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useProfileStore } from '@/stores/profile';
+import { ref } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 
-const profileStore = useProfileStore();
-
-onMounted(async () => {
-  if (!profileStore.loading) {
-    await profileStore.fetchProfile();
-  }
-});
+const authStore = useAuthStore();
 
 const handlePhotoUpload = (event) => {
   const file = event.target.files[0];
@@ -18,9 +12,9 @@ const handlePhotoUpload = (event) => {
   }
 };
 
-const updatedName = ref(profileStore.name);
-const updatedEmail = ref(profileStore.email);
-const updatedNickname = ref(profileStore.nickname);
+const updatedName = ref(authStore.name);
+const updatedEmail = ref(authStore.email);
+const updatedNickname = ref(authStore.nickname);
 const updatedAvatar = ref(null);
 
 const updateUserInfo = async () => {
@@ -28,10 +22,11 @@ const updateUserInfo = async () => {
     name: updatedName.value,
     email: updatedEmail.value,
     nickname: updatedNickname.value,
-    photo_filename: updatedAvatar.value ? updatedAvatar.value.name : profileStore.photo_filename,
+    photo_filename: updatedAvatar.value ? updatedAvatar.value.name : authStore.photo_filename,
   };
 
-  await profileStore.updateUserInfo(updatedData);
+  await authStore.updateUserInfo(updatedData);
+  await authStore.fetchProfile();
 };
 
 </script>
@@ -85,7 +80,7 @@ const updateUserInfo = async () => {
           </div>
           <!-- Submit Button -->
           <div class="pt-10">
-            <button type="submit" :disabled="profileStore.loading"
+            <button type="submit" :disabled="authStore.loading"
               class="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition focus:ring-4 focus:ring-gray-400 focus:outline-none">
               Update Profile
             </button>

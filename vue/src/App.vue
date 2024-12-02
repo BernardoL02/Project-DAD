@@ -75,7 +75,7 @@
           <div class="relative group flex flex-row items-center">
             <div v-if="authStore.user">
               <!-- Foto do Perfil -->
-              <img :src="profileStore.photoUrl" alt="User Profile Picture"
+              <img :src="authStore.userPhotoUrl" alt="User Profile Picture"
                 class="mr-2 ml-16 w-12 h-12 rounded-full border-1 border-black shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl cursor-pointer" />
               <!-- Dropdown Menu -->
               <div
@@ -147,10 +147,8 @@
 import Toaster from './components/ui/toast/Toaster.vue';
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
-import { useProfileStore } from '@/stores/profile';
 import { useRoute, useRouter } from 'vue-router';
 
-const profileStore = useProfileStore();
 const authStore = useAuthStore();
 const route = useRoute();
 const router = useRouter();

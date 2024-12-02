@@ -2,22 +2,22 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useErrorStore } from '@/stores/error'
-import { useProfileStore } from '@/stores/profile'
+import { useAuthStore } from '@/stores/auth'
 
 export const useGameStore = defineStore('game', () => {
   const storeError = useErrorStore()
-  const profileStore = useProfileStore()
+  const authStore = useAuthStore()
 
   const games = ref([])
   const statusFilter = ref('')
   const beginDateFilter = ref([null, null])
   const boardFilter = ref('All')
 
-  const difficulty = ref('normal');
+  const difficulty = ref('normal')
 
   const setDifficulty = (level) => {
-    difficulty.value = level;
-  };
+    difficulty.value = level
+  }
 
   const handleBoardSizeChange = (boardSize) => {
     boardFilter.value = boardSize
@@ -79,9 +79,9 @@ export const useGameStore = defineStore('game', () => {
                 ? '6x6'
                 : 'N/A',
         created_user:
-          game.created_user.nickname === profileStore.nickname ? 'You' : game.created_user.nickname,
+          game.created_user.nickname === authStore.nickname ? 'You' : game.created_user.nickname,
         winner_user:
-          game.winner_user.nickname === profileStore.nickname ? 'You' : game.winner_user.nickname,
+          game.winner_user.nickname === authStore.nickname ? 'You' : game.winner_user.nickname,
         participants_count: game.participants_count,
         status:
           game.status === 'PE'
@@ -263,26 +263,27 @@ export const useGameStore = defineStore('game', () => {
 
   const sendPostOnGameEnd = async (totalTime, totalTurns, gameId) => {
     try {
-        if (!gameId) {
-            console.error('Game ID não está definido.');
-            return;
-        }
+      if (!gameId) {
+        console.error('Game ID não está definido.')
+        return
+      }
 
-        const ended = new Date().toISOString().slice(0, 19).replace('T', ' ')
+      const ended = new Date().toISOString().slice(0, 19).replace('T', ' ')
 
-        await axios.patch(`/games/${gameId}`, {
-            status: 'E',
-            ended_at: ended,
-            total_time: totalTime,
-            total_turns_winner: totalTurns,
-        });
+      await axios.patch(`/games/${gameId}`, {
+        status: 'E',
+        ended_at: ended,
+        total_time: totalTime,
+        total_turns_winner: totalTurns
+      })
 
-        console.log(`Game atualizado com status "ended", tempo total de ${totalTime} segundos, e ${totalTurns} jogadas.`);
+      console.log(
+        `Game atualizado com status "ended", tempo total de ${totalTime} segundos, e ${totalTurns} jogadas.`
+      )
     } catch (error) {
-        console.error('Erro ao atualizar status do jogo:', error.response?.data || error.message);
+      console.error('Erro ao atualizar status do jogo:', error.response?.data || error.message)
     }
-};
-
+  }
 
   return {
     games,

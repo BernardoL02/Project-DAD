@@ -1,20 +1,14 @@
 <script setup>
-import { ref, onMounted } from 'vue';
-import { useProfileStore } from '@/stores/profile';
+import { ref } from 'vue';
+import { useAuthStore } from '@/stores/auth';
 
-const profileStore = useProfileStore();
-
-onMounted(async () => {
-  if (!profileStore.loading) {
-    await profileStore.fetchProfile();
-  }
-});
+const authStore = useAuthStore();
 
 const password = ref('');
 const confirmPassword = ref('');
 
 const updateUserInfo = async () => {
-  profileStore.updatePassword(password.value, confirmPassword.value)
+  authStore.updatePassword(password.value, confirmPassword.value)
 
   password.value = '';
   confirmPassword.value = '';
@@ -44,7 +38,7 @@ const updateUserInfo = async () => {
           </div>
 
           <div class="pt-10">
-            <button type="submit" :disabled="profileStore.loading"
+            <button type="submit" :disabled="authStore.loading"
               class="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition focus:ring-4 focus:ring-gray-400 focus:outline-none">
               Update Password
             </button>

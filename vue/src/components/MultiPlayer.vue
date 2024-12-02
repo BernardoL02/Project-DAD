@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { useProfileStore } from '@/stores/profile';
+import { useAuthStore } from '@/stores/auth';
 import { useGameStore } from '@/stores/game'
 import { useBoardStore } from '@/stores/board'
 import { useTransactionStore } from '@/stores/transaction';
@@ -9,7 +9,7 @@ import { useTransactionStore } from '@/stores/transaction';
 import PaginatedTable from '@/components/StandardTablePaginated.vue'
 
 const router = useRouter();
-const profileStore = useProfileStore();
+const authStore = useAuthStore();
 const gameStore = useGameStore()
 const boardStore = useBoardStore()
 
@@ -28,8 +28,8 @@ onMounted(async () => {
 
 const startGame = async (size, cost, board_id) => {
     var gameId = 0;
-    if (profileStore.userProfile) {
-        if (profileStore.coins < cost) {
+    if (authStore.user) {
+        if (authStore.coins < cost) {
             alert("You don't have enough brain coins to play on this board!");
             return;
         }
@@ -60,11 +60,11 @@ const onBoardClick = (size) => {
 
         <div class="bg-sky-100 p-6 rounded shadow-md flex justify-between items-center">
             <div>
-                <p class="text-lg font-semibold">Welcome, {{ profileStore.nickname }}</p>
+                <p class="text-lg font-semibold">Welcome, {{ authStore.nickname }}</p>
 
                 <div class="flex items-center pt-2 space-x-2">
                     <img src="/coin.png" alt="Coin Icon" class="w-6 h-6 object-contain" />
-                    <span class="text-semibold font-bold">{{ profileStore.coins }}</span>
+                    <span class="text-semibold font-bold">{{ authStore.coins }}</span>
                 </div>
             </div>
 
@@ -85,8 +85,8 @@ const onBoardClick = (size) => {
                         Required Coins - <span class="font-semibold">{{ board.coinsRequired }}</span>
                     </p>
                     <button class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600 transition mt-8"
-                        :class="{ 'opacity-50': profileStore.coins < board.coinsRequired }"
-                        :disabled="profileStore.coins < board.coinsRequired"
+                        :class="{ 'opacity-50': authStore.coins < board.coinsRequired }"
+                        :disabled="authStore.coins < board.coinsRequired"
                         @click="startGame(`${board.board_cols}x${board.board_rows}`, board.coinsRequired, board.id)">
                         Play
                     </button>

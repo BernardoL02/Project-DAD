@@ -8,44 +8,158 @@ import avatarNoneAssetURL from '@/assets/avatar-none.png'
 export const useAuthStore = defineStore('auth', () => {
   const storeError = useErrorStore()
 
+  const loading = ref(false)
+  const error = ref(null)
+  const responseMessage = ref('')
+
   const user = ref(null)
   const token = ref(sessionStorage.getItem('token') || '')
 
-  const userName = computed(() => {
+  const name = computed(() => {
     return user.value ? user.value.name : ''
+  })
+
+  const email = computed(() => {
+    return user.value ? user.value.email : ''
   })
 
   const nickname = computed(() => {
     return user.value ? user.value.nickname : ''
   })
 
+  const type = computed(() => {
+    return user.value ? user.value.type : ''
+  })
+
+  const coins = computed(() => {
+    return user.value ? user.value.brain_coins_balance : ''
+  })
+
+  const photo_filename = computed(() => {
+    return user.value ? user.value.photo_filename : ''
+  })
+
   const userFirstLastName = computed(() => {
-    const names = userName.value.trim().split(' ')
+    const names = name.value.trim().split(' ')
     const firstName = names[0] ?? ''
     const lastName = names.length > 1 ? names[names.length - 1] : ''
     return (firstName + ' ' + lastName).trim()
   })
 
-  const userEmail = computed(() => {
-    return user.value ? user.value.email : ''
-  })
-
-  const userType = computed(() => {
-    return user.value ? user.value.type : ''
-  })
-
-  const userGender = computed(() => {
-    return user.value ? user.value.gender : ''
-  })
-
   const userPhotoUrl = computed(() => {
-    const photoFile = user.value ? (user.value.photoFileName ?? '') : ''
+    const photoFile = user.value ? (user.value.photo_filename ?? '') : ''
     if (photoFile) {
-      return axios.defaults.baseURL.replaceAll('/api', photoFile)
+      const baseUrl = axios.defaults.baseURL.replace('/api', '')
+      return `${baseUrl}/storage/photos/${photoFile}`
     }
     return avatarNoneAssetURL
   })
 
+  // -------------- Profile --------------
+
+  const fetchProfile = async () => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const responseUser = await axios.get('users/me')
+      user.value = responseUser.data.data
+    } catch (err) {
+      error.value = 'Failed to load user profile. Please try again.'
+
+      storeError.setErrorMessages(
+        err.response?.data?.message,
+        err.response?.data?.errors,
+        err.response?.data?.status,
+        'Profile Fetch Error'
+      )
+      console.error('Error fetching profile:', err)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const updateUserInfo = async (user) => {
+    loading.value = true
+    responseMessage.value = ''
+    error.value = null
+
+    try {
+      const response = await axios.put('/users/me', user)
+
+      user.value = response.data.data
+
+      storeError.setSuccessMessages(
+        'Your information has been updated successfully!',
+        {},
+        200,
+        'Profile Update Success'
+      )
+    } catch (err) {
+      error.value = 'Failed to update information. Please try again.'
+      storeError.setErrorMessages(
+        err.response?.data?.message || 'Error occurred.',
+        err.response?.data?.errors || {},
+        err.response?.status || 500,
+        'Profile Update Error'
+      )
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const updatePassword = async (password, confirmPassword) => {
+    loading.value = true
+
+    try {
+      const data = {
+        password: password,
+        confirm_password: confirmPassword
+      }
+
+      const response = await axios.patch('/users/me', data)
+
+      storeError.setSuccessMessages(response.data.message, {}, 200, response.data.title)
+    } catch (err) {
+      const errorMessage = err.response?.data?.message || 'Error occurred.'
+      const errorTitle = err.response?.data?.title || 'Password Update Error'
+      const errorStatus = err.response?.status || 500
+
+      storeError.setErrorMessages(errorMessage, {}, errorStatus, errorTitle)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const deleteAccount = async (password) => {
+    storeError.resetMessages()
+    loading.value = true
+
+    try {
+      const data = {
+        password: password
+      }
+
+      const response = await axios.delete('/users/me', { data })
+
+      storeError.setSuccessMessages(response.data.message, {}, 200, response.data.title)
+
+      return true
+    } catch (err) {
+      const errorMessage =
+        err.response?.data?.message || 'An error occurred while deleting your account.'
+      const errorTitle = err.response?.data?.title || 'Account Deletion Error'
+      const errorStatus = err.response?.status || 500
+
+      storeError.setErrorMessages(errorMessage, {}, errorStatus, errorTitle)
+
+      return false
+    } finally {
+      loading.value = false
+    }
+  }
+
+  // -------------- Auth --------------
   // This function is "private" - not exported by the store
   const clearUser = () => {
     resetIntervalToRefreshToken()
@@ -61,7 +175,7 @@ export const useAuthStore = defineStore('auth', () => {
       sessionStorage.setItem('token', token.value)
       axios.defaults.headers.common.Authorization = 'Bearer ' + token.value
       const responseUser = await axios.get('users/me')
-      user.value = responseUser.data
+      user.value = responseUser.data.data
       repeatRefreshToken()
       return user.value
     } catch (e) {
@@ -200,17 +314,22 @@ export const useAuthStore = defineStore('auth', () => {
 
   return {
     user,
-    userName,
+    name,
     nickname,
     userFirstLastName,
-    userEmail,
-    userType,
-    userGender,
+    email,
+    type,
+    coins,
+    photo_filename,
     userPhotoUrl,
     login,
     logout,
     restoreToken,
     register,
-    clearUser
+    clearUser,
+    fetchProfile,
+    updateUserInfo,
+    updatePassword,
+    deleteAccount
   }
 })

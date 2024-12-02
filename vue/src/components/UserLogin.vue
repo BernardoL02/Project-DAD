@@ -2,10 +2,8 @@
 import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { RouterLink, useRouter } from 'vue-router';
-import { useProfileStore } from '@/stores/profile';
 
 const authStore = useAuthStore();
-const profileStore = useProfileStore();
 const router = useRouter();
 
 const email = ref('p1@mail.pt');
@@ -20,7 +18,7 @@ const submitLogin = async () => {
   });
 
   if (authStore.user) {
-    await profileStore.fetchProfile();
+    await authStore.fetchProfile();
     router.push('/playerProfile');
   }
 };
