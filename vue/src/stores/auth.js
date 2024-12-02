@@ -144,6 +144,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       storeError.setSuccessMessages(response.data.message, {}, 200, response.data.title)
 
+      clearUser()
       return true
     } catch (err) {
       const errorMessage =
@@ -326,7 +327,6 @@ export const useAuthStore = defineStore('auth', () => {
     logout,
     restoreToken,
     register,
-    clearUser,
     fetchProfile,
     updateUserInfo,
     updatePassword,
