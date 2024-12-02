@@ -121,6 +121,9 @@ const flipCard = (index) => {
 };
 
 const checkMatch = async () => {
+  // Delay para permitir que as cartas terminem de virar
+  await new Promise((resolve) => setTimeout(resolve, 800));
+
   if (gameStore.difficulty === 'hard') {
     const [firstIndex, secondIndex, thirdIndex] = selectedCards.value;
     if (
@@ -136,24 +139,25 @@ const checkMatch = async () => {
     }
   }
 
-  setTimeout(async () => {
-    selectedCards.value = [];
-    if (matchedPairs.value.length === shuffledCards.value.length) {
-      endTime.value = new Date();
-      const totalTurns = moves.value;
-      clearInterval(timerInterval.value);
+  // Limpar cartas selecionadas após o delay
+  selectedCards.value = [];
 
-      const totalTime = Math.floor((endTime.value - startTime.value) / 1000);
+  // Verificar se o jogo terminou
+  if (matchedPairs.value.length === shuffledCards.value.length) {
+    endTime.value = new Date();
+    const totalTurns = moves.value;
+    clearInterval(timerInterval.value);
 
-      await gameStore.sendPostOnGameEnd(totalTime, totalTurns, props.gameId);
+    const totalTime = Math.floor((endTime.value - startTime.value) / 1000);
 
-      isLeaving.value = true;
+    await gameStore.sendPostOnGameEnd(totalTime, totalTurns, props.gameId);
 
-      notificationStore.setSuccessMessage(`Você completou o jogo em ${totalTime} segundos!`, 'Parabéns!');
+    isLeaving.value = true;
 
-      router.push('/singlePlayer');
-    }
-  }, 1000);
+    notificationStore.setSuccessMessage(`Você completou o jogo em ${totalTime} segundos!`, 'Parabéns!');
+
+    router.push('/singlePlayer');
+  }
 };
 
 
@@ -183,7 +187,7 @@ const cancelExit = () => {
 const handleBeforeUnload = (event) => {
   event.preventDefault();
   gameStore.sendPostOnExit(props.gameId);
-  event.returnValue = ''; 
+  event.returnValue = '';
 };
 
 
@@ -213,24 +217,16 @@ router.beforeEach((to, from, next) => {
     <transition name="fade-in-scale" appear>
       <div v-if="gameStartedAnimation" class="game-container flex justify-center gap-10">
         <!-- Tabuleiro -->
-        <div class="game-board grid gap-2 bg-gray-100 p-4 rounded-lg shadow-md"
-             :style="{
-               gridTemplateRows: `repeat(${props.size.split('x')[0] || 4}, 1fr)`,
-               gridTemplateColumns: `repeat(${props.size.split('x')[1] || 4}, 1fr)`
-             }"
-        >
-          <div
-            v-for="(card, index) in shuffledCards"
-            :key="index"
-            class="relative cursor-pointer"
-            :class="{ 'pointer-events-none': matchedPairs.includes(index) }"
-            @click="flipCard(index)"
-          >
+        <div class="game-board grid gap-2 bg-gray-100 p-4 rounded-lg shadow-md" :style="{
+          gridTemplateRows: `repeat(${props.size.split('x')[0] || 4}, 1fr)`,
+          gridTemplateColumns: `repeat(${props.size.split('x')[1] || 4}, 1fr)`
+        }">
+          <div v-for="(card, index) in shuffledCards" :key="index"
+            class="relative cursor-pointer transition-opacity duration-300"
+            :class="{ 'opacity-50 pointer-events-none': matchedPairs.includes(index) }" @click="flipCard(index)">
             <!-- Carta -->
-            <div
-              class="w-24 h-36 transform-style-preserve-3d transition-transform duration-500 rotate-y-180"
-              :class="{ 'rotate-y-0': matchedPairs.includes(index) || selectedCards.includes(index) }"
-            >
+            <div class="w-24 h-36 transform-style-preserve-3d transition-transform duration-500 rotate-y-180"
+              :class="{ 'rotate-y-0': matchedPairs.includes(index) || selectedCards.includes(index) }">
               <div class="absolute w-full h-full backface-hidden bg-white rounded-lg">
                 <img :src="`/Cards/${card.image}`" alt="Card" class="w-full h-full rounded-lg" />
               </div>
@@ -251,24 +247,15 @@ router.beforeEach((to, from, next) => {
     </transition>
 
     <!-- Modal de Confirmação -->
-    <div
-      v-if="showModal"
-      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
-    >
+    <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div class="bg-white p-6 rounded shadow-md w-96">
         <h2 class="text-xl font-bold mb-4">Confirmação</h2>
         <p class="mb-4">Tem certeza de que deseja sair do jogo? <br> O progresso será perdido.</p>
         <div class="flex justify-end space-x-4">
-          <button
-            class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
-            @click="cancelExit"
-          >
+          <button class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400" @click="cancelExit">
             Cancelar
           </button>
-          <button
-            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-            @click="confirmExit"
-          >
+          <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" @click="confirmExit">
             Sair
           </button>
         </div>
@@ -329,4 +316,3 @@ router.beforeEach((to, from, next) => {
   max-height: fit-content;
 }
 </style>
-
