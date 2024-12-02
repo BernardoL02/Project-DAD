@@ -23,7 +23,6 @@ const confirmDelete = async () => {
   const accountDeleted = await authStore.deleteAccount(password.value);
 
   if (accountDeleted) {
-    authStore.clearUser();
     router.push('/login');
   }
 
