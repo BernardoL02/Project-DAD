@@ -34,8 +34,6 @@ onMounted(async () => {
     if (gameStore.boardFilter === "All") {
         gameStore.boardFilter = "3x4";
     }
-
-    difficulty.value = 'normal'
 });
 
 const startGame = async (size, cost, board_id) => {
@@ -47,7 +45,8 @@ const startGame = async (size, cost, board_id) => {
         }
 
         try {
-            gameId = await gameStore.createSinglePlayer(board_id);
+            gameId = await gameStore.createSinglePlayer(board_id, difficulty.value === 'hard' ? 'hard' : null);
+
             if (0 < cost) {
                 await transactionStore.createTransactionsGames(gameId, cost);
             }
