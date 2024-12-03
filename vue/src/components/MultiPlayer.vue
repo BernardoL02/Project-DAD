@@ -30,6 +30,7 @@ const tableColumns = [
 onMounted(async () => {
   await gameStore.getMultiPlayerGames()
   await boardStore.getBoards()
+  await authStore.fetchProfile();
 
   if (gameStore.boardFilter === 'All') {
     gameStore.boardFilter = '3x4'
@@ -105,7 +106,7 @@ const onBoardClick = (size) => {
             </button>
 
             <RouterLink v-else :to="{ name: 'store' }"
-              class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600 transition mt-8">
+              class="bg-yellow-400 text-white px-4 py-2 rounded hover:bg-yellow-500 transition mt-8">
               Buy Coins
             </RouterLink>
           </div>
@@ -147,13 +148,13 @@ const onBoardClick = (size) => {
                         Total Victories -
                         <span class="text-sm text-green-500">{{
                           gameStore.totalMultiplayerVictorys
-                        }}</span>
+                          }}</span>
                       </p>
                       <p class="text-sm text-gray-700">
                         Total Losses -
                         <span class="text-sm text-red-500">{{
                           gameStore.totalMultiplayerLosses
-                        }}</span>
+                          }}</span>
                       </p>
 
                       <p class="text-sm text-gray-700">
@@ -184,9 +185,9 @@ const onBoardClick = (size) => {
           <div class="flex flex-row gap-8">
             <button v-for="board in boardStore.boards" :key="board.id"
               @click="onBoardClick(board.board_cols + 'x' + board.board_rows)" :class="{
-                'bg-sky-600 text-white':
+                'bg-sky-500 text-white':
                   board.board_cols + 'x' + board.board_rows == gameStore.boardFilter,
-                'bg-sky-500 hover:bg-sky-600 text-white':
+                'bg-gray-200 hover:bg-gray-300 text-gray-700':
                   board.board_cols + 'x' + board.board_rows != gameStore.boardFilter
               }" class="px-4 py-1 rounded-md border transition-all duration-300">
               {{ board.board_cols + 'x' + board.board_rows }}
