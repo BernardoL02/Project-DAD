@@ -23135,3 +23135,201 @@
 [2024-12-03 00:08:53] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 00:08:52","board_id":1,"difficulty":"hard"} 
 [2024-12-03 00:08:53] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
 [2024-12-03 00:08:53] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 00:08:52","board_id":1,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 11:21:15] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 11:21:15","board_id":2,"difficulty":"hard"} 
+[2024-12-03 11:21:15] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
+[2024-12-03 11:21:15] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 11:21:15","board_id":2,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 14:41:19] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 14:41:17","board_id":1} 
+[2024-12-03 14:41:19] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 14:41:19] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 14:41:17","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 14:54:57] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 14:54:56","board_id":1,"difficulty":"hard"} 
+[2024-12-03 14:54:57] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
+[2024-12-03 14:54:57] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 14:54:56","board_id":1,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 15:01:36] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:01:37","board_id":1} 
+[2024-12-03 15:01:36] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:01:36] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:01:37","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:03:20] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:03:19","board_id":1} 
+[2024-12-03 15:03:20] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:03:20] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:03:19","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:06:27] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:06:28","board_id":1} 
+[2024-12-03 15:06:27] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:06:27] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:06:28","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:07:10] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:07:09","board_id":1} 
+[2024-12-03 15:07:10] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:07:10] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:07:09","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:12:12] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:12:12","board_id":1} 
+[2024-12-03 15:12:12] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:12:12] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:12:12","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:12:21] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:12:21","board_id":1,"difficulty":"hard"} 
+[2024-12-03 15:12:21] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
+[2024-12-03 15:12:21] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:12:21","board_id":1,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 15:14:35] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:14:34","board_id":1} 
+[2024-12-03 15:14:35] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:14:35] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:14:34","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:15:09] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:15:08","board_id":1} 
+[2024-12-03 15:15:09] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:15:09] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:15:08","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:21:49] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:21:49","board_id":1} 
+[2024-12-03 15:21:49] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:21:49] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:21:49","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:23:06] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:23:05","board_id":1} 
+[2024-12-03 15:23:06] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:23:06] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:23:05","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:24:33] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:24:33","board_id":1} 
+[2024-12-03 15:24:33] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:24:33] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:24:33","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:26:33] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:26:32","board_id":1} 
+[2024-12-03 15:26:33] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:26:33] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:26:32","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:26:59] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:26:59","board_id":1} 
+[2024-12-03 15:26:59] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:26:59] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:26:59","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:29:56] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:29:57","board_id":1} 
+[2024-12-03 15:29:56] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:29:56] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:29:57","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:31:52] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:31:52","board_id":1} 
+[2024-12-03 15:31:52] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:31:52] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:31:52","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:32:12] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:32:11","board_id":1} 
+[2024-12-03 15:32:12] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:32:12] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:32:11","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:32:23] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:32:23","board_id":1} 
+[2024-12-03 15:32:23] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:32:23] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:32:23","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:34:21] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:34:19","board_id":1} 
+[2024-12-03 15:34:21] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:34:21] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:34:19","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:39:11] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:39:10","board_id":1} 
+[2024-12-03 15:39:11] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:39:11] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:39:10","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:39:40] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:39:39","board_id":1} 
+[2024-12-03 15:39:40] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:39:40] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:39:39","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:40:06] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:40:07","board_id":1} 
+[2024-12-03 15:40:06] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:40:06] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:40:07","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:40:14] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:40:13","board_id":1} 
+[2024-12-03 15:40:14] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:40:14] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:40:13","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:40:53] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:40:52","board_id":1} 
+[2024-12-03 15:40:53] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:40:53] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:40:52","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:42:58] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:42:57","board_id":1} 
+[2024-12-03 15:42:58] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:42:58] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:42:57","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:43:07] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:43:07","board_id":1} 
+[2024-12-03 15:43:07] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:43:07] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:43:07","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:43:51] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:43:51","board_id":1} 
+[2024-12-03 15:43:51] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:43:51] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:43:51","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:46:31] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:46:30","board_id":1} 
+[2024-12-03 15:46:31] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:46:31] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:46:30","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:46:48] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:46:47","board_id":1} 
+[2024-12-03 15:46:48] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:46:48] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:46:47","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:48:05] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:48:05","board_id":1} 
+[2024-12-03 15:48:05] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:48:05] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:48:05","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:48:11] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:48:11","board_id":1} 
+[2024-12-03 15:48:11] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:48:11] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:48:11","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:48:48] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:48:47","board_id":1,"difficulty":"hard"} 
+[2024-12-03 15:48:48] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
+[2024-12-03 15:48:48] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:48:47","board_id":1,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 15:49:26] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:49:25","board_id":1,"difficulty":"hard"} 
+[2024-12-03 15:49:26] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
+[2024-12-03 15:49:26] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:49:25","board_id":1,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 15:52:35] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:52:34","board_id":1} 
+[2024-12-03 15:52:35] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:52:35] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:52:34","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:53:12] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:53:12","board_id":1,"difficulty":"hard"} 
+[2024-12-03 15:53:12] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
+[2024-12-03 15:53:12] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:53:12","board_id":1,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 15:54:12] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:54:11","board_id":1,"difficulty":"hard"} 
+[2024-12-03 15:54:12] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
+[2024-12-03 15:54:12] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:54:11","board_id":1,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 15:54:17] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:54:16","board_id":1} 
+[2024-12-03 15:54:17] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:54:17] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:54:16","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 15:59:26] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 15:59:27","board_id":1} 
+[2024-12-03 15:59:26] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 15:59:26] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 15:59:27","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 16:00:06] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:00:05","board_id":1} 
+[2024-12-03 16:00:06] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 16:00:06] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:00:05","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 16:02:13] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:02:11","board_id":1} 
+[2024-12-03 16:02:13] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 16:02:13] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:02:11","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 16:04:32] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:04:31","board_id":1} 
+[2024-12-03 16:04:32] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 16:04:32] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:04:31","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 16:05:27] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:05:26","board_id":1} 
+[2024-12-03 16:05:27] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 16:05:27] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:05:26","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 16:05:56] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:05:55","board_id":1} 
+[2024-12-03 16:05:56] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 16:05:56] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:05:55","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 16:07:42] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:07:41","board_id":1} 
+[2024-12-03 16:07:42] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 16:07:42] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:07:41","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 16:08:02] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:08:03","board_id":1} 
+[2024-12-03 16:08:02] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 16:08:02] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:08:03","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 16:08:46] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:08:45","board_id":1} 
+[2024-12-03 16:08:46] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 16:08:46] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:08:45","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 16:09:48] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:09:47","board_id":1} 
+[2024-12-03 16:09:48] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 16:09:48] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:09:47","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 16:10:39] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:10:39","board_id":1} 
+[2024-12-03 16:10:39] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 16:10:39] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:10:39","board_id":1,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 16:10:47] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:10:46","board_id":2,"difficulty":"hard"} 
+[2024-12-03 16:10:47] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
+[2024-12-03 16:10:47] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:10:46","board_id":2,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 16:10:53] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:10:52","board_id":1,"difficulty":"hard"} 
+[2024-12-03 16:10:53] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
+[2024-12-03 16:10:53] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:10:52","board_id":1,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 16:12:43] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:12:43","board_id":2,"difficulty":"hard"} 
+[2024-12-03 16:12:43] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
+[2024-12-03 16:12:43] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:12:43","board_id":2,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 16:13:27] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:13:25","board_id":3,"difficulty":"hard"} 
+[2024-12-03 16:13:27] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
+[2024-12-03 16:13:27] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:13:25","board_id":3,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 16:17:22] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:17:22","board_id":2,"difficulty":"hard"} 
+[2024-12-03 16:17:22] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
+[2024-12-03 16:17:22] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:17:22","board_id":2,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 16:17:28] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:17:28","board_id":3,"difficulty":"hard"} 
+[2024-12-03 16:17:28] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
+[2024-12-03 16:17:28] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:17:28","board_id":3,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 16:17:59] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:17:59","board_id":2} 
+[2024-12-03 16:17:59] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 16:17:59] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:17:59","board_id":2,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 16:21:57] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:21:58","board_id":2} 
+[2024-12-03 16:21:57] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 16:21:57] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:21:58","board_id":2,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 16:24:04] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:24:05","board_id":2,"difficulty":"hard"} 
+[2024-12-03 16:24:04] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
+[2024-12-03 16:24:04] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:24:05","board_id":2,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 16:27:00] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:26:59","board_id":2} 
+[2024-12-03 16:27:00] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 16:27:00] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:26:59","board_id":2,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 16:27:42] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:27:42","board_id":2,"difficulty":"hard"} 
+[2024-12-03 16:27:42] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
+[2024-12-03 16:27:42] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:27:42","board_id":2,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 16:29:52] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:29:52","board_id":2,"difficulty":"hard"} 
+[2024-12-03 16:29:52] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
+[2024-12-03 16:29:52] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:29:52","board_id":2,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 16:30:40] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:30:39","board_id":3,"difficulty":"hard"} 
+[2024-12-03 16:30:40] local.DEBUG: Custom Data Before Save: {"difficulty":"hard"} 
+[2024-12-03 16:30:40] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:30:39","board_id":3,"difficulty":"hard","created_user_id":7,"custom":"{\"difficulty\":\"hard\"}"} 
+[2024-12-03 16:30:49] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:30:49","board_id":3} 
+[2024-12-03 16:30:49] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 16:30:49] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:30:49","board_id":3,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 16:30:57] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:30:58","board_id":2} 
+[2024-12-03 16:30:57] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 16:30:57] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:30:58","board_id":2,"created_user_id":7,"custom":"[]"} 
+[2024-12-03 16:31:02] local.DEBUG: Request All Data: {"type":"S","status":"PL","began_at":"2024-12-03 16:31:03","board_id":1} 
+[2024-12-03 16:31:02] local.DEBUG: Custom Data Before Save:  
+[2024-12-03 16:31:02] local.DEBUG: Final Game Data Before Save: {"type":"S","status":"PL","began_at":"2024-12-03 16:31:03","board_id":1,"created_user_id":7,"custom":"[]"} 

@@ -3,10 +3,14 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useErrorStore } from '@/stores/error'
 import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
+import { useNotificationStore } from '@/stores/notification'
 
 export const useGameStore = defineStore('game', () => {
   const storeError = useErrorStore()
   const authStore = useAuthStore()
+  const router = useRouter()
+  const notificationStore = useNotificationStore()
 
   const games = ref([])
   const statusFilter = ref('')
@@ -15,6 +19,60 @@ export const useGameStore = defineStore('game', () => {
 
   const difficultyFilter = ref('Normal')
   const difficulty = ref('normal')
+
+  const shuffledCards = ref([])
+  const selectedCards = ref([])
+  const matchedPairs = ref([])
+  const startTime = ref(null)
+  const endTime = ref(null)
+  const moves = ref(0)
+  const timer = ref(0)
+  const timerInterval = ref(null)
+  const currentGameId = ref(null)
+  const isLeaving = ref(false)
+
+  const availableCards = [
+    'c1.png',
+    'c2.png',
+    'c3.png',
+    'c4.png',
+    'c5.png',
+    'c6.png',
+    'c7.png',
+    'c11.png',
+    'c12.png',
+    'c13.png',
+    'e1.png',
+    'e2.png',
+    'e3.png',
+    'e4.png',
+    'e5.png',
+    'e6.png',
+    'e7.png',
+    'e11.png',
+    'e12.png',
+    'e13.png',
+    'o1.png',
+    'o2.png',
+    'o3.png',
+    'o4.png',
+    'o5.png',
+    'o6.png',
+    'o7.png',
+    'o11.png',
+    'o12.png',
+    'o13.png',
+    'p1.png',
+    'p2.png',
+    'p3.png',
+    'p4.png',
+    'p5.png',
+    'p6.png',
+    'p7.png',
+    'p11.png',
+    'p12.png',
+    'p13.png'
+  ]
 
   const setDifficulty = (level) => {
     difficulty.value = level
@@ -306,13 +364,150 @@ export const useGameStore = defineStore('game', () => {
         total_time: totalTime,
         total_turns_winner: totalTurns
       })
-
-      console.log(
-        `Game atualizado com status "ended", tempo total de ${totalTime} segundos, e ${totalTurns} jogadas.`
-      )
     } catch (error) {
       console.error('Erro ao atualizar status do jogo:', error.response?.data || error.message)
     }
+  }
+
+  const shuffleArray = (array) => array.sort(() => Math.random() - 0.5)
+
+  const totalCards = computed(() => {
+    if (!boardFilter.value || !boardFilter.value.includes('x')) return 16
+    const [rows, cols] = boardFilter.value.split('x').map(Number)
+    return Math.min(rows * cols, availableCards.length * 2)
+  })
+
+  // Gerar cartas embaralhadas
+  const generateCards = () => {
+    const [rows, cols] = boardFilter.value.split('x').map(Number)
+    const totalCards = rows * cols
+
+    let cards = []
+
+    if (difficulty.value === 'hard') {
+      const trioCount = Math.floor(totalCards / 3)
+      const remainingCards = totalCards % 3
+
+      const shuffledAvailableCards = shuffleArray([...availableCards])
+      for (let i = 0; i < trioCount; i++) {
+        const cardImage = shuffledAvailableCards[i % shuffledAvailableCards.length]
+        cards.push(
+          { id: i + 1, image: cardImage },
+          { id: i + 1, image: cardImage },
+          { id: i + 1, image: cardImage }
+        )
+      }
+    } else {
+      const pairCount = Math.floor(totalCards / 2) // Número máximo de pares
+
+      const shuffledAvailableCards = shuffleArray([...availableCards])
+      for (let i = 0; i < pairCount; i++) {
+        const cardImage = shuffledAvailableCards[i % shuffledAvailableCards.length]
+        cards.push({ id: i + 1, image: cardImage }, { id: i + 1, image: cardImage })
+      }
+    }
+
+    shuffledCards.value = shuffleArray(cards)
+  }
+
+  const startGame = (size, gameId) => {
+    currentGameId.value = gameId
+    console.log(size)
+    boardFilter.value = size
+    generateCards()
+    timer.value = 0
+    moves.value = 0
+    matchedPairs.value = []
+    selectedCards.value = []
+    startTime.value = null
+    endTime.value = null
+
+    if (timerInterval.value) {
+      clearInterval(timerInterval.value)
+      timerInterval.value = null
+    }
+  }
+
+  const flipCard = (index) => {
+    if (!startTime.value) {
+      startTime.value = new Date()
+      timerInterval.value = setInterval(() => {
+        const now = new Date()
+        timer.value = Math.floor((now - startTime.value) / 1000)
+      }, 1000)
+    }
+
+    if (difficulty.value === 'hard') {
+      if (selectedCards.value.length < 3 && !selectedCards.value.includes(index)) {
+        selectedCards.value.push(index)
+
+        if (selectedCards.value.length === 3) {
+          moves.value++
+          checkMatch()
+        }
+      }
+    } else {
+      if (selectedCards.value.length < 2 && !selectedCards.value.includes(index)) {
+        selectedCards.value.push(index)
+
+        if (selectedCards.value.length === 2) {
+          moves.value++
+          checkMatch()
+        }
+      }
+    }
+  }
+
+  const checkMatch = async () => {
+    await new Promise((resolve) => setTimeout(resolve, 800))
+
+    if (difficulty.value === 'hard') {
+      const [firstIndex, secondIndex, thirdIndex] = selectedCards.value
+      if (
+        shuffledCards.value[firstIndex].id === shuffledCards.value[secondIndex].id &&
+        shuffledCards.value[firstIndex].id === shuffledCards.value[thirdIndex].id
+      ) {
+        matchedPairs.value.push(firstIndex, secondIndex, thirdIndex)
+      }
+    } else {
+      const [firstIndex, secondIndex] = selectedCards.value
+      if (shuffledCards.value[firstIndex].id === shuffledCards.value[secondIndex].id) {
+        matchedPairs.value.push(firstIndex, secondIndex)
+      }
+    }
+
+    selectedCards.value = []
+
+    if (matchedPairs.value.length === shuffledCards.value.length) {
+      endTime.value = new Date()
+      clearInterval(timerInterval.value)
+      timerInterval.value = null
+      const totalTime = Math.floor((endTime.value - startTime.value) / 1000)
+      sendPostOnGameEnd(totalTime, moves.value, currentGameId.value)
+      setIsLeaving(true)
+
+      notificationStore.setSuccessMessage(
+        `You completed the game in ${totalTime} seconds!`,
+        'Congratulations!'
+      )
+
+      router.push('/singlePlayer')
+    }
+  }
+
+  const elapsedTime = computed(() => {
+    if (startTime.value && endTime.value) {
+      return Math.floor((endTime.value - startTime.value) / 1000)
+    }
+    return timer.value
+  })
+
+  const setIsLeaving = (value) => {
+    isLeaving.value = value
+  }
+
+  const resetIsLeaving = () => {
+    isLeaving.value = false
   }
 
   return {
@@ -335,6 +530,19 @@ export const useGameStore = defineStore('game', () => {
     difficultyFilter,
     setDifficulty,
     handleDifficultyChange,
-    difficulty
+    difficulty,
+    shuffledCards,
+    selectedCards,
+    matchedPairs,
+    startTime,
+    endTime,
+    moves,
+    timer,
+    elapsedTime,
+    flipCard,
+    startGame,
+    isLeaving,
+    setIsLeaving,
+    resetIsLeaving
   }
 })
