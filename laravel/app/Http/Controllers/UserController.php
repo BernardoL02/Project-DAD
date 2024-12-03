@@ -40,19 +40,15 @@ class UserController extends Controller
         $user->update($request->validated());
 
         if ($request->hasFile('photo_filename')) {
-            $request->validate([
-                'photo_filename' => 'max:4096',
-            ]);
-
             $path = $request->file('photo_filename')->store('photos', 'public');
-
-            $user->photo_filename = 'storage/photos/' . basename($path);
+            $user->photo_filename = basename($path);
         }
 
         $user->save();
 
         return new UserResource($user);
     }
+
 
     public function updatePassword(Request $request)
     {
