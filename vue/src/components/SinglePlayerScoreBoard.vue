@@ -1,38 +1,28 @@
 <script setup>
-import { computed, watch, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { usescoreBoardStore } from '@/stores/scoreBoard'
 import { useBoardStore } from '@/stores/board'
-import { useGameStore } from '@/stores/game'
 import PaginatedTable from '@/components/StandardTablePaginated.vue'
 
 const columns = ['Rank', 'Player', 'Best Time', 'Min Turns', 'Status']
 
-const scoreBoardStore = usescoreBoardStore()
 const boardStore = useBoardStore()
-const gameStore = useGameStore()
+const scoreBoardStore = usescoreBoardStore()
 
-const scoreboards = computed(() => scoreBoardStore.scoreboards)
 const loading = computed(() => scoreBoardStore.loading)
-const boardSize = computed(() => gameStore.boardFilter)
+const boardSize = ref('3x4')
+const filteredScoreboards = computed(() => scoreBoardStore.filteredScoreboards)
 
 onMounted(async () => {
   await boardStore.getBoards()
   if (!boardSize.value && boardStore.boards.length > 0) {
-    gameStore.handleBoardSizeChange(
-      boardStore.boards[0].board_cols + 'x' + boardStore.boards[0].board_rows
-    )
+    scoreBoardStore.boardSize = `${boardStore.boards[0].board_cols}x${boardStore.boards[0].board_rows}`
   }
-  await scoreBoardStore.fetchSinglePlayerScoreboard(boardSize.value)
-})
-
-watch(boardSize, async (newSize) => {
-  if (newSize) {
-    await scoreBoardStore.fetchSinglePlayerScoreboard(newSize)
-  }
+  await scoreBoardStore.fetchAllScoreboards()
 })
 
 const onBoardClick = (size) => {
-  gameStore.handleBoardSizeChange(size) // Update filter
+  scoreBoardStore.boardSize = size
 }
 </script>
 
@@ -71,9 +61,13 @@ const onBoardClick = (size) => {
     <div>
       <div v-if="loading" class="text-center text-gray-400">Loading...</div>
       <div v-else>
-        <PaginatedTable :columns="columns" :data="scoreboards" :pagination="false" />
-        <!-- Show a message if there are no scores -->
-        <div v-if="!loading && scoreboards.length === 0" class="text-center text-gray-400 mt-4">
+        <!-- Paginated Table com os dados filtrados -->
+        <PaginatedTable :columns="columns" :data="filteredScoreboards" :pagination="false" />
+        <!-- Exibe mensagem caso não haja pontuações -->
+        <div
+          v-if="!loading && filteredScoreboards.length === 0"
+          class="text-center text-gray-400 mt-4"
+        >
           No scores available
         </div>
       </div>

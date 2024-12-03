@@ -324,7 +324,9 @@ router.beforeEach((to, from, next) => {
 /* Transição de entrada e saída */
 .fade-in-scale-enter-active,
 .fade-in-scale-leave-active {
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition:
+    opacity 0.5s ease,
+    transform 0.5s ease;
 }
 
 .fade-in-scale-enter-from {

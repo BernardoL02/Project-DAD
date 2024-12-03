@@ -33,7 +33,7 @@ class GameController extends Controller
         if ($request->has('difficulty')) {
             $customData['difficulty'] = $request->input('difficulty');
         }
-        
+
         $gameData['custom'] = json_encode($customData);
 
         Log::debug('Request All Data:', $request->all());
