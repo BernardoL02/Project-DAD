@@ -52,3 +52,4 @@ G8. CUSTOM FEATURES AND IMPLEMENTATION DETAILS
 [+-] - Implementamos diversos extras relacionados com os jogos (ratio w/l, etc..)
 
 [] - Adding sound effects to the game
+[] - All the site has to be responsive

@@ -18,27 +18,24 @@ class Game extends Model
         'ended_at',
         'total_time',
         'board_id',
-        'total_turns_winner'
-    ];
-
-    protected $casts = [
-        'custom' => 'array',
+        'total_turns_winner',
+        'custom',
     ];
 
     // Relacionamentos
     public function creator()
     {
-        return $this->belongsTo(User::class, 'created_user_id');
+        return $this->belongsTo(User::class, 'created_user_id')->withTrashed();
     }
 
     public function winner()
     {
-        return $this->belongsTo(User::class, 'winner_user_id');
+        return $this->belongsTo(User::class, 'winner_user_id')->withTrashed();
     }
 
     public function board()
     {
-        return $this->belongsTo(Board::class);
+        return $this->belongsTo(Board::class, 'board_id');
     }
 
     public function transactions()

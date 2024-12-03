@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\GameResource;
 use App\Http\Requests\StoreGameRequest;
 use App\Http\Resources\MultiPlayerGameResource;
+use Illuminate\Support\Facades\Log;
 
 class GameController extends Controller
 {
@@ -28,10 +29,22 @@ class GameController extends Controller
         $gameData = $request->validated();
         $gameData['created_user_id'] = $request->user()->id;
 
+        $customData = [];
+        if ($request->has('difficulty')) {
+            $customData['difficulty'] = $request->input('difficulty');
+        }
+        
+        $gameData['custom'] = json_encode($customData);
+
+        Log::debug('Request All Data:', $request->all());
+        Log::debug('Custom Data Before Save:', $customData);
+        Log::debug('Final Game Data Before Save:', $gameData);
+
         $game = Game::create($gameData);
 
         return new GameResource($game);
     }
+
 
     /**
      * Display the specified resource.
@@ -85,8 +98,12 @@ class GameController extends Controller
         $user = $request->user();
 
         $multiPlayerGames = Game::with([
-                'createdUser',
-                'winnerUser',
+                'createdUser' => function ($query) {
+                    $query->withTrashed();
+                },
+                'winnerUser' => function ($query) {
+                    $query->withTrashed();
+                },
                 'multiplayerGamesPlayed' => function ($query) use ($user) {
                     $query->where('user_id', $user->id);
                 }
@@ -107,8 +124,6 @@ class GameController extends Controller
         return MultiPlayerGameResource::collection($multiPlayerGames);
     }
 
-
-
     public function updateGameStatus(Request $request, Game $game)
     {
         $validated = $request->validate([
@@ -117,11 +132,11 @@ class GameController extends Controller
             'total_time' => 'nullable|numeric|min:0',
             'total_turns_winner' => 'nullable|integer|min:0',
         ]);
-    
+
         $game->update($validated);
-    
+
         return new GameResource($game);
     }
-    
-    
+
+
 }

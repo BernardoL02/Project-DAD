@@ -39,10 +39,10 @@ class UserController extends Controller
 
         if ($request->hasFile('photo_filename')) {
             $request->validate([
-                'photo_filename' => 'image|max:4096',
+                'photo_filename' => 'max:4096',
             ]);
 
-            $path = $request->file('photo_filename')->store('public/photos');
+            $path = $request->file('photo_filename')->store('photos', 'public');
 
             $user->photo_filename = 'storage/photos/' . basename($path);
         }
