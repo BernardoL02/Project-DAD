@@ -11,6 +11,8 @@ use App\Http\Requests\UpdateUserRequest;
 use Illuminate\Validation\Rules\Password;
 use App\Http\Requests\RegistrationRequest;
 use App\Http\Requests\UpdatePasswordRequest;
+use App\Htpp\Request\ProfileUserResource;
+use App\Http\Resources\ProfileUserResource as ResourcesProfileUserResource;
 
 class UserController extends Controller
 {
@@ -107,5 +109,19 @@ class UserController extends Controller
             'message' => 'Your account was permanently deleted.'
         ], 200);
     }
+
+     public function profileUser(Request $request, String $nickname){
+
+
+        $user = User::where('nickname',$nickname)->first();
+
+        if(!$user){
+        return response()->json([
+                    'message' => 'User not found.',
+                ], 404);
+        }
+
+        return new ResourcesProfileUserResource($user);
+     }
 }
 

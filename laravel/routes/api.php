@@ -46,6 +46,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 Route::get('/scoreboard/single', [ScoreBoardController::class, 'globalSinglePlayerScoreboard']);
 Route::get('/scoreboard/multiplayer', [ScoreBoardController::class, 'multiplayerScoreboard']);
+Route::get('/users/{nickname}', [UserController::class , 'profileUser']);
 
 
 
