@@ -1,16 +1,8 @@
 <script setup>
-<<<<<<< HEAD
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
 import { useNotificationStore } from '@/stores/notification'
 import { useGameStore } from '@/stores/game'
-=======
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { useNotificationStore } from '@/stores/notification';
-import { useGameStore } from '@/stores/game';
->>>>>>> 2b85e55d83cfb110b0d981ccac96536286860bb8
 
 const props = defineProps({
   size: {
@@ -161,12 +153,8 @@ const flipCard = (index) => {
 }
 
 const checkMatch = async () => {
-<<<<<<< HEAD
   // Delay para permitir que as cartas terminem de virar
   await new Promise((resolve) => setTimeout(resolve, 800))
-=======
-  await new Promise((resolve) => setTimeout(resolve, 800));
->>>>>>> 2b85e55d83cfb110b0d981ccac96536286860bb8
 
   if (gameStore.difficulty === 'hard') {
     const [firstIndex, secondIndex, thirdIndex] = selectedCards.value
@@ -183,12 +171,8 @@ const checkMatch = async () => {
     }
   }
 
-<<<<<<< HEAD
   // Limpar cartas selecionadas após o delay
   selectedCards.value = []
-=======
-  selectedCards.value = [];
->>>>>>> 2b85e55d83cfb110b0d981ccac96536286860bb8
 
   if (matchedPairs.value.length === shuffledCards.value.length) {
     endTime.value = new Date()
@@ -340,9 +324,7 @@ router.beforeEach((to, from, next) => {
 /* Transição de entrada e saída */
 .fade-in-scale-enter-active,
 .fade-in-scale-leave-active {
-  transition:
-    opacity 0.5s ease,
-    transform 0.5s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .fade-in-scale-enter-from {
