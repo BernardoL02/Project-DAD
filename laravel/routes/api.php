@@ -44,7 +44,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 // ------ Score Boards ----
 
-Route::get('/scoreboard/single/{boardSize}', [ScoreBoardController::class, 'globalSinglePlayerScoreboard']);
+Route::get('/scoreboard/single', [ScoreBoardController::class, 'globalSinglePlayerScoreboard']);
 Route::get('/scoreboard/multiplayer', [ScoreBoardController::class, 'multiplayerScoreboard']);
 
 

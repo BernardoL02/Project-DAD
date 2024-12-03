@@ -11,4 +11,5 @@ class BoardController extends Controller
     {
         return response()->json(Board::all());
     }
+
 }
