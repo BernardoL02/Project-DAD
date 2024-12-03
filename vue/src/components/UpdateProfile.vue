@@ -4,11 +4,16 @@ import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
 
+const avatar = ref(null);
+const uploadButton = ref(true)
+
 const handlePhotoUpload = (event) => {
   const file = event.target.files[0]
 
   if (file) {
+    uploadButton.value = false
     updatedAvatar.value = file
+    avatar.value = URL.createObjectURL(file);
   }
 }
 
@@ -69,15 +74,21 @@ const updateUserInfo = async () => {
               </label>
 
               <!-- Custom File Input -->
-              <div class="flex items-center justify-left w-full">
+              <div v-show="uploadButton" class="flex items-center justify-left w-full">
                 <label for="avatar"
                   class="flex flex-col items-center bg-sky-500 text-white rounded-lg shadow-lg px-4 py-2 cursor-pointer hover:bg-sky-600 transition-colors">
                   <span class="text-xs">Choose a File</span>
                   <!-- Input oculto -->
                   <input type="file" id="avatar" @change="handlePhotoUpload" accept=".png, .jpeg, .jpg"
-                    class="form-control w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                    class="form-control w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hidden" />
                 </label>
               </div>
+
+              <div v-show="avatar" class="flex justify-start">
+                <img :src="avatar" alt="User Profile Picture"
+                  class=" w-28 h-28 border-4 border-white rounded-full  shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl" />
+              </div>
+
             </div>
           </div>
           <!-- Submit Button -->
