@@ -13,6 +13,7 @@ export const useGameStore = defineStore('game', () => {
   const beginDateFilter = ref([null, null])
   const boardFilter = ref('All')
 
+  const difficultyFilter = ref('Normal')
   const difficulty = ref('normal')
 
   const setDifficulty = (level) => {
@@ -23,6 +24,10 @@ export const useGameStore = defineStore('game', () => {
     boardFilter.value = boardSize
   }
 
+  const handleDifficultyChange = (difficulty) => {
+    difficultyFilter.value = difficulty
+  }
+
   const getSinglePlayerGames = async () => {
     storeError.resetMessages()
     try {
@@ -30,6 +35,11 @@ export const useGameStore = defineStore('game', () => {
 
       const updatedGames = response.data.data.map((game) => ({
         id: game.id,
+        difficulty: game.custom
+          ? JSON.parse(game.custom).difficulty === 'hard'
+            ? 'Hard'
+            : 'Normal'
+          : 'Normal',
         board_id:
           game.board_id === 1
             ? '3x4'
@@ -52,6 +62,7 @@ export const useGameStore = defineStore('game', () => {
         total_time: game.total_time + 's' || 'N/A',
         total_turns_winner: game.total_turns_winner ? game.total_turns_winner : 'N/A'
       }))
+
       games.value = updatedGames
     } catch (e) {
       storeError.setErrorMessages(
@@ -129,6 +140,13 @@ export const useGameStore = defineStore('game', () => {
       filtered = filtered.filter((game) => game.board_id === boardFilter.value)
     }
 
+    if (difficultyFilter.value && difficultyFilter.value !== 'All') {
+      filtered = filtered.filter((game) => {
+        const gameDifficulty = game.difficulty || 'Normal'
+        return gameDifficulty === difficultyFilter.value
+      })
+    }
+
     return filtered
   })
 
@@ -136,7 +154,13 @@ export const useGameStore = defineStore('game', () => {
     const endedGames = games.value.filter((game) => {
       const isBoardMatch =
         !boardFilter.value || boardFilter.value === 'All' || game.board_id === boardFilter.value
-      return game.status === 'Ended' && isBoardMatch
+
+      const isDifficultyMatch =
+        !difficultyFilter.value ||
+        difficultyFilter.value === 'All' ||
+        game.difficulty === difficultyFilter.value
+
+      return game.status === 'Ended' && isBoardMatch && isDifficultyMatch
     })
 
     const sorted = endedGames.sort((a, b) => {
@@ -222,7 +246,7 @@ export const useGameStore = defineStore('game', () => {
     return (totalTimeInSeconds / 60).toFixed(2)
   })
 
-  const createSinglePlayer = async (board_id, difficulty = null) => {
+  const createSinglePlayer = async (board_id, difficulty) => {
     try {
       const beganAt = new Date().toISOString().slice(0, 19).replace('T', ' ')
 
@@ -236,8 +260,6 @@ export const useGameStore = defineStore('game', () => {
       if (difficulty === 'hard') {
         payload.difficulty = 'hard'
       }
-
-      console.log(payload)
 
       const response = await axios.post('games', payload)
 
@@ -264,7 +286,6 @@ export const useGameStore = defineStore('game', () => {
       await axios.patch(`/games/${gameId}`, {
         status: 'I'
       })
-      console.log('Game status atualizado para "interrupted".')
     } catch (error) {
       console.error('Erro ao atualizar status do jogo:', error.response?.data || error.message)
     }
@@ -311,7 +332,9 @@ export const useGameStore = defineStore('game', () => {
     totalMultiplayerVictorys,
     totalMultiplayerLosses,
     totalTimePlayedMultiPlayer,
-    difficulty,
-    setDifficulty
+    difficultyFilter,
+    setDifficulty,
+    handleDifficultyChange,
+    difficulty
   }
 })

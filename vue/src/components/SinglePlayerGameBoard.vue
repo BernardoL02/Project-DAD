@@ -1,7 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from 'axios';
 import { useNotificationStore } from '@/stores/notification';
 import { useGameStore } from '@/stores/game';
 

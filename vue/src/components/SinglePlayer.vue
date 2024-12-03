@@ -14,9 +14,10 @@ const gameStore = useGameStore();
 const boardStore = useBoardStore();
 const transactionStore = useTransactionStore();
 
-const tableColumns = ['Id', 'Board', 'Status', 'Began At', 'Total Time', 'Turns'];
+const tableColumns = ['Id', 'Difficulty', 'Board', 'Status', 'Began At', 'Total Time', 'Turns'];
 
 const difficulty = ref('normal');
+const difficultyFilyer = ref('Normal');
 
 const toggleDifficulty = () => {
     difficulty.value = difficulty.value === 'normal' ? 'hard' : 'normal';
@@ -61,6 +62,12 @@ const startGame = async (size, cost, board_id) => {
 const onBoardClick = (size) => {
     gameStore.handleBoardSizeChange(size);
 };
+
+const onDifficultyClick = () => {
+    difficultyFilyer.value = difficultyFilyer.value === 'Normal' ? 'Hard' : 'Normal';
+    gameStore.handleDifficultyChange(difficultyFilyer.value);
+};
+
 
 </script>
 
@@ -175,12 +182,26 @@ const onBoardClick = (size) => {
                         </p>
                     </div>
 
-                    <div class="flex justify-center pt-2">
+                    <div class="grid grid-cols-1 place-items-center items-center justify-center pt-2 space-y-2">
+                        <div class="flex items-center space-x-2 flex-row justify-center mb-5 mt-2">
+                            <div class="relative w-32 h-8 bg-gray-200 rounded-full flex items-center cursor-pointer p-1 shadow-inner transition-all duration-300"
+                                @click="onDifficultyClick">
+                                <div class="absolute h-full text-sm w-1/2 px-8 bg-gradient-to-r from-sky-500 to-sky-600 text-white font-semibold flex items-center justify-center rounded-full transition-all duration-300 ease-in-out"
+                                    :style="{ left: difficultyFilyer === 'Normal' ? '0%' : '50%' }">
+                                    {{ difficultyFilyer === 'Normal' ? 'Normal' : 'Hard' }}
+                                </div>
+                                <div class="flex w-full text-xs font-semibold text-gray-700 justify-between px-2">
+                                    <span :class="{ 'invisible': difficultyFilyer === 'Normal' }">Normal</span>
+                                    <span :class="{ 'invisible': difficultyFilyer === 'Hard' }">Hard</span>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="flex flex-row gap-8">
                             <button v-for="board in boardStore.boards" :key="board.id"
                                 @click="onBoardClick(board.board_cols + 'x' + board.board_rows)" :class="{
-                                    'bg-sky-600 text-white': board.board_cols + 'x' + board.board_rows == gameStore.boardFilter,
-                                    'bg-sky-500 hover:bg-sky-600 text-white': board.board_cols + 'x' + board.board_rows != gameStore.boardFilter
+                                    'bg-sky-500 text-white': board.board_cols + 'x' + board.board_rows == gameStore.boardFilter,
+                                    'bg-gray-200 hover:bg-gray-300 text-gray-700': board.board_cols + 'x' + board.board_rows != gameStore.boardFilter
                                 }" class="px-4 py-1 rounded-md border transition-all duration-300">
                                 {{ board.board_cols + 'x' + board.board_rows }}
                             </button>
