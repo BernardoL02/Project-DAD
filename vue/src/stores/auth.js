@@ -85,7 +85,11 @@ export const useAuthStore = defineStore('auth', () => {
     error.value = null
 
     try {
-      const response = await axios.put('/users/me', user)
+      const response = await axios.post('/users/me', user, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
 
       user.value = response.data.data
 

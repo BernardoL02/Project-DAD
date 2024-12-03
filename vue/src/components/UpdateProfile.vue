@@ -18,15 +18,18 @@ const updatedNickname = ref(authStore.nickname)
 const updatedAvatar = ref(null)
 
 const updateUserInfo = async () => {
-  const updatedData = {
-    name: updatedName.value,
-    email: updatedEmail.value,
-    nickname: updatedNickname.value,
-    photo_filename: updatedAvatar.value ? updatedAvatar.value.name : authStore.photo_filename
+  const updatedData = new FormData();
+
+  updatedData.append('name', updatedName.value);
+  updatedData.append('email', updatedEmail.value);
+  updatedData.append('nickname', updatedNickname.value);
+
+  if (updatedAvatar.value) {
+    updatedData.append('photo_filename', updatedAvatar.value);
   }
 
-  await authStore.updateUserInfo(updatedData)
-  await authStore.fetchProfile()
+  await authStore.updateUserInfo(updatedData);
+  await authStore.fetchProfile();
 }
 </script>
 
@@ -41,36 +44,22 @@ const updateUserInfo = async () => {
             <!-- Name Input -->
             <div>
               <label for="name" class="block text-sm font-medium text-gray-600 mb-2">Name</label>
-              <input
-                id="name"
-                v-model="updatedName"
-                type="text"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
-              />
+              <input id="name" v-model="updatedName" type="text"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" />
             </div>
 
             <!-- Email Input -->
             <div>
               <label for="email" class="block text-sm font-medium text-gray-600 mb-2">Email</label>
-              <input
-                id="email"
-                v-model="updatedEmail"
-                type="email"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
-              />
+              <input id="email" v-model="updatedEmail" type="email"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" />
             </div>
 
             <!-- Nickname Input -->
             <div>
-              <label for="nickname" class="block text-sm font-medium text-gray-600 mb-2"
-                >Nickname</label
-              >
-              <input
-                id="nickname"
-                v-model="updatedNickname"
-                type="text"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
-              />
+              <label for="nickname" class="block text-sm font-medium text-gray-600 mb-2">Nickname</label>
+              <input id="nickname" v-model="updatedNickname" type="text"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" />
             </div>
 
             <!-- Avatar Upload -->
@@ -81,30 +70,20 @@ const updateUserInfo = async () => {
 
               <!-- Custom File Input -->
               <div class="flex items-center justify-left w-full">
-                <label
-                  for="avatar"
-                  class="flex flex-col items-center bg-sky-500 text-white rounded-lg shadow-lg px-4 py-2 cursor-pointer hover:bg-sky-600 transition-colors"
-                >
+                <label for="avatar"
+                  class="flex flex-col items-center bg-sky-500 text-white rounded-lg shadow-lg px-4 py-2 cursor-pointer hover:bg-sky-600 transition-colors">
                   <span class="text-xs">Choose a File</span>
                   <!-- Input oculto -->
-                  <input
-                    type="file"
-                    id="avatar"
-                    @change="handlePhotoUpload"
-                    accept=".png, .jpeg, .jpg"
-                    class="form-control w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
+                  <input type="file" id="avatar" @change="handlePhotoUpload" accept=".png, .jpeg, .jpg"
+                    class="form-control w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500" />
                 </label>
               </div>
             </div>
           </div>
           <!-- Submit Button -->
           <div class="pt-10">
-            <button
-              type="submit"
-              :disabled="authStore.loading"
-              class="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition focus:ring-4 focus:ring-gray-400 focus:outline-none"
-            >
+            <button type="submit" :disabled="authStore.loading"
+              class="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition focus:ring-4 focus:ring-gray-400 focus:outline-none">
               Update Profile
             </button>
           </div>
