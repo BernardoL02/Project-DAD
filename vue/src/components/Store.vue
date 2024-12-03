@@ -76,11 +76,11 @@ onMounted(async () => {
 
 
 <template>
-  <div class="max-w-3xl mx-auto py-8">
+  <div class="max-w-3xl mx-auto py-8 space-y-6">
     <h1 class="text-3xl font-bold text-center mb-8">Store</h1>
 
     <!-- Display User's Brain Coins -->
-    <div class="bg-sky-100 p-4 rounded shadow-md flex justify-between items-center mb-6">
+    <div class="bg-sky-100 p-6 rounded-xl shadow-lg flex justify-between items-center">
       <div>
         <p class="text-lg font-semibold">Hello, {{ authStore.nickname }}</p>
         <div class="flex items-center">

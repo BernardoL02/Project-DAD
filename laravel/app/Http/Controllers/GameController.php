@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use App\Http\Resources\GameResource;
 use App\Http\Requests\StoreGameRequest;
 use App\Http\Resources\MultiPlayerGameResource;
-use Illuminate\Support\Facades\Log;
 
 class GameController extends Controller
 {
@@ -35,10 +34,6 @@ class GameController extends Controller
         }
 
         $gameData['custom'] = json_encode($customData);
-
-        Log::debug('Request All Data:', $request->all());
-        Log::debug('Custom Data Before Save:', $customData);
-        Log::debug('Final Game Data Before Save:', $gameData);
 
         $game = Game::create($gameData);
 
