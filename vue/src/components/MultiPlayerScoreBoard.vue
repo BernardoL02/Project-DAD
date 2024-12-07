@@ -3,7 +3,7 @@ import { computed, onMounted } from 'vue'
 import { usescoreBoardStore } from '@/stores/scoreBoard'
 import PaginatedTable from '@/components/StandardTablePaginated.vue'
 
-const columns = ['Rank', 'Player', 'Victories', 'Losses']
+const columns = ['Rank', 'Player', 'Victories', 'Losses', 'Win/Loss Ratio']
 const scoreBoardStore = usescoreBoardStore()
 
 const scoreboards = computed(() => scoreBoardStore.scoreboards)

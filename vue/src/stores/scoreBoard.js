@@ -4,8 +4,8 @@ import axios from 'axios'
 import avatarNoneAssetURL from '@/assets/avatar-none.png'
 
 export const usescoreBoardStore = defineStore('scoreBoard', () => {
-  const boardSize = ref('3x4') // Default board size is '3x4'
-  const scoreboards = ref([]) // Data for the scoreboard
+  const boardSize = ref('3x4')
+  const scoreboards = ref([])
   const loading = ref(false)
   const allScoreboards = ref({})
   const topPlayer1 = ref(null)
@@ -44,7 +44,7 @@ export const usescoreBoardStore = defineStore('scoreBoard', () => {
     loading.value = true // Start loading
     try {
       const response = await axios.get(`/users/${nickname}`)
-      const user = response.data?.data // Safely access nested data
+      const user = response.data?.data
 
       if (user && user.photo_filename) {
         // Check if user and photo_filename exist
@@ -71,7 +71,11 @@ export const usescoreBoardStore = defineStore('scoreBoard', () => {
         Rank: index + 1,
         Player: player.nickname,
         Victories: player.victories,
-        Losses: player.losses
+        Losses: player.losses,
+        WinRatio:
+          player.losses === 0
+            ? player.victories + '.0'
+            : (player.victories / player.losses).toFixed(2)
       }))
     } catch (error) {
       console.error('Error fetching multiplayer scoreboard:', error)
