@@ -37,7 +37,7 @@
 
             <RouterLink :to="{ name: 'single-player' }" :class="[
               'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-              route.path === '/singlePlayer'
+              route.path === '/singleplayer'
                 ? 'text-indigo-500 font-semibold'
                 : 'text-gray-900 hover:text-sky-600'
             ]" active-class="text-blue-600 font-semibold">
@@ -54,7 +54,7 @@
             </RouterLink>
             <RouterLink :to="{ name: 'store' }" :class="[
               'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-              route.path === '/Store'
+              route.path === '/store'
                 ? 'text-indigo-500 font-semibold'
                 : 'text-gray-900 hover:text-sky-600'
             ]" active-class="text-blue-600 font-semibold">
@@ -63,9 +63,12 @@
 
             <!-- Dropdown Score Board -->
             <div class="relative group pt-[6px]">
-              <label for=""
-                class="text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
-                active-class="text-blue-600 font-semibold">
+              <label for="" :class="[
+                'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                route.path === '/scoreBoard/singlePlayer' || route.path === '/scoreBoard/multiPlayer'
+                  ? 'text-indigo-500 font-semibold'
+                  : 'text-gray-900 hover:text-sky-600'
+              ]" active-class="text-blue-600 font-semibold">
                 Score Board
               </label>
               <!-- Dropdown Menu -->
