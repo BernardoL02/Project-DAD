@@ -190,6 +190,9 @@ export const useGameStore = defineStore('game', () => {
         const gameDate = new Date(game.began_at)
         const start = new Date(startDate)
         const end = new Date(endDate)
+
+        end.setHours(23, 59, 59, 999)
+
         return gameDate >= start && gameDate <= end
       })
     }

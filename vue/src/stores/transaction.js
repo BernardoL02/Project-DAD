@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useErrorStore } from '@/stores/error'
@@ -9,6 +9,21 @@ export const useTransactionStore = defineStore('transaction', () => {
   const transactions = ref([])
   const loading = ref(false)
   const error = ref(null)
+  const dateRange = ref([null, null])
+
+  const formatDate = (date) => {
+    if (!date) return ''
+    const options = { year: 'numeric', month: 'short', day: 'numeric' }
+    return new Date(date).toLocaleDateString('en-US', options)
+  }
+
+  const formattedDateRange = computed(() => {
+    const [start, end] = dateRange.value
+    if (start && end) {
+      return `${formatDate(start)} - ${formatDate(end)}`
+    }
+    return 'Select Date Range'
+  })
 
   const createTransactionsGames = async (gameId, cost) => {
     try {
@@ -93,6 +108,10 @@ export const useTransactionStore = defineStore('transaction', () => {
       }))
 
       transactions.value = formattedTransactions
+
+      // Não definir o `dateRange` automaticamente
+      // Se quiser apenas manter vazio:
+      dateRange.value = [null, null]
     } catch (error) {
       storeError.setErrorMessages(
         error.response?.data?.message || 'An error occurred while fetching transactions.',
@@ -102,12 +121,42 @@ export const useTransactionStore = defineStore('transaction', () => {
     }
   }
 
+  const handleDateChange = (newRange) => {
+    dateRange.value = newRange.map((date) =>
+      date ? new Date(date).toISOString().split('T')[0] : null
+    )
+  }
+
+  const filteredTransactions = computed(() => {
+    if (!dateRange.value[0] && !dateRange.value[1]) {
+      return transactions.value
+    }
+
+    const [start, end] = dateRange.value.map((date) =>
+      date ? new Date(date).setHours(0, 0, 0, 0) : null
+    )
+
+    return transactions.value.filter((transaction) => {
+      const transactionDate = new Date(transaction.date).setHours(0, 0, 0, 0)
+      return (!start || transactionDate >= start) && (!end || transactionDate <= end)
+    })
+  })
+
+  const resetFilters = () => {
+    dateRange.value = [null, null]
+  }
+
   return {
     transactions,
     loading,
     error,
+    dateRange,
+    formattedDateRange,
     createTransactionsGames,
     createTransactionForBrainCoins,
-    getTransactions
+    getTransactions,
+    handleDateChange,
+    filteredTransactions,
+    resetFilters
   }
 })
