@@ -6,7 +6,7 @@ import { useGameStore } from '@/stores/game'
 import { useBoardStore } from '@/stores/board'
 import { useTransactionStore } from '@/stores/transaction'
 
-import PaginatedTable from '@/components/StandardTablePaginated.vue'
+import PaginatedTable from '@/components/ui/table/StandardTablePaginated.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()

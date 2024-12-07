@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue';
 import { useGameStore } from '@/stores/game';
-import PaginatedTable from '@/components/StandardTablePaginated.vue';
+import PaginatedTable from '@/components/ui/table/StandardTablePaginated.vue';
 import DropdownButton from '@/components/ui/DropdownButton.vue';
 import DatePicker from 'vue-datepicker-next';
 

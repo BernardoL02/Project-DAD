@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref, computed } from 'vue';
 import { useTransactionStore } from '@/stores/transaction';
-import PaginatedTable from '@/components/StandardTablePaginated.vue';
+import PaginatedTable from '@/components/ui/table/StandardTablePaginated.vue';
 import DatePicker from 'vue-datepicker-next';
 import 'vue-datepicker-next/index.css';
 
@@ -37,7 +37,7 @@ const filteredTransactions = computed(() => {
   );
 
   const filtered = transactionStore.transactions.filter((transaction) => {
-    const transactionDate = new Date(transaction.date).setHours(0, 0, 0, 0); 
+    const transactionDate = new Date(transaction.date).setHours(0, 0, 0, 0);
     return (
       (!start || transactionDate >= start) &&
       (!end || transactionDate <= end)
@@ -88,15 +88,9 @@ onMounted(async () => {
 
       <div class="flex justify-center items-center mb-6">
         <div class="w-80 mx-auto">
-          <DatePicker
-            v-model="dateRange"
-            range
-            format="YYYY-MM-DD"
-            value-format="YYYY-MM-DD"
+          <DatePicker v-model="dateRange" range format="YYYY-MM-DD" value-format="YYYY-MM-DD"
             class="w-full border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500"
-            :placeholder="formattedDateRange"
-            @change="handleDateChange"
-          />
+            :placeholder="formattedDateRange" @change="handleDateChange" />
         </div>
       </div>
 
