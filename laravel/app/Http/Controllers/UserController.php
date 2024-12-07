@@ -28,6 +28,7 @@ class UserController extends Controller
         $user = User::create($validated);
         $user->brain_coins_balance = 0;
         $user->type = 'P';
+        $user->save();
 
         return new UserResource($user);
     }

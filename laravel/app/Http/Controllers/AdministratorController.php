@@ -1,0 +1,75 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\RegistrationRequest;
+use App\Http\Resources\AdminResource;
+use App\Models\Game;
+use App\Models\User;
+
+class AdministratorController extends Controller
+{
+    public function index()
+    {
+        $users = User::all();
+        return response()->json($users);
+    }
+
+    public function store(RegistrationRequest $request)
+    {
+        $validated = $request->validated();
+
+        $admin = User::create($validated);
+        $admin->brain_coins_balance = 0;
+        $admin->type = 'A';
+        $admin->save();
+
+        return new AdminResource($admin);
+    }
+
+    public function blockUser(String $nickname)
+    {
+        $user = User::where('nickname',$nickname)->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'User not found.'], 404);
+        }
+
+        $user->blocked = true;
+        $user->save();
+
+        return response()->json(['message' => 'User has been blocked.']);
+    }
+
+    public function unblockUser(String $nickname)
+        {
+            $user = User::where('nickname',$nickname)->first();
+
+            if (!$user) {
+                return response()->json(['message' => 'User not found.'], 404);
+            }
+
+            $user->blocked = false;
+            $user->save();
+
+            return response()->json(['message' => 'User has been unblocked.']);
+        }
+
+        public function destroy(String $nickname)
+        {
+             $user = User::where('nickname',$nickname)->first();
+
+            if (!$user) {
+                return response()->json(['message' => 'Cannot delete this account.'], 403);
+            }
+
+            if ($user->isAdmin()) {
+                return response()->json(['message' => 'Administrators cannot delete their own accounts.'], 403);
+            }
+
+            $user->delete();
+
+            return response()->json(['message' => 'Account deleted successfully.']);
+        }
+
+}

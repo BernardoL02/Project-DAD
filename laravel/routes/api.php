@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdministratorController;
 use App\Models\Game;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/users/me', [UserController::class, 'update']);
     Route::patch('/users/me', [UserController::class, 'updatePassword']);
     Route::delete('/users/me', [UserController::class, 'destroy']);
+
+    //------Administrator -----
+
+    Route::get('/admin/users', [AdministratorController::class, 'index']);
+    Route::post('/admin/register', [AdministratorController::class, 'store']);
+    Route::post('/admin/block/{nickname}', [AdministratorController::class, 'blockUser']);
+    Route::post('/admin/unblock/{nickname}', [AdministratorController::class, 'unblockUser']);
+    Route::delete('/admin/delete/{nickname}', [AdministratorController::class, 'destroy']);
+
 
     // ----- Games -----
     Route::get('/games', [GameController::class, 'index']);
