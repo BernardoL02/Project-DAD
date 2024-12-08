@@ -39,12 +39,17 @@ const onBoardClick = (size) => {
 
         <div class="flex justify-center pt-2">
           <div class="flex flex-row gap-8">
-            <button v-for="board in boardStore.boards" :key="board.id"
-              @click="onBoardClick(board.board_cols + 'x' + board.board_rows)" :class="{
+            <button
+              v-for="board in boardStore.boards"
+              :key="board.id"
+              @click="onBoardClick(board.board_cols + 'x' + board.board_rows)"
+              :class="{
                 'bg-sky-600 text-white': board.board_cols + 'x' + board.board_rows == boardSize,
                 'bg-sky-500 hover:bg-sky-600 text-white':
                   board.board_cols + 'x' + board.board_rows != boardSize
-              }" class="px-4 py-1 rounded-md border transition-all duration-100">
+              }"
+              class="px-4 py-1 rounded-md border transition-all duration-100"
+            >
               {{ board.board_cols + 'x' + board.board_rows }}
             </button>
           </div>
@@ -57,9 +62,17 @@ const onBoardClick = (size) => {
       <div v-if="loading" class="text-center text-gray-400">Loading...</div>
       <div v-else>
         <!-- Paginated Table com os dados filtrados -->
-        <PaginatedTable :columns="columns" :data="filteredScoreboards" :pagination="false" />
+        <PaginatedTable
+          :columns="columns"
+          :data="filteredScoreboards"
+          :pagination="false"
+          :showActions="false"
+        />
         <!-- Exibe mensagem caso não haja pontuações -->
-        <div v-if="!loading && filteredScoreboards.length === 0" class="text-center text-gray-400 mt-4">
+        <div
+          v-if="!loading && filteredScoreboards.length === 0"
+          class="text-center text-gray-400 mt-4"
+        >
           No scores available
         </div>
       </div>
