@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game;
+use App\Models\Board;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Http\Resources\GameResource;
 use App\Http\Requests\StoreGameRequest;
@@ -126,8 +128,16 @@ class GameController extends Controller
         return MultiPlayerGameResource::collection($multiPlayerGames);
     }
 
+
     public function updateGameStatus(UpdateGameRequest $request, Game $game)
     {
+        $gameData = $request->validate([
+            'status' => 'required|string|in:E,I',
+            'ended_at' => 'nullable|date|after_or_equal:began_at',
+            'total_time' => 'nullable|numeric|min:0',
+            'total_turns_winner' => 'nullable|integer|min:0',
+        ]);
+
         $customData = json_decode($game->custom, true) ?? [];
 
         if ($request->has('custom')) {
@@ -138,7 +148,45 @@ class GameController extends Controller
         $validated = $request->validated();
         $validated['custom'] = json_encode($customData);
 
-        $game->update($validated);
+        if ($game->type === 'S' && $gameData['status'] === 'E') {
+            $user = $request->user();
+
+            $bestGame = Game::where('created_user_id', $user->id)
+                ->where('status', 'E')
+                ->where('type', 'S')
+                ->where('board_id', $game->board_id)
+                ->orderBy('total_time')
+                ->first();
+
+            if ($bestGame && isset($gameData['total_time']) && $gameData['total_time'] < $bestGame->total_time) {
+
+                $board = Board::find($game->board_id);
+                $boardSize = $board ? "{$board->board_cols}x{$board->board_rows}" : "unknown size";
+
+                $transactionData = [
+                    'type' => 'B',
+                    'user_id' => $user->id,
+                    'brain_coins' => 5,
+                    'game_id' => null,
+                    'transaction_datetime' => now(),
+                    'custom' => json_encode([
+                        'notificationRead' => 1,
+                        'msg' => "You received 5 brain coins for beating your previous record on a $boardSize board.",
+                    ]),
+                ];
+
+                $transaction = Transaction::create($transactionData);
+
+                $user->brain_coins_balance += 5;
+                $user->save();
+            }
+        }
+
+        $game->update($gameData);
+
+        if (isset($transaction)) {
+            $transaction->update(['game_id' => $game->id]);
+        }
 
         return new GameResource($game);
     }

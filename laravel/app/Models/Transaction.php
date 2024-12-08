@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Transaction extends Model
 {
     use HasFactory;
-    
+
     public $timestamps = false;
 
     protected $fillable = [
@@ -19,6 +19,7 @@ class Transaction extends Model
     protected $casts = [
         'custom' => 'array',
     ];
+
 
     // Relacionamentos
     public function user()

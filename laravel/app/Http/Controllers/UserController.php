@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
+use Illuminate\Support\Facades\Log;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UpdateUserRequest;
+use App\Htpp\Request\ProfileUserResource;
 use Illuminate\Validation\Rules\Password;
 use App\Http\Requests\RegistrationRequest;
+use App\Http\Resources\TransactionResource;
 use App\Http\Requests\UpdatePasswordRequest;
-use App\Htpp\Request\ProfileUserResource;
 use App\Http\Resources\ProfileUserResource as ResourcesProfileUserResource;
 
 class UserController extends Controller
@@ -28,6 +31,24 @@ class UserController extends Controller
         $user = User::create($validated);
         $user->brain_coins_balance = 0;
         $user->type = 'P';
+
+        if ($request->hasFile('photo_filename')) {
+            $path = $request->file('photo_filename')->store('photos', 'public');
+            $user->photo_filename = basename($path);
+        }
+
+        $transaction = Transaction::create([
+            'type' => 'B',
+            'transaction_datetime' => now(),
+            'user_id' => $user->id,
+            'brain_coins' => 10,
+            'custom' => json_encode([
+                'notificationRead' => 1,
+                'msg' => 'Welcome! You\'ve received 10 Brain Coins as a sign-up reward.'
+            ]),
+        ]);
+
+        $user->brain_coins_balance += 10;
         $user->save();
 
         return new UserResource($user);
@@ -120,5 +141,21 @@ class UserController extends Controller
 
         return new ResourcesProfileUserResource($user);
      }
+
+    public function getNotifications(Request $request)
+    {
+        $user = $request->user();
+
+        $transactions = Transaction::where('user_id', $user->id)
+            ->whereNotNull('custom')->orderBy('transaction_datetime', 'desc')
+            ->get();
+
+        $filteredTransactions = $transactions->filter(function ($transaction) {
+            $customData = json_decode($transaction->custom, true);
+            return isset($customData['notificationRead']) && $customData['notificationRead'] == 1;
+        });
+
+        return TransactionResource::collection($filteredTransactions);
+    }
 }
 

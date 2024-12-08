@@ -2,9 +2,11 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useErrorStore } from '@/stores/error'
+import { useBoardStore } from '@/stores/board'
 
 export const useTransactionStore = defineStore('transaction', () => {
   const storeError = useErrorStore()
+  const boardStore = useBoardStore()
 
   const transactions = ref([])
   const loading = ref(false)
@@ -25,18 +27,29 @@ export const useTransactionStore = defineStore('transaction', () => {
     return 'Select Date Range'
   })
 
-  const createTransactionsGames = async (gameId, cost) => {
+  const createTransactionsGames = async (gameId, cost, board_id, gameType) => {
     try {
       const datetime = new Date().toISOString().slice(0, 19).replace('T', ' ')
+
+      let msg = null
+      if (gameType === 'Single-Player' || gameType === 'Multi-Player') {
+        const board = boardStore.boards.find((b) => b.id === board_id)
+        const boardName = `${board.board_cols}x${board.board_rows}`
+
+        msg =
+          gameType === 'Single-Player'
+            ? `You spent ${cost} brain coin to play on ${boardName} in a single-player game.`
+            : `You spent ${cost} brain coin to play on ${boardName} in a multi-player game.`
+      }
 
       const response = await axios.post('/transactions', {
         type: 'I',
         game_id: gameId,
         brain_coins: -cost,
-        transaction_datetime: datetime
+        transaction_datetime: datetime,
+        msg: msg
       })
 
-      console.log('Transaction created for game successfully:', response.data)
       return response.data
     } catch (error) {
       storeError.setErrorMessages(

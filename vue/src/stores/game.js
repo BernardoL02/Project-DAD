@@ -461,7 +461,7 @@ export const useGameStore = defineStore('game', () => {
 
   const startGame = (size, gameId) => {
     currentGameId.value = gameId
-    console.log(size)
+
     boardFilter.value = size
 
     generateCards()

@@ -9,7 +9,7 @@ REMOVAL
 G2. BRAIN COINS AND TRANSACTIONS
 
 [] - Bonus de 1 coin quando acaba o jogo
-
+[] - Filtros nas transactions
 
 G4. MULTIPLAYER GAMES
 

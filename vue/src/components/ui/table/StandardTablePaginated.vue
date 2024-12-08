@@ -53,20 +53,32 @@ watch(
 <template>
   <div class="overflow-x-auto shadow-md rounded-lg">
     <!-- Tabela -->
-    <table class="min-w-full text-sm text-left text-gray-600 border-collapse border border-gray-300">
+    <table
+      class="min-w-full text-sm text-left text-gray-600 border-collapse border border-gray-300"
+    >
       <thead class="bg-gray-200">
         <tr>
-          <th v-for="(column, index) in columns" :key="'header-' + index"
-            class="border border-gray-300 px-4 py-2 text-left">
+          <th
+            v-for="(column, index) in columns"
+            :key="'header-' + index"
+            class="border border-gray-300 px-4 py-2 text-left"
+          >
             {{ column }}
           </th>
         </tr>
       </thead>
 
       <tbody>
-        <tr v-for="(row, rowIndex) in paginatedData" :key="'row-' + rowIndex" class="odd:bg-white even:bg-gray-100">
-          <td v-for="(value, colIndex) in row" :key="'cell-' + rowIndex + '-' + colIndex"
-            class="border border-gray-300 px-4 py-2">
+        <tr
+          v-for="(row, rowIndex) in paginatedData"
+          :key="'row-' + rowIndex"
+          class="odd:bg-white even:bg-gray-100"
+        >
+          <td
+            v-for="(value, colIndex) in row"
+            :key="'cell-' + rowIndex + '-' + colIndex"
+            class="border border-gray-300 px-4 py-2"
+          >
             {{ value }}
           </td>
         </tr>
@@ -76,13 +88,19 @@ watch(
     <!-- Controles de Paginação -->
     <div v-if="isPaginated" class="flex items-center justify-between m-4">
       <div>
-        <button @click="previousPage" :disabled="currentPage === 1 || totalPages === 0"
-          class="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400">
+        <button
+          @click="previousPage"
+          :disabled="currentPage === 1 || totalPages === 0"
+          class="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
+        >
           Previous
         </button>
 
-        <button @click="nextPage" :disabled="currentPage === totalPages || totalPages === 0"
-          class="ml-2 px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400">
+        <button
+          @click="nextPage"
+          :disabled="currentPage === totalPages || totalPages === 0"
+          class="ml-2 px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
+        >
           Next
         </button>
       </div>

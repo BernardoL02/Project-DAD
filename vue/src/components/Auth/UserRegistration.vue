@@ -11,12 +11,18 @@ const name = ref('')
 const password = ref('')
 const nickname = ref('')
 const responseData = ref('')
-const avatarFile = ref(null)
+const updatedAvatar = ref(null)
 
-const handleAvatarUpload = (event) => {
+const avatar = ref(null)
+const uploadButton = ref(true)
+
+const handlePhotoUpload = (event) => {
   const file = event.target.files[0]
+
   if (file) {
-    avatarFile.value = file
+    uploadButton.value = false
+    updatedAvatar.value = file
+    avatar.value = URL.createObjectURL(file)
   }
 }
 
@@ -27,8 +33,8 @@ const submitRegister = async () => {
   formData.append('nickname', nickname.value)
   formData.append('password', password.value)
 
-  if (avatarFile.value) {
-    formData.append('photo_filename', avatarFile.value.name)
+  if (updatedAvatar.value) {
+    formData.append('photo_filename', updatedAvatar.value)
   }
 
   const newUser = await authStore.register(formData)
@@ -101,14 +107,29 @@ const submitRegister = async () => {
             <label for="avatar" class="block text-sm font-medium text-gray-600 mb-2"> Photo </label>
 
             <!-- Custom File Input -->
-            <div class="flex items-center justify-left w-full">
+            <div v-show="uploadButton" class="flex items-center justify-left w-full">
               <label
                 for="avatar"
                 class="flex flex-col items-center bg-sky-500 text-white rounded-lg shadow-lg px-4 py-2 cursor-pointer hover:bg-sky-600 transition-colors"
               >
                 <span class="text-xs">Choose a File</span>
-                <input type="file" id="avatar" @change="handleAvatarUpload" class="hidden" />
+                <!-- Input oculto -->
+                <input
+                  type="file"
+                  id="avatar"
+                  @change="handlePhotoUpload"
+                  accept=".png, .jpeg, .jpg"
+                  class="form-control w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hidden"
+                />
               </label>
+            </div>
+
+            <div v-show="avatar" class="flex justify-start">
+              <img
+                :src="avatar"
+                alt="User Profile Picture"
+                class="w-28 h-28 border-4 border-white rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl"
+              />
             </div>
           </div>
 

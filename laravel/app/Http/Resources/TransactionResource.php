@@ -14,6 +14,8 @@ class TransactionResource extends JsonResource
      */
     public function toArray($request)
     {
+        $custom = json_decode($this->custom, true);
+
         return [
             'id' => $this->id,
             'type' => $this->type,
@@ -28,6 +30,8 @@ class TransactionResource extends JsonResource
                 'name' => $this->user->name,
                 'email' => $this->user->email,
             ],
+            'notification_read' => isset($custom['notificationRead']) && $custom['notificationRead'] == 1 ? 1 : 0,
+            'msg' => isset($custom['msg']) ? $custom['msg'] : null,
         ];
     }
 }
