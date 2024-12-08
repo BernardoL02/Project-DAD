@@ -21,7 +21,8 @@ export const useAdminStore = defineStore('admin', () => {
         Name: user.name,
         Email: user.email,
         NickName: user.nickname,
-        Type: user.type == 'A' ? 'Administrator' : 'Player'
+        Type: user.type == 'A' ? 'Administrator' : 'Player',
+        Blocked: user.blocked
       }))
     } catch (err) {
       error.value = 'Failed to load user profiles. Please try again.'
@@ -39,7 +40,7 @@ export const useAdminStore = defineStore('admin', () => {
 
   const blockUser = async (nickname) => {
     try {
-      await axios.post(`/admin/users/block`, nickname)
+      await axios.post(`admin/block/` + nickname)
       await getUsers()
     } catch (err) {
       console.error('Error blocking user:', err)
@@ -48,7 +49,7 @@ export const useAdminStore = defineStore('admin', () => {
 
   const unblockUser = async (nickname) => {
     try {
-      await axios.post(`/admin/users/unblock`, nickname)
+      await axios.post(`admin/unblock/` + nickname)
       await getUsers()
     } catch (err) {
       console.error('Error unblocking user:', err)
@@ -57,7 +58,8 @@ export const useAdminStore = defineStore('admin', () => {
 
   const deleteUser = async (nickname) => {
     try {
-      await axios.delete(`admin/delete`, nickname)
+      console.log(nickname)
+      await axios.delete(`admin/delete/` + nickname)
       await getUsers()
     } catch (err) {
       console.error('Error deleting user:', err)

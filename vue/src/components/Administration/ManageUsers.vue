@@ -1,33 +1,51 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAdminStore } from '@/stores/admin'
+import { useAuthStore } from '@/stores/auth'
 import PaginatedTable from '@/components/ui/table/StandardActionsTable.vue'
+import ConfirmationModal from '@/components/ui/ConfirmationModal.vue'
 
 const columns = ['Id', 'Name', 'Email', 'NickName', 'Type']
-
-// Admin store
 const adminStore = useAdminStore()
+const authStore = useAuthStore()
 const loading = ref(false)
+const showModal = ref(false)
+const modalTitle = ref('')
+const modalMessage = ref('')
+const actionType = ref('')
+const targetNickname = ref('')
 
-// Methods for user actions
-const blockUser = async (nickname) => {
-  if (confirm(`Are you sure you want to block ${nickname}?`)) {
-    loading.value = true
-    await adminStore.blockUser(nickname)
-    loading.value = false
-  }
+const openModal = (type, nickname) => {
+  actionType.value = type
+  targetNickname.value = nickname
+  modalTitle.value =
+    type === 'block' ? `Block User` : type === 'unblock' ? `Unblock User` : `Delete User`
+  modalMessage.value =
+    type === 'delete'
+      ? `Are you sure you want to delete ${nickname}? This action cannot be undone.`
+      : `Are you sure you want to ${type} ${nickname}?`
+  showModal.value = true
+}
+const handleCancel = () => {
+  showModal.value = false
 }
 
-const deleteUser = async (nickname) => {
-  if (confirm(`Are you sure you want to delete ${nickname}? This action cannot be undone.`)) {
-    loading.value = false
-  }
+const handleConfirm = async () => {
   loading.value = true
-  await adminStore.deleteUser(nickname)
+  if (actionType.value === 'block') {
+    await adminStore.blockUser(targetNickname.value)
+  } else if (actionType.value === 'unblock') {
+    await adminStore.unblockUser(targetNickname.value)
+  } else if (actionType.value === 'delete') {
+    await adminStore.deleteUser(targetNickname.value)
+  }
+  loading.value = false
+  showModal.value = false
 }
 
 onMounted(async () => {
   loading.value = true
+  authStore.fetchProfile()
   await adminStore.getUsers()
   loading.value = false
 })
@@ -40,69 +58,74 @@ onMounted(async () => {
     <div>
       <div v-if="loading" class="text-center text-gray-400">Loading...</div>
 
-      <!-- Paginated Table -->
       <div v-else>
         <PaginatedTable
           :columns="columns"
           :data="adminStore.users"
-          :hidden-columns="[]"
+          :hidden-columns="['Blocked']"
           :pagination="true"
         >
-          <!-- Action Slot -->
           <template #actions="{ row }">
             <div class="flex space-x-2">
-              <button @click="blockUser(row.NickName)">
-                <!-- Icon -->
+              <button v-if="!row.Blocked" @click="openModal('block', row.NickName)">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  x="0px"
-                  y="0px"
-                  width="25"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  fill="#000000"
                   height="25"
-                  viewBox="0 0 48 48"
+                  width="25"
+                  version="1.1"
+                  id="Layer_1"
+                  viewBox="0 0 330 330"
+                  xml:space="preserve"
                 >
-                  <linearGradient
-                    id="GCWVriy4rQhfclYQVzRmda_hRIvjOSQ8I0i_gr1"
-                    x1="9.812"
-                    x2="38.361"
-                    y1="9.812"
-                    y2="38.361"
-                    gradientUnits="userSpaceOnUse"
-                  >
-                    <stop offset="0" stop-color="#f44f5a"></stop>
-                    <stop offset=".443" stop-color="#ee3d4a"></stop>
-                    <stop offset="1" stop-color="#e52030"></stop>
-                  </linearGradient>
-                  <path
-                    fill="url(#GCWVriy4rQhfclYQVzRmda_hRIvjOSQ8I0i_gr1)"
-                    d="M24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,12.955,35.045,4,24,4z M24,38	c-7.732,0-14-6.268-14-14s6.268-14,14-14s14,6.268,14,14S31.732,38,24,38z"
-                  ></path>
-                  <linearGradient
-                    id="GCWVriy4rQhfclYQVzRmdb_hRIvjOSQ8I0i_gr2"
-                    x1="6.821"
-                    x2="41.08"
-                    y1="6.321"
-                    y2="40.58"
-                    gradientTransform="translate(-.146 .354)"
-                    gradientUnits="userSpaceOnUse"
-                  >
-                    <stop offset="0" stop-color="#f44f5a"></stop>
-                    <stop offset=".443" stop-color="#ee3d4a"></stop>
-                    <stop offset="1" stop-color="#e52030"></stop>
-                  </linearGradient>
-                  <polygon
-                    fill="url(#GCWVriy4rQhfclYQVzRmdb_hRIvjOSQ8I0i_gr2)"
-                    points="13.371,38.871 9.129,34.629 34.629,9.129 38.871,13.371"
-                  ></polygon>
+                  <g id="XMLID_516_">
+                    <path
+                      id="XMLID_517_"
+                      d="M15,160c8.284,0,15-6.716,15-15V85c0-30.327,24.673-55,55-55c30.327,0,55,24.673,55,55v45h-25   c-8.284,0-15,6.716-15,15v170c0,8.284,6.716,15,15,15h200c8.284,0,15-6.716,15-15V145c0-8.284-6.716-15-15-15H170V85   c0-46.869-38.131-85-85-85S0,38.131,0,85v60C0,153.284,6.716,160,15,160z"
+                    />
+                  </g>
                 </svg>
-                <!-- Text -->
-                {{ isBlocked ? 'Unblock' : 'Block' }}
+              </button>
+
+              <button v-else @click="openModal('unblock', row.NickName)">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  fill="#000000"
+                  height="25"
+                  width="25"
+                  version="1.1"
+                  id="Layer_1"
+                  viewBox="0 0 330 330"
+                  xml:space="preserve"
+                >
+                  <g id="XMLID_518_">
+                    <path
+                      id="XMLID_519_"
+                      d="M65,330h200c8.284,0,15-6.716,15-15V145c0-8.284-6.716-15-15-15h-15V85c0-46.869-38.131-85-85-85   S80.001,38.131,80.001,85v45H65c-8.284,0-15,6.716-15,15v170C50,323.284,56.716,330,65,330z M110.001,85   c0-30.327,24.673-55,54.999-55c30.327,0,55,24.673,55,55v45H110.001V85z"
+                    />
+                  </g>
+                </svg>
               </button>
               <button
-                class="text-white bg-red-500 px-3 py-1 rounded hover:bg-red-600"
-                @click="deleteUser(row.NickName)"
+                v-if="authStore.nickname != row.NickName"
+                @click="openModal('delete', row.NickName)"
               >
-                Delete
+                <svg
+                  class="hover:stroke-2 w-6 h-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="1"
+                  stroke="red"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                  />
+                </svg>
               </button>
             </div>
           </template>
@@ -116,6 +139,13 @@ onMounted(async () => {
           No users available.
         </div>
       </div>
+      <ConfirmationModal
+        :visible="showModal"
+        :title="modalTitle"
+        :message="modalMessage"
+        @confirm="handleConfirm"
+        @cancel="handleCancel"
+      />
     </div>
   </div>
 </template>

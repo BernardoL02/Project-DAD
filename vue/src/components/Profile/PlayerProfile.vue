@@ -1,35 +1,33 @@
 <script setup>
-import { useRouter } from 'vue-router';
-import { ref } from 'vue';
-import { useAuthStore } from '@/stores/auth';
+import { useRouter } from 'vue-router'
+import { ref } from 'vue'
+import { useAuthStore } from '@/stores/auth'
 
-const authStore = useAuthStore();
-const router = useRouter();
+const authStore = useAuthStore()
+const router = useRouter()
 
-let deleteAccountVisible = ref(false);
-const password = ref('');
+let deleteAccountVisible = ref(false)
+const password = ref('')
 
 const showDeleteAccount = () => {
   password.value = ''
-  deleteAccountVisible.value = true;
-};
+  deleteAccountVisible.value = true
+}
 
 const hideDeleteAccount = () => {
-  deleteAccountVisible.value = false;
-};
+  deleteAccountVisible.value = false
+}
 
 const confirmDelete = async () => {
-
-  const accountDeleted = await authStore.deleteAccount(password.value);
+  const accountDeleted = await authStore.deleteAccount(password.value)
 
   if (accountDeleted) {
-    router.push('/login');
+    router.push('/login')
   }
 
-  hideDeleteAccount();
+  hideDeleteAccount()
   password.value = ''
-};
-
+}
 </script>
 
 <template>
@@ -47,8 +45,11 @@ const confirmDelete = async () => {
     <div v-else-if="authStore.user" class="space-y-6">
       <div class="text-center pb-6">
         <!-- Profile Picture -->
-        <img :src="authStore.userPhotoUrl" alt="User Profile Picture"
-          class="w-60 h-60 rounded-full mx-auto border-4 border-white shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl" />
+        <img
+          :src="authStore.userPhotoUrl"
+          alt="User Profile Picture"
+          class="w-60 h-60 rounded-full mx-auto border-4 border-white shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl"
+        />
       </div>
 
       <!-- User Name and Nickname -->
@@ -58,14 +59,12 @@ const confirmDelete = async () => {
 
       <!-- Brain Coins and Type -->
       <div class="bg-white p-6 rounded-xl shadow-lg space-y-6">
-
         <!-- User Name Section -->
         <div class="bg-white p-5 rounded-lg shadow-md flex items-center justify-between">
-
           <!-- User Name -->
           <div class="flex flex-col items-center ml-4">
             <p class="text-lg font-bold text-black">Nickname</p>
-            <p class="text-base  font-semibold text-gray-500">
+            <p class="text-base font-semibold text-gray-500">
               {{ authStore.nickname }}
             </p>
           </div>
@@ -78,19 +77,24 @@ const confirmDelete = async () => {
             </p>
           </div>
 
-
           <!-- Account Type -->
           <div class="flex flex-col items-center mr-4">
             <p class="text-lg font-bold text-black">Account Type</p>
-            <p class="text-base  font-semibold text-gray-500">
-              {{ authStore.type === 'P' ? 'Player' :
-                (authStore.type === 'A' ? 'Administrator' : 'Unknown') }}
+            <p class="text-base font-semibold text-gray-500">
+              {{
+                authStore.type === 'P'
+                  ? 'Player'
+                  : authStore.type === 'A'
+                    ? 'Administrator'
+                    : 'Unknown'
+              }}
             </p>
           </div>
         </div>
-
-        <!-- Brain Coins Section -->
-        <div class="bg-sky-100 p-5 rounded-lg shadow-lg flex items-center justify-between">
+        <div
+          v-if="authStore.type != 'A'"
+          class="bg-sky-100 p-5 rounded-lg shadow-lg flex items-center justify-between"
+        >
           <div class="flex items-center space-x-3">
             <img src="/coin.png" alt="Coin Icon" class="w-10 h-10 object-contain" />
             <div>
@@ -99,46 +103,62 @@ const confirmDelete = async () => {
               </p>
             </div>
           </div>
-          <RouterLink :to="{ name: 'store' }"
-            class="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 transition duration-300 mr-2">
+          <RouterLink
+            :to="{ name: 'store' }"
+            class="bg-sky-500 text-white px-4 py-2 rounded-lg hover:bg-sky-600 transition duration-300 mr-2"
+          >
             Buy Coins
           </RouterLink>
         </div>
       </div>
 
-      <div class="flex justify-end mr-4">
-        <button @click="showDeleteAccount"
+      <div v-if="authStore.type != 'A'" class="flex justify-end mr-4">
+        <button
+          @click="showDeleteAccount"
           class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300 mr-2"
-          type="button">
+          type="button"
+        >
           Delete Account
         </button>
       </div>
     </div>
   </div>
 
-  <div v-if="deleteAccountVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div
+    v-if="deleteAccountVisible"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
     <div class="bg-white rounded-lg shadow-lg p-6 w-auto">
-      <h2 class="text-lg font-bold text-gray-800 mb-1">Do you really want to delete your account? </h2>
-      <p class="text-gray-600 mb-6">
-        This action is irreversible.
-      </p>
+      <h2 class="text-lg font-bold text-gray-800 mb-1">
+        Do you really want to delete your account?
+      </h2>
+      <p class="text-gray-600 mb-6">This action is irreversible.</p>
       <div class="flex justify-center space-x-4 flex-col">
-
         <div>
-          <input type="password" id="register-password" v-model="password" placeholder="Password"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" />
+          <input
+            type="password"
+            id="register-password"
+            v-model="password"
+            placeholder="Password"
+            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+          />
         </div>
 
         <div class="flex flex-row justify-center mt-8 space-x-5">
-          <button @click="hideDeleteAccount" class="bg-gray-500 text-white px-4 py-1 rounded hover:bg-gray-600">
+          <button
+            @click="hideDeleteAccount"
+            class="bg-gray-500 text-white px-4 py-1 rounded hover:bg-gray-600"
+          >
             Cancel
           </button>
-          <button @click="confirmDelete" class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600">
+          <button
+            @click="confirmDelete"
+            class="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600"
+          >
             Delete
           </button>
         </div>
       </div>
     </div>
   </div>
-
 </template>
