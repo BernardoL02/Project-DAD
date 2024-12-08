@@ -15,6 +15,8 @@ export const useAuthStore = defineStore('auth', () => {
   const user = ref(null)
   const token = ref(sessionStorage.getItem('token') || '')
 
+  const notifications = ref([])
+
   const name = computed(() => {
     return user.value ? user.value.name : ''
   })
@@ -76,6 +78,63 @@ export const useAuthStore = defineStore('auth', () => {
       console.error('Error fetching profile:', err)
     } finally {
       loading.value = false
+    }
+  }
+
+  const getNotifications = async () => {
+    storeError.resetMessages()
+    try {
+      const response = await axios.get('/users/me/notifications')
+
+      const formattedTransactions = response.data.data.map((transaction) => ({
+        id: transaction.id,
+        date: transaction.transaction_datetime,
+        type:
+          transaction.type === 'P'
+            ? 'Purchase'
+            : transaction.type === 'I'
+              ? 'Game'
+              : transaction.type === 'B'
+                ? 'Bonus'
+                : 'Other',
+        value: transaction.euros || '-',
+        paymentMethod: transaction.payment_type || '-',
+        reference: transaction.payment_reference || '-',
+        coins: transaction.brain_coins,
+        msg: transaction.msg
+      }))
+
+      notifications.value = formattedTransactions
+    } catch (error) {
+      storeError.setErrorMessages(
+        error.response?.data?.message || 'An error occurred while fetching transactions.',
+        'Transaction Fetch Error'
+      )
+      throw error
+    }
+  }
+
+  const deleteNotification = async (notificationId) => {
+    try {
+      const response = await axios.patch('/transactions/' + notificationId, {
+        notificationRead: '0'
+      })
+
+      if (response.data?.message === 'Notification deleted successfully.') {
+        storeError.setSuccessMessages(response.data.message, {}, 200, null)
+        return true
+      }
+
+      return false
+    } catch (error) {
+      storeError.setErrorMessages(
+        error.response?.data?.message,
+        error.response?.data?.errors,
+        error.response?.data?.status,
+        'Notification Error'
+      )
+      console.error('Error deleting a notificaiton:', error.response?.data || error.message)
+      throw error
     }
   }
 
@@ -332,6 +391,9 @@ export const useAuthStore = defineStore('auth', () => {
     restoreToken,
     register,
     fetchProfile,
+    getNotifications,
+    deleteNotification,
+    notifications,
     updateUserInfo,
     updatePassword,
     deleteAccount

@@ -52,7 +52,7 @@ export const useErrorStore = defineStore('error', () => {
       default:
         if (typeof fieldMessages === 'object' && Object.keys(fieldMessages).length > 0) {
           toastMessage = Object.entries(fieldMessages)
-            .map(([, messages]) => messages.join(', '))
+            .map(([, messages]) => (Array.isArray(messages) ? messages.join(', ') : messages))
             .join('\n')
         } else {
           toastMessage = mainMessage || 'Data is invalid. Check the fields!'

@@ -86,41 +86,121 @@
             </div>
           </div>
 
-          <!-- Login/Register ou Perfil do Usuário -->
-          <div class="relative group flex flex-row items-center">
-            <div v-if="authStore.user">
-              <!-- Foto do Perfil -->
-              <img :src="authStore.userPhotoUrl" alt="User Profile Picture"
-                class="mr-2 ml-16 w-12 h-12 rounded-full border-1 border-black shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl cursor-pointer" />
-              <!-- Dropdown Menu -->
-              <div
-                class="absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col right-[-60px] top-[2px] mt-14 bg-white shadow-lg rounded-lg w-40 z-10 transition-all duration-300 ease-in-out">
-                <RouterLink to="/playerProfile"
-                  class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm rounded-t-lg">
-                  View Profile
-                </RouterLink>
-                <RouterLink to="/updateProfile" class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm">
-                  Update Profile
-                </RouterLink>
-                <RouterLink to="/changePassword" class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm">
-                  Change Password
-                </RouterLink>
-                <button @click="handleLogout"
-                  class="block text-left w-full text-gray-900 hover:bg-red-100 hover:text-red-600 px-4 py-2 text-sm rounded-b-lg">
-                  Log Out
-                </button>
+          <div v-if="authStore.user" class="flex flex-row space-x-7">
+            <div>
+              <div class="relative group flex items-center space-x-6 pt-3">
+                <!-- Foto do Perfil -->
+                <div class="relative inline-block">
+                  <!-- Bell Icon -->
+                  <img src="/bell.png" alt="Notification Icon"
+                    class="w-[22px]  h-[22px] object-contain cursor-pointer" />
+
+                  <!-- Notification Badge -->
+                  <span
+                    class="absolute top-[-8px] right-[-5px] inline-flex items-center justify-center w-[18px] h-[18px] text-xs font-semibold text-white bg-sky-500 rounded-full">
+                    {{ authStore.notifications.length }}
+                  </span>
+                </div>
+
+                <!-- Dropdown Menu -->
+                <div
+                  class="absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col right-[-150px] top-[57px] bg-white shadow-lg rounded-lg w-40 z-10 transition-all duration-300 ease-in-out">
+                  <div class="absolute right-0 mt-2 w-[270px] bg-white border border-gray-200 rounded-lg shadow-lg"
+                    v-if="authStore.notifications.length > 0">
+                    <!-- Adicionar overflow-y-auto e max-h -->
+                    <ul class="space-y-1 p-1 overflow-y-auto max-h-72">
+                      <div v-for="notification in authStore.notifications" :key="notification.id"
+                        class="flex flex-col p-2 rounded-md  hover:bg-sky-100 mr-1">
+                        <!-- Alinhamento do Tipo e Data -->
+                        <div class="flex justify-between items-center w-full mb-1">
+                          <span class="text-xs font-semibold">{{ notification.type }}</span>
+
+                          <div class="flex flex-row space-x-1">
+                            <span class="text-xs">{{ new Date(notification.date).toLocaleDateString() }}</span>
+
+                            <img src="/delete.png" alt="Delete Notification Icon"
+                              @click="handleDeleteNotificaitonClick(notification.id)"
+                              class="w-[16px] h-[16px] object-contain cursor-pointer pt-1 mt-[-3px] transition-transform transform hover:scale-110 hover:shadow-lg" />
+
+                          </div>
+                        </div>
+
+                        <div>
+                          <!-- If the transaction type is 'B' (Bonus) -->
+                          <div v-if="notification.type === 'Bonus'" class="flex flex-col text-gray-500">
+                            <span v-if="notification.msg" class="text-xs"> {{
+                              notification.msg
+                              }}</span>
+                            <span v-else class="text-xs">You receive a bonus of {{ notification.coins }} coins</span>
+                          </div>
+
+                          <!-- If the transaction type is 'P' (Purchase) -->
+                          <div v-else-if="notification.type === 'Purchase'" class="flex flex-col text-gray-500">
+                            <span class="text-xs">{{ notification.value }}€ </span>
+                            <span class="text-xs">{{ notification.paymentMethod + " - " + notification.reference
+                              }}</span>
+                          </div>
+
+
+                          <div v-else-if="notification.type === 'Game'" class="flex flex-col text-gray-500">
+
+                            <span v-if="notification.msg" class="text-xs">
+                              {{ notification.msg }}
+                            </span>
+                            <span v-else-if="notification.coins < 0" class="text-xs">
+                              You spent {{ Math.abs(notification.coins) }} brain coin
+                            </span>
+                            <span v-else class="text-xs">
+                              You earned {{ notification.coins }} brain coin
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </ul>
+                  </div>
+                </div>
               </div>
             </div>
-            <div v-else>
-              <RouterLink to="/login" :class="[
-                'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                route.path === '/login' || route.path === '/registration'
-                  ? 'text-indigo-500 font-semibold'
-                  : 'text-gray-900 hover:text-sky-600'
-              ]" active-class="text-blue-600 font-semibold">
-                Login/Register
-              </RouterLink>
+
+            <!-- Login/Register ou Perfil do Usuário -->
+            <div class="relative group flex flex-row items-center">
+              <div>
+                <div class="relative group flex items-center space-x-6">
+                  <!-- Foto do Perfil -->
+                  <img :src="authStore.userPhotoUrl" alt="User Profile Picture"
+                    class="w-12 h-12 border-2 border-white rounded-full  shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl" />
+
+                  <!-- Dropdown Menu -->
+                  <div
+                    class=" border border-gray-200 rounded-lg shadow-lg absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col right-[-65px] top-[64px] bg-white w-40 z-10 transition-all duration-300 ease-in-out">
+                    <RouterLink to="/playerProfile"
+                      class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm rounded-t-lg">
+                      View Profile
+                    </RouterLink>
+                    <RouterLink to="/updateProfile" class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm">
+                      Update Profile
+                    </RouterLink>
+                    <RouterLink to="/changePassword" class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm">
+                      Change Password
+                    </RouterLink>
+                    <button @click="handleLogout"
+                      class="block text-left w-full text-gray-900 hover:bg-red-100 hover:text-red-600 px-4 py-2 text-sm rounded-b-lg">
+                      Log Out
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
+          <div v-else>
+            <RouterLink to="/login" :class="[
+              'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+              route.path === '/login' || route.path === '/registration'
+                ? 'text-indigo-500 font-semibold'
+                : 'text-gray-900 hover:text-sky-600'
+            ]" active-class="text-blue-600 font-semibold">
+              Login/Register
+            </RouterLink>
           </div>
         </nav>
       </div>
@@ -172,6 +252,13 @@ const handleLogout = async () => {
   const success = await authStore.logout()
   if (success) {
     router.push('/login')
+  }
+}
+
+const handleDeleteNotificaitonClick = async (notificationId) => {
+  const success = await authStore.deleteNotification(notificationId)
+  if (success) {
+    authStore.getNotifications();
   }
 }
 

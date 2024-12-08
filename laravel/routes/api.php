@@ -23,6 +23,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/users/me', [UserController::class, 'update']);
     Route::patch('/users/me', [UserController::class, 'updatePassword']);
     Route::delete('/users/me', [UserController::class, 'destroy']);
+    Route::get('/users/me/notifications', [UserController::class , 'getNotifications']);
 
     //------Administrator -----
 
@@ -31,7 +32,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/admin/block/{nickname}', [AdministratorController::class, 'blockUser']);
     Route::post('/admin/unblock/{nickname}', [AdministratorController::class, 'unblockUser']);
     Route::delete('/admin/delete/{nickname}', [AdministratorController::class, 'destroy']);
-
 
     // ----- Games -----
     Route::get('/games', [GameController::class, 'index']);
@@ -49,6 +49,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // ----- Transactions -----
     Route::get('/transactions', [TransactionController::class, 'index']);
     Route::post('/transactions', [TransactionController::class, 'store']);
+    Route::patch('/transactions/{transaction}', [TransactionController::class, 'changeTransactionStatus']);
 
 });
 

@@ -44,6 +44,11 @@ class TransactionController extends Controller
             ], 400);
         }
 
+        $customData = ['notificationRead' => 1];
+        if (!empty($request['msg'])) {
+            $customData['msg'] = $request['msg'];
+        }
+
         $transaction = Transaction::create([
             'type' => $validated['type'],
             'transaction_datetime' => now(),
@@ -53,6 +58,7 @@ class TransactionController extends Controller
             'payment_type' => $validated['payment_type'] ?? null,
             'payment_reference' => $validated['payment_reference'] ?? null,
             'brain_coins' => $validated['brain_coins'],
+            'custom' => json_encode($customData),
         ]);
 
         $user->brain_coins_balance += $validated['brain_coins'];
@@ -75,5 +81,23 @@ class TransactionController extends Controller
         ]);
 
         return $response->status() === 201;
+    }
+
+    public function changeTransactionStatus(Request $request, Transaction $transaction)
+    {
+        $request->validate([
+            'notificationRead' => 'required|boolean',
+        ]);
+
+        $custom = json_decode($transaction->custom, true);
+
+        $custom['notificationRead'] = $request->input('notificationRead') ? 1 : 0;
+
+        $transaction->custom = json_encode($custom);
+        $transaction->save();
+
+        return response()->json([
+            'message' => 'Notification deleted successfully.',
+        ]);
     }
 }

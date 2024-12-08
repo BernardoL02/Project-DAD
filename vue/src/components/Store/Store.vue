@@ -61,6 +61,7 @@ const processPurchase = async () => {
 
     notificationStore.setSuccessMessage(`Successfully purchased ${selectedItem.value.name}.`);
     await authStore.fetchProfile();
+    await authStore.getNotifications();
     closeModal();
   } catch (error) {
     console.error('Error processing payment:', error.response?.data || error.message);

@@ -112,11 +112,12 @@ router.beforeEach(async (to, from, next) => {
   if (handlingFirstRoute) {
     handlingFirstRoute = false
 
+    await authStore.restoreToken()
+
     if (authStore.user) {
       await authStore.fetchProfile()
+      await authStore.getNotifications()
     }
-
-    await authStore.restoreToken()
   }
 
   if ((to.name == 'singlePlayerHistory' || to.name == 'Profile') && !authStore.user) {

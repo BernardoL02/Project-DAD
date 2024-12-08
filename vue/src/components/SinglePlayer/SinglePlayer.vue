@@ -53,7 +53,8 @@ const startGame = async (size, cost, board_id) => {
       )
 
       if (0 < cost) {
-        await transactionStore.createTransactionsGames(gameId, cost)
+        await transactionStore.createTransactionsGames(gameId, cost, board_id, "Single-Player")
+        await authStore.getNotifications();
       }
     } catch (error) {
       console.error('Error starting the game:', error.message || error.response?.data)
