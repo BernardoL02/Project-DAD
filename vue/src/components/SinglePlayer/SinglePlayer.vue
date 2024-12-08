@@ -230,7 +230,7 @@ const onDifficultyClick = () => {
         </div>
       </div>
 
-      <PaginatedTable :columns="tableColumns" :data="filteredGamesForTable" :pagination="false" :showActions="false" />
+      <PaginatedTable :columns="tableColumns" :data="filteredGamesForTable" :pagination="false" />
 
 
       <div class="bg-white p-6 rounded-lg shadow-md mt-6">

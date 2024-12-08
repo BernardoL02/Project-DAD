@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 
-const { data, columns, pagination, showActions } = defineProps({
+const { data, columns, pagination } = defineProps({
   data: {
     type: Array,
     required: true
@@ -14,11 +14,6 @@ const { data, columns, pagination, showActions } = defineProps({
     type: Boolean,
     required: false,
     default: true
-  },
-  showActions: {
-    type: Boolean,
-    required: false,
-    default: true // Exibe as ações por padrão
   }
 })
 
@@ -55,34 +50,24 @@ watch(
 )
 </script>
 
-
 <template>
   <div class="overflow-x-auto shadow-md rounded-lg">
     <!-- Tabela -->
     <table class="min-w-full text-sm text-left text-gray-600 border-collapse border border-gray-300">
       <thead class="bg-gray-200">
         <tr>
-          <!-- Cabeçalhos das colunas -->
           <th v-for="(column, index) in columns" :key="'header-' + index"
-            class="border border-gray-300 px-4 py-2 text-left equal-width">
+            class="border border-gray-300 px-4 py-2 text-left">
             {{ column }}
           </th>
-          <th v-if="showActions" class="border border-gray-300 px-4 py-2 text-left equal-width">Actions</th>
         </tr>
       </thead>
 
       <tbody>
-        <!-- Percorre as linhas da tabela -->
         <tr v-for="(row, rowIndex) in paginatedData" :key="'row-' + rowIndex" class="odd:bg-white even:bg-gray-100">
-          <!-- Renderiza os valores das colunas especificadas -->
-          <td v-for="(column, colIndex) in columns" :key="'cell-' + rowIndex + '-' + colIndex"
-            class="border border-gray-300 px-4 py-2 equal-width">
-            {{ row[column] }}
-          </td>
-          <!-- Coluna de Ações -->
-          <td v-if="$slots.actions" class="border border-gray-300 px-4 py-2 equal-width action-cell">
-            <!-- Slot para ações -->
-            <slot name="actions" :row="row" />
+          <td v-for="(value, colIndex) in row" :key="'cell-' + rowIndex + '-' + colIndex"
+            class="border border-gray-300 px-4 py-2">
+            {{ value }}
           </td>
         </tr>
       </tbody>
@@ -108,30 +93,3 @@ watch(
     </div>
   </div>
 </template>
-
-<style scoped>
-/* Garante que todas as colunas tenham a mesma largura */
-.equal-width {
-  width: calc(100% / var(--column-count));
-}
-
-/* Define a altura mínima para todas as células */
-td,
-th {
-  min-height: 50px;
-  /* Ajuste conforme necessário */
-  vertical-align: middle;
-  /* Centraliza o conteúdo verticalmente */
-}
-
-/* Caso precise de uma altura fixa */
-.action-cell {
-  height: 50px;
-  /* Altere para fixar a altura, se necessário */
-}
-
-/* Define uma variável CSS para contar o número de colunas */
-:root {
-  --column-count: 8;
-}
-</style>
