@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Http\Resources\GameResource;
 use App\Http\Requests\StoreGameRequest;
 use App\Http\Resources\MultiPlayerGameResource;
+use Illuminate\Support\Facades\Log;
+use App\Http\Requests\UpdateGameRequest;
 
 class GameController extends Controller
 {
@@ -28,12 +30,17 @@ class GameController extends Controller
         $gameData = $request->validated();
         $gameData['created_user_id'] = $request->user()->id;
 
-        $customData = [];
-        if ($request->has('difficulty')) {
-            $customData['difficulty'] = $request->input('difficulty');
-        }
+        if ($request->has('custom')) {
+            $customData = json_decode($request->input('custom'), true);
 
-        $gameData['custom'] = json_encode($customData);
+            $customData = array_filter($customData, function ($value) {
+                return $value !== null;
+            });
+
+            if (!empty($customData)) {
+                $gameData['custom'] = json_encode($customData);
+            }
+        }
 
         $game = Game::create($gameData);
 
@@ -119,19 +126,21 @@ class GameController extends Controller
         return MultiPlayerGameResource::collection($multiPlayerGames);
     }
 
-    public function updateGameStatus(Request $request, Game $game)
+    public function updateGameStatus(UpdateGameRequest $request, Game $game)
     {
-        $validated = $request->validate([
-            'status' => 'required|string|in:E,I',
-            'ended_at' => 'nullable|date|after_or_equal:began_at',
-            'total_time' => 'nullable|numeric|min:0',
-            'total_turns_winner' => 'nullable|integer|min:0',
-        ]);
+        $customData = json_decode($game->custom, true) ?? [];
+
+        if ($request->has('custom')) {
+            $newCustomData = json_decode($request->input('custom'), true);
+            $customData = array_merge($customData, $newCustomData);
+        }
+
+        $validated = $request->validated();
+        $validated['custom'] = json_encode($customData);
 
         $game->update($validated);
 
         return new GameResource($game);
     }
-
 
 }

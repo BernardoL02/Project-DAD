@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useGameStore } from '@/stores/game'
@@ -15,6 +15,18 @@ const boardStore = useBoardStore()
 const transactionStore = useTransactionStore()
 
 const tableColumns = ['Id', 'Difficulty', 'Board', 'Status', 'Began At', 'Total Time', 'Turns']
+
+const filteredGamesForTable = computed(() => {
+  return gameStore.bestResultsSinglePlayer.map((game) => ({
+    Id: game.id,
+    Difficulty: game.difficulty,
+    Board: game.board_id,
+    Status: game.status,
+    'Began At': game.began_at,
+    'Total Time': game.total_time,
+    Turns: game.total_turns_winner
+  }));
+});
 
 const difficulty = ref('normal')
 const difficultyFilyer = ref('Normal')
@@ -36,6 +48,8 @@ onMounted(async () => {
   if (gameStore.boardFilter === 'All') {
     gameStore.boardFilter = '3x4'
   }
+
+  console.log('Best Results Single Player:', gameStore.bestResultsSinglePlayer);
 })
 
 const startGame = async (size, cost, board_id) => {
@@ -216,7 +230,8 @@ const onDifficultyClick = () => {
         </div>
       </div>
 
-      <PaginatedTable :columns="tableColumns" :data="gameStore.bestResultsSinglePlayer" :pagination="false" />
+      <PaginatedTable :columns="tableColumns" :data="filteredGamesForTable" :pagination="false" :showActions="false" />
+
 
       <div class="bg-white p-6 rounded-lg shadow-md mt-6">
         <p class="text-sm text-gray-700 font-semibold mb-1">Sorting Criteria</p>
