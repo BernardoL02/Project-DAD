@@ -15,8 +15,7 @@ export const useAdminStore = defineStore('admin', () => {
     error.value = null
 
     try {
-      const response = await axios.get(`/admin/users`)
-      // Ensure each user has a unique key for rendering in tables
+      const response = await axios.get(`admin/users`)
       users.value = response.data.map((user) => ({
         Id: user.id,
         Name: user.name,
@@ -58,7 +57,7 @@ export const useAdminStore = defineStore('admin', () => {
 
   const deleteUser = async (nickname) => {
     try {
-      await axios.delete(`/admin/users`, { data: { nickname } })
+      await axios.delete(`admin/delete`, nickname)
       await getUsers()
     } catch (err) {
       console.error('Error deleting user:', err)
@@ -119,10 +118,10 @@ export const useAdminStore = defineStore('admin', () => {
     users,
     loading,
     error,
+    register,
     getUsers,
     blockUser,
     unblockUser,
-    deleteUser,
-    register
+    deleteUser
   }
 })

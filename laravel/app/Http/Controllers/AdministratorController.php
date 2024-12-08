@@ -22,6 +22,10 @@ class AdministratorController extends Controller
         $admin = User::create($validated);
         $admin->brain_coins_balance = 0;
         $admin->type = 'A';
+        if ($request->hasFile('photo_filename')) {
+            $path = $request->file('photo_filename')->store('photos', 'public');
+            $admin->photo_filename = basename($path);
+        }
         $admin->save();
 
         return new AdminResource($admin);
