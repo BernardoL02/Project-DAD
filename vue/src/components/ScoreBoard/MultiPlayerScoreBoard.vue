@@ -31,27 +31,36 @@ onMounted(async () => {
         <div class="bg-white p-6 rounded-lg shadow-md mb-6">
           <div class="flex items-end justify-center space-x-12 mb-6">
             <div class="player-container flex flex-col items-center top-12">
-              <img v-if="scoreBoardStore.topPlayer2?.photo_filename" :src="scoreBoardStore.topPlayer2.photo_filename"
+              <img
+                v-if="scoreBoardStore.topPlayer2?.photo_filename"
+                :src="scoreBoardStore.topPlayer2.photo_filename"
                 alt="User Profile Picture"
-                class="w-20 h-20 rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl cursor-pointer" />
+                class="w-20 h-20 rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl cursor-pointer"
+              />
               <p v-if="scoreBoardStore.topPlayer2?.nickname" class="text-sm text-gray-600 mt-2">
                 {{ scoreBoardStore.topPlayer2.nickname }}
               </p>
             </div>
 
             <div class="player-container flex flex-col items-center top-4">
-              <img v-if="scoreBoardStore.topPlayer1?.photo_filename" :src="scoreBoardStore.topPlayer1.photo_filename"
+              <img
+                v-if="scoreBoardStore.topPlayer1?.photo_filename"
+                :src="scoreBoardStore.topPlayer1.photo_filename"
                 alt="User Profile Picture"
-                class="w-20 h-20 rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl cursor-pointer" />
+                class="w-20 h-20 rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl cursor-pointer"
+              />
               <p v-if="scoreBoardStore.topPlayer1?.nickname" class="text-sm text-gray-600 mt-2">
                 {{ scoreBoardStore.topPlayer1.nickname }}
               </p>
             </div>
 
             <div class="player-container flex flex-col items-center top-20">
-              <img v-if="scoreBoardStore.topPlayer3?.photo_filename" :src="scoreBoardStore.topPlayer3.photo_filename"
+              <img
+                v-if="scoreBoardStore.topPlayer3?.photo_filename"
+                :src="scoreBoardStore.topPlayer3.photo_filename"
                 alt="User Profile Picture"
-                class="w-20 h-20 rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl cursor-pointer" />
+                class="w-20 h-20 rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl cursor-pointer"
+              />
               <p v-if="scoreBoardStore.topPlayer3?.nickname" class="text-sm text-gray-600 mt-2">
                 {{ scoreBoardStore.topPlayer3.nickname }}
               </p>
@@ -69,7 +78,12 @@ onMounted(async () => {
 
       <div v-if="loading" class="text-center text-gray-400">Loading...</div>
       <div v-else>
-        <PaginatedTable :columns="columns" :data="scoreboards" :pagination="false" />
+        <PaginatedTable
+          :columns="columns"
+          :data="scoreboards"
+          :pagination="false"
+          :showActions="false"
+        />
         <div v-if="!loading && scoreboards.length === 0" class="text-center text-gray-400 mt-4">
           No scores available
         </div>
