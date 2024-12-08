@@ -30,6 +30,8 @@ export const useGameStore = defineStore('game', () => {
   const timerInterval = ref(null)
   const currentGameId = ref(null)
   const isLeaving = ref(false)
+  const initialBoard = ref([])
+  const replayActions = ref([])
 
   const availableCards = [
     'c1.png',
@@ -91,35 +93,50 @@ export const useGameStore = defineStore('game', () => {
     try {
       const response = await axios.get('games/single')
 
-      const updatedGames = response.data.data.map((game) => ({
-        id: game.id,
-        difficulty: game.custom
-          ? JSON.parse(game.custom).difficulty === 'hard'
-            ? 'Hard'
-            : 'Normal'
-          : 'Normal',
-        board_id:
-          game.board_id === 1
-            ? '3x4'
-            : game.board_id === 2
-              ? '4x4'
-              : game.board_id === 3
-                ? '6x6'
-                : 'N/A',
-        status:
-          game.status === 'PE'
-            ? 'Pending'
-            : game.status === 'PL'
-              ? 'In Progress'
-              : game.status === 'E'
-                ? 'Ended'
-                : game.status === 'I'
-                  ? 'Interrupted'
+      const updatedGames = response.data.data.map((game) => {
+        let replay = null
+        let difficulty = 'Normal'
+
+        // Processa o campo `custom` para extrair `replay` e `difficulty`
+        if (game.custom) {
+          try {
+            const customData = JSON.parse(game.custom)
+            if (customData.replay) {
+              replay = customData.replay // Extrai os dados do replay
+            }
+            difficulty = customData.difficulty === 'hard' ? 'Hard' : 'Normal'
+          } catch (error) {
+            console.error(`Erro ao processar o campo custom do jogo ID ${game.id}:`, error)
+          }
+        }
+
+        return {
+          id: game.id,
+          difficulty,
+          board_id:
+            game.board_id === 1
+              ? '3x4'
+              : game.board_id === 2
+                ? '4x4'
+                : game.board_id === 3
+                  ? '6x6'
                   : 'N/A',
-        began_at: game.began_at || 'N/A',
-        total_time: game.total_time + 's' || 'N/A',
-        total_turns_winner: game.total_turns_winner ? game.total_turns_winner : 'N/A'
-      }))
+          status:
+            game.status === 'PE'
+              ? 'Pending'
+              : game.status === 'PL'
+                ? 'In Progress'
+                : game.status === 'E'
+                  ? 'Ended'
+                  : game.status === 'I'
+                    ? 'Interrupted'
+                    : 'N/A',
+          began_at: game.began_at || 'N/A',
+          total_time: game.total_time ? game.total_time + 's' : 'N/A',
+          total_turns_winner: game.total_turns_winner || 'N/A',
+          replay // Adiciona o replay ao objeto retornado
+        }
+      })
 
       games.value = updatedGames
     } catch (e) {
@@ -243,7 +260,7 @@ export const useGameStore = defineStore('game', () => {
       return turnsA - turnsB
     })
 
-    return sorted.slice(0, 10)
+    return sorted.slice(0, 10).map(({ replay, ...rest }) => rest)
   })
 
   const bestResultsMultiplayer = computed(() => {
@@ -318,8 +335,9 @@ export const useGameStore = defineStore('game', () => {
         board_id: board_id
       }
 
-      if (difficulty === 'hard') {
-        payload.difficulty = 'hard'
+      // Adicionar "custom" apenas se a dificuldade for válida
+      if (difficulty && difficulty !== 'normal') {
+        payload.custom = JSON.stringify({ difficulty })
       }
 
       const response = await axios.post('games', payload)
@@ -328,13 +346,33 @@ export const useGameStore = defineStore('game', () => {
       return createdGame.id
     } catch (e) {
       console.error('Error creating single-player game:', e)
-      storeError.setErrorMessages(
-        e.response?.data?.message || 'An error occurred while creating the game',
-        e.response?.data?.errors || [],
-        e.response?.status || 500
-      )
       throw new Error('Failed to create single-player game')
     }
+  }
+
+  const saveInitialBoard = () => {
+    const boardSize = boardFilter.value.split('x').map(Number)
+    let boardMatrix = []
+    let index = 0
+
+    for (let i = 0; i < boardSize[0]; i++) {
+      let row = []
+      for (let j = 0; j < boardSize[1]; j++) {
+        row.push(shuffledCards.value[index].image)
+        index++
+      }
+      boardMatrix.push(row)
+    }
+    initialBoard.value = boardMatrix
+    console.log(boardMatrix)
+  }
+
+  const registerAction = (position) => {
+    console.log(position)
+    replayActions.value.push({
+      time: elapsedTime.value, // Time of action
+      position: position // Position of card flipped
+    })
   }
 
   const sendPostOnExit = async (gameId) => {
@@ -355,20 +393,29 @@ export const useGameStore = defineStore('game', () => {
   const sendPostOnGameEnd = async (totalTime, totalTurns, gameId) => {
     try {
       if (!gameId) {
-        console.error('Game ID não está definido.')
+        console.error('Game ID is not defined.')
         return
       }
 
       const ended = new Date().toISOString().slice(0, 19).replace('T', ' ')
 
+      const replayData = {
+        replay: {
+          board: initialBoard.value, // The initial board state
+          actions: replayActions.value // The actions performed by the player
+        }
+      }
+
+      // Send updated data to the backend
       await axios.patch(`/games/${gameId}`, {
         status: 'E',
         ended_at: ended,
         total_time: totalTime,
-        total_turns_winner: totalTurns
+        total_turns_winner: totalTurns,
+        custom: JSON.stringify(replayData) // Only send replay data
       })
     } catch (error) {
-      console.error('Erro ao atualizar status do jogo:', error.response?.data || error.message)
+      console.error('Error updating game status:', error.response?.data || error.message)
     }
   }
 
@@ -380,7 +427,6 @@ export const useGameStore = defineStore('game', () => {
     return Math.min(rows * cols, availableCards.length * 2)
   })
 
-  // Gerar cartas embaralhadas
   const generateCards = () => {
     const [rows, cols] = boardFilter.value.split('x').map(Number)
     const totalCards = rows * cols
@@ -417,7 +463,10 @@ export const useGameStore = defineStore('game', () => {
     currentGameId.value = gameId
 
     boardFilter.value = size
+
     generateCards()
+    saveInitialBoard()
+
     timer.value = 0
     moves.value = 0
     matchedPairs.value = []
@@ -439,6 +488,13 @@ export const useGameStore = defineStore('game', () => {
         timer.value = Math.floor((now - startTime.value) / 1000)
       }, 1000)
     }
+
+    const position = [
+      Math.floor(index / boardFilter.value.split('x')[1]),
+      index % boardFilter.value.split('x')[1]
+    ]
+
+    registerAction(position)
 
     if (difficulty.value === 'hard') {
       if (selectedCards.value.length < 3 && !selectedCards.value.includes(index)) {

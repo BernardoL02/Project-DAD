@@ -33,7 +33,6 @@ class StoreGameRequest extends FormRequest
             'ended_at' => 'nullable|date|after_or_equal:began_at', 
             'total_time' => 'nullable|numeric|min:0', 
             'board_id' => 'required|exists:boards,id',
-            'difficulty' => 'nullable|string|in:hard',
         ];
     }    
 

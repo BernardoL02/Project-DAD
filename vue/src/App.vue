@@ -65,7 +65,8 @@
             <div class="relative group pt-[6px]">
               <label for="" :class="[
                 'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                route.path === '/scoreBoard/singlePlayer' || route.path === '/scoreBoard/multiPlayer'
+                route.path === '/scoreBoard/singlePlayer' ||
+                  route.path === '/scoreBoard/multiPlayer'
                   ? 'text-indigo-500 font-semibold'
                   : 'text-gray-900 hover:text-sky-600'
               ]" active-class="text-blue-600 font-semibold">
@@ -84,6 +85,24 @@
                 </RouterLink>
               </div>
             </div>
+
+            <RouterLink :to="{ name: 'ManageUsers' }" :class="[
+              'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+              route.path === '/ManageUsers'
+                ? 'text-indigo-500 font-semibold'
+                : 'text-gray-900 hover:text-sky-600'
+            ]" active-class="text-blue-600 font-semibold">
+              Manage Users
+            </RouterLink>
+
+            <RouterLink :to="{ name: 'RegisterAdmin' }" :class="[
+              'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+              route.path === '/RegisterAdmin'
+                ? 'text-indigo-500 font-semibold'
+                : 'text-gray-900 hover:text-sky-600'
+            ]" active-class="text-blue-600 font-semibold">
+              Register Admins
+            </RouterLink>
           </div>
 
           <div v-if="authStore.user" class="flex flex-row space-x-7">
@@ -130,7 +149,7 @@
                           <div v-if="notification.type === 'Bonus'" class="flex flex-col text-gray-500">
                             <span v-if="notification.msg" class="text-xs"> {{
                               notification.msg
-                              }}</span>
+                            }}</span>
                             <span v-else class="text-xs">You receive a bonus of {{ notification.coins }} coins</span>
                           </div>
 
@@ -223,6 +242,11 @@
 
         <RouterLink class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
           Score Board
+        </RouterLink>
+
+        <RouterLink to="/ManageUsers"
+          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
+          Manage Users
         </RouterLink>
 
         <RouterLink to="/playerProfile"

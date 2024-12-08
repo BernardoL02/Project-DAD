@@ -122,8 +122,6 @@ export const useTransactionStore = defineStore('transaction', () => {
 
       transactions.value = formattedTransactions
 
-      // Não definir o `dateRange` automaticamente
-      // Se quiser apenas manter vazio:
       dateRange.value = [null, null]
     } catch (error) {
       storeError.setErrorMessages(
