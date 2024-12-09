@@ -80,7 +80,7 @@ export const useAdminStore = defineStore('admin', () => {
 
   const blockUser = async (id) => {
     try {
-      await axios.patch('admin/block/' + id)
+      await axios.patch('admin/block/' + parseInt(id))
       await getUsers()
     } catch (err) {
       console.log('entrou')
@@ -96,7 +96,7 @@ export const useAdminStore = defineStore('admin', () => {
 
   const unblockUser = async (id) => {
     try {
-      await axios.patch('admin/unblock/' + id)
+      await axios.patch('admin/unblock/' + parseInt(id))
       await getUsers()
     } catch (err) {
       error.value = 'Failed to unblocking an user'

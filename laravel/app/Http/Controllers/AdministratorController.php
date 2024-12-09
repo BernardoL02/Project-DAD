@@ -32,10 +32,8 @@ class AdministratorController extends Controller
         return new AdminResource($admin);
     }
 
-    public function blockUser(int $id)
+    public function blockUser(User $user)
     {
-        $user = User::where('id',$id)->first();
-
         if (!$user) {
             return response()->json(['message' => 'User not found.'], 404);
         }
@@ -46,40 +44,35 @@ class AdministratorController extends Controller
         return response()->json(['message' => 'User has been blocked.']);
     }
 
-    public function unblockUser(int $id)
-        {
-            $user = User::where('id',$id)->first();
-
-            if (!$user) {
-                return response()->json(['message' => 'User not found.'], 404);
-            }
-
-            $user->blocked = false;
-            $user->save();
-
-            return response()->json(['message' => 'User has been unblocked.']);
+    public function unblockUser(User $user)
+    {
+        if (!$user) {
+            return response()->json(['message' => 'User not found.'], 404);
         }
 
-        public function destroy(int $id)
-        {
-             $user = User::where('id',$id)->first();
+        $user->blocked = false;
+        $user->save();
 
-            if (!$user) {
-                return response()->json(['message' => 'Cannot delete this account.'], 403);
-            }
+        return response()->json(['message' => 'User has been unblocked.']);
+    }
 
-            if ($user->isAdmin()) {
-                return response()->json(['message' => 'Administrators cannot delete their own accounts.'], 403);
-            }
-
-            $user->delete();
-
-            return response()->json(['message' => 'Account deleted successfully.']);
+    public function destroy(User $user)
+    {
+        if (!$user) {
+            return response()->json(['message' => 'Cannot delete this account.'], 403);
         }
 
-        public function viewTransactions(){
-            $transactions = Transaction::with('user')->orderBy('transaction_datetime', 'desc')->get();
-            return response()->json($transactions);
-
+        if ($user->isAdmin()) {
+            return response()->json(['message' => 'Administrators cannot delete their own accounts.'], 403);
         }
+
+        $user->delete();
+
+        return response()->json(['message' => 'Account deleted successfully.']);
+    }
+
+    public function viewTransactions(){
+        $transactions = Transaction::with('user')->orderBy('transaction_datetime', 'desc')->get();
+        return response()->json($transactions);
+    }
 }
