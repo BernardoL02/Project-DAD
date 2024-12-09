@@ -1,42 +1,28 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import { useAdminStore } from '@/stores/admin'
 import PaginatedTable from '@/components/ui/table/StandardTablePaginated.vue'
 import DatePicker from 'vue-datepicker-next'
-import DropdownButton from '@/components/ui/DropdownButton.vue'
 import 'vue-datepicker-next/index.css'
+import DropdownButton from '@/components/ui/DropdownButton.vue'
 
 const adminStore = useAdminStore()
 
-const typeOptions = ['All', 'Game', 'Purchase', 'Bonus']
-const paymentMethodOptions = ['All', 'MB', 'PAYPAL', 'MBWAY', 'IBAN', 'VISA']
-
-const selectedType = ref('All')
-const selectedPaymentMethod = ref('All')
-
-const handleSelect = (value, filterType) => {
-  if (filterType === 'type') {
-    selectedType.value = value
-    adminStore.filterByType(value)
-  } else if (filterType === 'paymentMethod') {
-    selectedPaymentMethod.value = value
-    adminStore.filterByPaymentMethod(value)
-  }
-}
+const statusOptions = ['All', 'Pending', 'In Progress', 'Ended', 'Interrupted']
+const gameTypeOptions = ['All', 'Single-Player', 'Multi-Player']
 
 const handleResetFilters = () => {
-  selectedType.value = 'All'
-  selectedPaymentMethod.value = 'All'
   adminStore.resetFilters()
 }
 
 onMounted(() => {
   adminStore.getTransactions()
+  adminStore.getAllGames()
 })
 </script>
 
 <template>
-  <h1 class="text-3xl font-bold text-center">All Transactions</h1>
+  <h1 class="text-3xl font-bold text-center">All Games</h1>
   <div class="max-w-7xl mx-auto mt-10">
     <div class="bg-white p-6 rounded-lg shadow-md mb-6">
       <div class="flex flex-col sm:flex-row sm:justify-between gap-5">
@@ -52,25 +38,24 @@ onMounted(() => {
             @change="adminStore.handleDateChange"
           />
         </div>
-
         <div class="w-full sm:w-auto">
-          <label for="type" class="block text-sm font-medium text-gray-700 pb-2"
-            >Transaction Type</label
-          >
+          <label for="gameStatus" class="block text-sm font-medium text-gray-700 pb-2">
+            Game Status
+          </label>
           <DropdownButton
-            :options="typeOptions"
-            v-model="selectedType"
-            @select="(value) => handleSelect(value, 'type')"
+            :options="statusOptions"
+            v-model="adminStore.gameStatusFilter"
+            @select="(value) => adminStore.filterByGameStatus(value)"
           />
         </div>
         <div class="w-full sm:w-auto">
-          <label for="paymentMethod" class="block text-sm font-medium text-gray-700 pb-2"
-            >Payment Method</label
-          >
+          <label for="gameType" class="block text-sm font-medium text-gray-700 pb-2">
+            Game Type
+          </label>
           <DropdownButton
-            :options="paymentMethodOptions"
-            v-model="selectedPaymentMethod"
-            @select="(value) => handleSelect(value, 'paymentMethod')"
+            :options="gameTypeOptions"
+            v-model="adminStore.gameTypeFilter"
+            @select="(value) => adminStore.filterByGameType(value)"
           />
         </div>
       </div>
@@ -84,10 +69,21 @@ onMounted(() => {
         </button>
       </div>
     </div>
+
+    <!-- Paginated Table Component -->
     <div class="space-y-6">
       <PaginatedTable
-        :columns="['Id', 'Name', 'Date', 'Type', 'Value', 'Payment Method', 'Reference', 'Coins']"
-        :data="adminStore.filteredTransactions"
+        :columns="[
+          'Id',
+          'Board',
+          'Created User',
+          'Winner User',
+          'Type of Game',
+          'Status',
+          'Date',
+          'Time'
+        ]"
+        :data="adminStore.filteredGames"
       />
     </div>
   </div>

@@ -29,11 +29,13 @@ class GameResource extends JsonResource
             'created_user' => new UserResource($this->whenLoaded('createdUser')),
             'winner_user' => new UserResource($this->whenLoaded('winnerUser')),
             'participants_count' => $this->participants_count,
-            'user' => [
-                'id' => $this->user->id,
-                'name' => $this->user->name,
-                'email' => $this->user->email,
-            ],
+            'user' => $this->whenLoaded('user', function () {
+                return [
+                    'id' => optional($this->user)->id,
+                    'name' => optional($this->user)->name,
+                    'email' => optional($this->user)->email,
+                ];
+            }),
             'total_turns_winner' => $this->total_turns_winner,
             'custom' => $this->custom,
         ];

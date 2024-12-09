@@ -19,6 +19,7 @@ import ChangePassword from '@/components/Profile/ChangePassword.vue'
 import ManageUsers from '@/components/Administration/ManageUsers.vue'
 import AdminTransactions from '@/components/Administration/AdminTransactions.vue'
 import MultiPlayerLobbys from '@/components/Multiplayer/MuiltiPlayerLobbys.vue'
+import AdministrateGames from '@/components/Administration/AdministrateGames.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -118,6 +119,11 @@ const router = createRouter({
       path: '/adminTransactions',
       name: 'adminTransactions',
       component: AdminTransactions
+    },
+    {
+      path: '/administrateGames',
+      name: 'administrateGames',
+      component: AdministrateGames
     }
   ]
 })
