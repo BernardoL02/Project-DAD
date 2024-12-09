@@ -85,30 +85,32 @@ const onBoardClick = (size) => {
 
     <div class="bg-white p-4 rounded-xl shadow-lg">
       <div class="relative text-center mb-6 mr-4">
-        <h2 class="text-2xl font-semibold text-center pl-5">Select Board</h2>
+        <h2 class="text-2xl font-semibold text-center pl-5">View Lobbys</h2>
       </div>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div v-for="board in boardStore.boards" :key="board.id"
-          class="p-6 border rounded-lg flex flex-col items-center justify-between bg-gray-50 shadow-md hover:shadow-lg">
-          <p class="text-lg font-bold">
-            {{ board.board_cols + 'x' + board.board_rows }}
-          </p>
-          <p class="text-sm text-gray-500 mt-2">
-            Required Coins - <span class="font-semibold">{{ board.coinsRequired }}</span>
-          </p>
-
-          <div class="mt-8">
-            <button v-if="authStore.coins >= board.coinsRequired"
-              class="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600 transition mt-8" @click="
-                startGame(`${board.board_cols}x${board.board_rows}`, board.coinsRequired, board.id)
-                ">
-              Play
-            </button>
-
-            <RouterLink v-else :to="{ name: 'store' }"
-              class="bg-yellow-400 text-white px-4 py-2 rounded hover:bg-yellow-500 transition mt-8">
-              Buy Coins
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div
+          class="p-6 border rounded-lg flex flex-col items-center justify-center bg-gray-50 shadow-md hover:shadow-lg">
+          <p class="text-lg font-bold">Choose Your Lobby</p>
+          <p class="text-sm text-gray-500 mt-2">Browse and join a lobby now!</p>
+          <div class="flex justify-center items-center mt-8 w-full">
+            <RouterLink :to="{ name: 'lobbys' }"
+              class="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-transform transform hover:scale-105">
+              View Lobbies
             </RouterLink>
+          </div>
+        </div>
+
+        <div
+          class="p-6 border rounded-lg flex flex-col items-center justify-center bg-gray-50 shadow-md hover:shadow-lg">
+          <p class="text-lg font-bold">Join a Lobby</p>
+          <p class="text-sm text-gray-500 mt-2">Enter a lobby code to join.</p>
+          <input type="text" placeholder="Enter lobby code"
+            class="w-full px-4 py-2 mt-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" />
+          <div class="flex justify-center items-center mt-4 w-full">
+            <button
+              class="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-transform transform hover:scale-105">
+              Join Lobby
+            </button>
           </div>
         </div>
       </div>
