@@ -112,23 +112,11 @@ onMounted(async () => {
           <template #actions="{ row }">
             <div class="flex space-x-2">
               <button v-if="!row.Blocked" @click="openModal('block', row.NickName)">
-                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000"
-                  height="25" width="25" version="1.1" id="Layer_1" viewBox="0 0 330 330" xml:space="preserve">
-                  <g id="XMLID_516_">
-                    <path id="XMLID_517_"
-                      d="M15,160c8.284,0,15-6.716,15-15V85c0-30.327,24.673-55,55-55c30.327,0,55,24.673,55,55v45h-25   c-8.284,0-15,6.716-15,15v170c0,8.284,6.716,15,15,15h200c8.284,0,15-6.716,15-15V145c0-8.284-6.716-15-15-15H170V85   c0-46.869-38.131-85-85-85S0,38.131,0,85v60C0,153.284,6.716,160,15,160z" />
-                  </g>
-                </svg>
+                <img src="/lock.png" alt="Lock" class="w-6 h-6 hover:opacity-80 transition-opacity duration-200" />
               </button>
 
               <button v-else @click="openModal('unblock', row.NickName)">
-                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000"
-                  height="25" width="25" version="1.1" id="Layer_1" viewBox="0 0 330 330" xml:space="preserve">
-                  <g id="XMLID_518_">
-                    <path id="XMLID_519_"
-                      d="M65,330h200c8.284,0,15-6.716,15-15V145c0-8.284-6.716-15-15-15h-15V85c0-46.869-38.131-85-85-85   S80.001,38.131,80.001,85v45H65c-8.284,0-15,6.716-15,15v170C50,323.284,56.716,330,65,330z M110.001,85   c0-30.327,24.673-55,54.999-55c30.327,0,55,24.673,55,55v45H110.001V85z" />
-                  </g>
-                </svg>
+                <img src="/unlock.png" alt="Unlock" class="w-6 h-6 hover:opacity-80 transition-opacity duration-200" />
               </button>
               <button v-if="authStore.nickname != row.NickName" @click="openModal('delete', row.NickName)">
                 <svg class="hover:stroke-2 w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -198,12 +186,10 @@ onMounted(async () => {
           <div class="mb-4">
             <label for="avatar" class="block text-sm font-medium text-gray-600 mb-2"> Photo </label>
 
-            <!-- Custom File Input -->
             <div v-show="uploadButton" class="flex items-center justify-left w-full">
               <label for="avatar"
                 class="flex flex-col items-center bg-sky-500 text-white rounded-lg shadow-lg px-4 py-2 cursor-pointer hover:bg-sky-600 transition-colors">
                 <span class="text-xs">Choose a File</span>
-                <!-- Input oculto -->
                 <input type="file" id="avatar" @change="handlePhotoUpload" accept=".png, .jpeg, .jpg"
                   class="form-control w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hidden" />
               </label>
