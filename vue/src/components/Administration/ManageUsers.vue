@@ -25,15 +25,15 @@ const avatar = ref(null)
 const updatedAvatar = ref(null)
 const uploadButton = ref(true)
 
-const openModal = (type, nickname) => {
+const openModal = (type, id) => {
   actionType.value = type
-  targetNickname.value = nickname
+  targetNickname.value = id
   modalTitle.value =
     type === 'block' ? `Block User` : type === 'unblock' ? `Unblock User` : `Delete User`
   modalMessage.value =
     type === 'delete'
-      ? `Are you sure you want to delete ${nickname}? This action cannot be undone.`
-      : `Are you sure you want to ${type} ${nickname}?`
+      ? `Are you sure you want to delete ${id}? This action cannot be undone.`
+      : `Are you sure you want to ${type} ${id}?`
   showModal.value = true
 }
 const handleCancel = () => {
@@ -100,7 +100,6 @@ onMounted(async () => {
 onUnmounted(async () => {
   adminStore.users = []
 })
-
 </script>
 
 <template>
@@ -124,7 +123,7 @@ onUnmounted(async () => {
         >
           <template #actions="{ row }">
             <div v-if="authStore.nickname !== row.NickName" class="flex space-x-2">
-              <button v-if="!row.Blocked" @click="openModal('block', row.NickName)">
+              <button v-if="!row.Blocked" @click="openModal('block', row.Id)">
                 <img
                   src="/lock.png"
                   alt="Lock"
@@ -132,14 +131,14 @@ onUnmounted(async () => {
                 />
               </button>
 
-              <button v-else @click="openModal('unblock', row.NickName)">
+              <button v-else @click="openModal('unblock', row.Id)">
                 <img
                   src="/unlock.png"
                   alt="Unlock"
                   class="w-6 h-6 hover:opacity-80 transition-opacity duration-200"
                 />
               </button>
-              <button @click="openModal('delete', row.NickName)">
+              <button @click="openModal('delete', row.Id)">
                 <svg
                   class="hover:stroke-2 w-6 h-6"
                   xmlns="http://www.w3.org/2000/svg"

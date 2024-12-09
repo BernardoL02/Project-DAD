@@ -78,9 +78,9 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
-  const blockUser = async (nickname) => {
+  const blockUser = async (id) => {
     try {
-      await axios.post(`admin/block/` + nickname)
+      await axios.patch('admin/block/' + id)
       await getUsers()
     } catch (err) {
       console.log('entrou')
@@ -94,9 +94,9 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
-  const unblockUser = async (nickname) => {
+  const unblockUser = async (id) => {
     try {
-      await axios.post(`admin/unblock/` + nickname)
+      await axios.patch('admin/unblock/' + id)
       await getUsers()
     } catch (err) {
       error.value = 'Failed to unblocking an user'
@@ -109,10 +109,9 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
 
-  const deleteUser = async (nickname) => {
+  const deleteUser = async (id) => {
     try {
-      console.log(nickname)
-      await axios.delete(`admin/delete/` + nickname)
+      await axios.delete('admin/delete/' + id)
       await getUsers()
     } catch (err) {
       if (err.response) {

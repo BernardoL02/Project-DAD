@@ -29,9 +29,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //------Administrator -----
     Route::get('/admin/users', [AdministratorController::class, 'index'])->can("viewAny", User::class);
     Route::post('/admin/register', [AdministratorController::class, 'store'])->can("create", User::class);
-    Route::post('/admin/block/{nickname}', [AdministratorController::class, 'blockUser'])->can('block', User::class);
-    Route::post('/admin/unblock/{nickname}', [AdministratorController::class, 'unblockUser'])->can('unblock', User::class);
-    Route::delete('/admin/delete/{nickname}', [AdministratorController::class, 'destroy'])->can('delete', User::class);
+    Route::patch('/admin/block/{id}', [AdministratorController::class, 'blockUser'])->can('block', User::class);
+    Route::patch('/admin/unblock/{id}', [AdministratorController::class, 'unblockUser'])->can('unblock', User::class);
+    Route::delete('/admin/delete/{id}', [AdministratorController::class, 'destroy'])->can('delete', User::class);
     Route::get('/admin/transactions', [AdministratorController::class, 'viewTransactions']);
 
     // ----- Games -----
