@@ -7,6 +7,8 @@ const loading = computed(() => scoreBoardStore.loading)
 
 onMounted(async () => {
 
+  scoreBoardStore.loading = true;
+
   await scoreBoardStore.fetchMultiPlayerScoreboard()
 
   scoreBoardStore.topPlayer1 = await scoreBoardStore.fetchProfileTopPlayers(
@@ -24,6 +26,8 @@ onMounted(async () => {
   scoreBoardStore.topPlayer5 = await scoreBoardStore.fetchProfileTopPlayers(
     scoreBoardStore.scoreboards[4].Player
   )
+
+  scoreBoardStore.loading = false;
 })
 </script>
 
@@ -51,7 +55,7 @@ onMounted(async () => {
           </div>
         </div>
 
-        <div v-if="!loading" class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div v-if="loading == false" class="bg-white p-6 rounded-lg shadow-md mb-6">
           <div class="flex items-end justify-center space-x-12 mb-6">
             <div class="player-container flex flex-col items-center top-[120px] left-8 relative group">
               <img v-if="scoreBoardStore.topPlayer4?.photo_filename" :src="scoreBoardStore.topPlayer4.photo_filename"
@@ -221,6 +225,9 @@ onMounted(async () => {
             </div>
           </div>
           <img src="/podium3.png" alt="Podium" class="mx-auto w-[500px] h-auto pb-2" />
+        </div>
+        <div v-else>
+          <div v-if="loading" class="text-center text-gray-400">Loading...</div>
         </div>
       </div>
     </div>

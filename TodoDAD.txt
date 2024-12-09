@@ -14,6 +14,7 @@ G2. BRAIN COINS AND TRANSACTIONS
 G4. MULTIPLAYER GAMES
 
 [] - Tudo
+[] - Notificações
 
 G5. GAME HISTORY AND SCORING BOARDS
 
@@ -36,6 +37,7 @@ of all games from all players on the platform
 [] - Administrators will also have access to their own profile, where they can view and perform all the
 same actions as any other user, except for the option to remove their own account
 
+[] - Mudar block e unblock para patch
 
 G7. STATISTICS
 
