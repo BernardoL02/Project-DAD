@@ -15,6 +15,7 @@ G4. MULTIPLAYER GAMES
 
 [] - Tudo
 [] - Notificações
+[] - Policy para multiplayer games (update)
 
 G5. GAME HISTORY AND SCORING BOARDS
 

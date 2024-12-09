@@ -53,7 +53,12 @@ class User extends Authenticatable
 
     public function isAdmin()
     {
-        return $this->type === 'A'; // Verifica se o tipo é 'A' para administrador
+        return $this->type === 'A';
+    }
+
+    public function isPlayer()
+    {
+        return $this->type === 'P';
     }
 
      // Relationships
