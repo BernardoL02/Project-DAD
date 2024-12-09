@@ -30,8 +30,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //------Administrator -----
     Route::get('/admin/users', [AdministratorController::class, 'index'])->can("viewAny", User::class);
     Route::post('/admin/register', [AdministratorController::class, 'store'])->can("create", User::class);
-    Route::post('/admin/block/{user}', [AdministratorController::class, 'blockUser'])->can('block', 'user');
-    Route::post('/admin/unblock/{user}', [AdministratorController::class, 'unblockUser'])->can('unblock', models: 'user');
+    Route::patch('/admin/block/{user}', [AdministratorController::class, 'blockUser'])->can('block', 'user');
+    Route::patch('/admin/unblock/{user}', [AdministratorController::class, 'unblockUser'])->can('unblock', 'user');
     Route::delete('/admin/delete/{user}', [AdministratorController::class, 'destroy'])->can('delete', 'user');
     Route::get('/admin/transactions', [AdministratorController::class, 'viewTransactions'])->can("viewAll", Transaction::class);
 

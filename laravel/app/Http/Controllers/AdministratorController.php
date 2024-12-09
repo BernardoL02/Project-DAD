@@ -32,9 +32,9 @@ class AdministratorController extends Controller
         return new AdminResource($admin);
     }
 
-    public function blockUser(String $nickname)
+    public function blockUser(int $id)
     {
-        $user = User::where('nickname',$nickname)->first();
+        $user = User::where('id',$id)->first();
 
         if (!$user) {
             return response()->json(['message' => 'User not found.'], 404);
@@ -46,9 +46,9 @@ class AdministratorController extends Controller
         return response()->json(['message' => 'User has been blocked.']);
     }
 
-    public function unblockUser(String $nickname)
+    public function unblockUser(int $id)
         {
-            $user = User::where('nickname',$nickname)->first();
+            $user = User::where('id',$id)->first();
 
             if (!$user) {
                 return response()->json(['message' => 'User not found.'], 404);
@@ -60,9 +60,9 @@ class AdministratorController extends Controller
             return response()->json(['message' => 'User has been unblocked.']);
         }
 
-        public function destroy(String $nickname)
+        public function destroy(int $id)
         {
-             $user = User::where('nickname',$nickname)->first();
+             $user = User::where('id',$id)->first();
 
             if (!$user) {
                 return response()->json(['message' => 'Cannot delete this account.'], 403);
