@@ -228,7 +228,7 @@ onMounted(async () => {
               </div>
             </div>
           </div>
-          <img src="/podium3.png" alt="Podium" class="mx-auto w-[500px] h-auto pb-2" />
+          <img src="/podium.png" alt="Podium" class="mx-auto w-[500px] h-auto pb-2" />
         </div>
         <div v-else>
           <div v-if="loading" class="text-center text-gray-400">Loading...</div>
