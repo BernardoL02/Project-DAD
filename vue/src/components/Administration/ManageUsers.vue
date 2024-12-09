@@ -14,9 +14,8 @@ const modalTitle = ref('')
 const modalMessage = ref('')
 const actionType = ref('')
 const targetNickname = ref('')
-const showRegisterModal = ref(false) // Controle do modal de registro
+const showRegisterModal = ref(false)
 
-// Estado para o formulário de registro
 const name = ref('')
 const email = ref('')
 const nickname = ref('')
