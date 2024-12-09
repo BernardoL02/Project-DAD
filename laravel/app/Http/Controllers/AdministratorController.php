@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\RegistrationRequest;
 use App\Http\Resources\AdminResource;
 use App\Models\Game;
+use App\Models\Transaction;
 use App\Models\User;
 
 class AdministratorController extends Controller
@@ -76,4 +77,9 @@ class AdministratorController extends Controller
             return response()->json(['message' => 'Account deleted successfully.']);
         }
 
+        public function viewTransactions(){
+            $transactions = Transaction::with('user')->orderBy('transaction_datetime', 'desc')->get();
+            return response()->json($transactions);
+
+        }
 }

@@ -17,7 +17,7 @@ import PlayerTransactionHistory from '@/components/Store/PlayerTransactionHistor
 import PlayerHistoryMultiPlayer from '@/components/Multiplayer/PlayerHistoryMultiPlayer.vue'
 import ChangePassword from '@/components/Profile/ChangePassword.vue'
 import ManageUsers from '@/components/Administration/ManageUsers.vue'
-import RegisterAdmin from '@/components/Administration/RegisterAdmin.vue'
+import AdminTransactions from '@/components/Administration/AdminTransactions.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -109,9 +109,9 @@ const router = createRouter({
       component: ManageUsers
     },
     {
-      path: '/RegisterAdmin',
-      name: 'RegisterAdmin',
-      component: RegisterAdmin
+      path: '/adminTransactions',
+      name: 'adminTransactions',
+      component: AdminTransactions
     }
   ]
 })

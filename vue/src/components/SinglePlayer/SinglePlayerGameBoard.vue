@@ -102,7 +102,7 @@ onUnmounted(() => {
               </div>
             </div>
           </div>
-        </div>
+        </div>  
 
         <!-- Informações do Jogo -->
         <div class="game-info p-4 bg-gray-50 border border-gray-300 rounded-lg shadow-md sticky top-4 w-64">

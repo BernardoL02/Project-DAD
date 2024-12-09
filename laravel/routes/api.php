@@ -32,6 +32,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/admin/block/{nickname}', [AdministratorController::class, 'blockUser']);
     Route::post('/admin/unblock/{nickname}', [AdministratorController::class, 'unblockUser']);
     Route::delete('/admin/delete/{nickname}', [AdministratorController::class, 'destroy']);
+    Route::get('/admin/transactions', [AdministratorController::class, 'viewTransactions']);
 
     // ----- Games -----
     Route::get('/games', [GameController::class, 'index']);

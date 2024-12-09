@@ -14,11 +14,8 @@ class TransactionController extends Controller
     {
         $user = $request->user();
 
-        if ($user->isAdmin()) {
-            $transactions = Transaction::with('user')->orderBy('transaction_datetime', 'desc')->get();
-        } else {
-            $transactions = $user->transactions()->with('user')->orderBy('transaction_datetime', 'desc')->get();
-        }
+
+        $transactions = $user->transactions()->with('user')->orderBy('transaction_datetime', 'desc')->get();
 
         return TransactionResource::collection($transactions);
     }
