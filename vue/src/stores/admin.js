@@ -25,14 +25,13 @@ export const useAdminStore = defineStore('admin', () => {
         Blocked: user.blocked
       }))
     } catch (err) {
-      error.value = 'Failed to load user profiles. Please try again.'
+      error.value = 'Failed to load usersPlease try again.'
       storeError.setErrorMessages(
         err.response?.data?.message,
         err.response?.data?.errors,
         err.response?.data?.status,
-        'Profile Fetch Error'
+        'Error Get Users'
       )
-      console.error('Error fetching profiles:', err)
     } finally {
       loading.value = false
     }
@@ -43,7 +42,14 @@ export const useAdminStore = defineStore('admin', () => {
       await axios.post(`admin/block/` + nickname)
       await getUsers()
     } catch (err) {
-      console.error('Error blocking user:', err)
+      console.log('entrou')
+      error.value = 'Failed to block an user'
+      storeError.setErrorMessages(
+        err.response?.data?.message,
+        err.response?.data?.errors,
+        err.response?.data?.status,
+        'Error Blocking User'
+      )
     }
   }
 
@@ -52,7 +58,13 @@ export const useAdminStore = defineStore('admin', () => {
       await axios.post(`admin/unblock/` + nickname)
       await getUsers()
     } catch (err) {
-      console.error('Error unblocking user:', err)
+      error.value = 'Failed to unblocking an user'
+      storeError.setErrorMessages(
+        err.response?.data?.message,
+        err.response?.data?.errors,
+        err.response?.data?.status,
+        'Error Unblocking User'
+      )
     }
   }
 
@@ -62,7 +74,23 @@ export const useAdminStore = defineStore('admin', () => {
       await axios.delete(`admin/delete/` + nickname)
       await getUsers()
     } catch (err) {
-      console.error('Error deleting user:', err)
+      if (err.response) {
+        // Captura os detalhes do erro do servidor
+        const message = err.response.data?.message || 'Erro desconhecido.'
+        const status = err.response.status || 'Status não definido.'
+
+        // Exibe a mensagem personalizada no console (ou em outro lugar no app)
+        console.error(`Erro ${status}: ${message}`)
+
+        // Configura o estado de erro no frontend
+        error.value = `Falha ao excluir o usuário: ${message}`
+        storeError.setErrorMessages(
+          message,
+          err.response?.data?.errors,
+          status,
+          'Erro ao deletar usuário'
+        )
+      }
     }
   }
 
