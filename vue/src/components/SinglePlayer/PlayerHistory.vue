@@ -122,7 +122,7 @@ onMounted(async () => {
                 class="text-blue-500 hover:underline">
                 <img src="/replay.png" alt="Replay" class="w-6 h-6" />
               </button>
-              <span
+              <span v-if="row.replay"
                 class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 Replay
               </span>
