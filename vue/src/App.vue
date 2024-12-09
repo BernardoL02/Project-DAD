@@ -75,34 +75,48 @@
               <!-- Dropdown Menu -->
               <div
                 class="absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col bg-white shadow-lg rounded-lg w-40 z-10 mt-2 transition-all duration-300 ease-in-out">
-                <RouterLink to="/scoreBoard/singlePlayer"
-                  class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm rounded-md">
+                <RouterLink to="/scoreBoard/singlePlayer" :class="[
+                  'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                  route.path === '/scoreBoard/singlePlayer'
+                    ? 'text-indigo-500 font-semibold'
+                    : 'text-gray-900 hover:text-sky-600'
+                ]" active-class="text-blue-600 font-semibold">
                   Single Player
                 </RouterLink>
-                <RouterLink to="/scoreBoard/multiPlayer"
-                  class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm rounded-md">
+                <RouterLink to="/scoreBoard/multiPlayer" :class="[
+                  'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                  route.path === '/scoreBoard/multiPlayer'
+                    ? 'text-indigo-500 font-semibold'
+                    : 'text-gray-900 hover:text-sky-600'
+                ]" active-class="text-blue-600 font-semibold">
                   Multi Player
                 </RouterLink>
               </div>
             </div>
 
-            <RouterLink :to="{ name: 'ManageUsers' }" :class="[
-              'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-              route.path === '/ManageUsers'
-                ? 'text-indigo-500 font-semibold'
-                : 'text-gray-900 hover:text-sky-600'
-            ]" active-class="text-blue-600 font-semibold">
-              Manage Users
-            </RouterLink>
-
-            <RouterLink :to="{ name: 'RegisterAdmin' }" :class="[
-              'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-              route.path === '/RegisterAdmin'
-                ? 'text-indigo-500 font-semibold'
-                : 'text-gray-900 hover:text-sky-600'
-            ]" active-class="text-blue-600 font-semibold">
-              Register Admins
-            </RouterLink>
+            <div class="relative group pt-[6px]">
+              <label for="" :class="[
+                'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                route.path === '/ManageUsers' ||
+                  route.path === '/RegisterAdmin'
+                  ? 'text-indigo-500 font-semibold'
+                  : 'text-gray-900 hover:text-sky-600'
+              ]" active-class="text-blue-600 font-semibold">
+                DaschBoard
+              </label>
+              <!-- Dropdown Menu -->
+              <div
+                class="absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col bg-white shadow-lg rounded-lg w-40 z-10 mt-2 transition-all duration-300 ease-in-out">
+                <RouterLink :to="{ name: 'ManageUsers' }" :class="[
+                  'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                  route.path === '/ManageUsers'
+                    ? 'text-indigo-500 font-semibold'
+                    : 'text-gray-900 hover:text-sky-600'
+                ]" active-class="text-blue-600 font-semibold">
+                  Manage Users
+                </RouterLink>
+              </div>
+            </div>
           </div>
 
           <div v-if="authStore.user" class="flex flex-row space-x-7">

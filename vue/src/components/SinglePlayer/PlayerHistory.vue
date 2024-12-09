@@ -117,10 +117,16 @@ onMounted(async () => {
         :pagination="true">
         <template #actions="{ row }">
           <div class="flex justify-center items-center h-full">
-            <button v-if="row.replay" @click="replayStore.handleReplay(row.replay, row.difficulty)"
-              class="text-blue-500 hover:underline">
-              <img src="/replay.png" alt="Replay" class="w-6 h-6" />
-            </button>
+            <div class="relative group inline-block">
+              <button v-if="row.replay" @click="replayStore.handleReplay(row.replay, row.difficulty)"
+                class="text-blue-500 hover:underline">
+                <img src="/replay.png" alt="Replay" class="w-6 h-6" />
+              </button>
+              <span
+                class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-max px-2 py-1 bg-black text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                Replay
+              </span>
+            </div>
           </div>
         </template>
       </PaginatedTable>
