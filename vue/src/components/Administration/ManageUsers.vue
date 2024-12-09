@@ -24,17 +24,19 @@ const avatar = ref(null)
 const updatedAvatar = ref(null)
 const uploadButton = ref(true)
 
-const openModal = (type, id) => {
+const openModal = (type, id, nickname) => {
   actionType.value = type
   targetNickname.value = id
   modalTitle.value =
     type === 'block' ? `Block User` : type === 'unblock' ? `Unblock User` : `Delete User`
   modalMessage.value =
     type === 'delete'
-      ? `Are you sure you want to delete ${id}? This action cannot be undone.`
-      : `Are you sure you want to ${type} ${id}?`
+      ? `Are you sure you want to delete user ${nickname}? This action cannot be undone.`
+      : `Are you sure you want to ${type} user ${nickname}?`
+
   showModal.value = true
 }
+
 const handleCancel = () => {
   showModal.value = false
 }
@@ -86,7 +88,7 @@ const submitRegister = async () => {
 
   await adminStore.register(formData)
   closeRegisterModal()
-  await adminStore.getUsers() // Atualizar a lista de usuários
+  await adminStore.getUsers()
 }
 
 onMounted(async () => {
@@ -111,14 +113,14 @@ onUnmounted(async () => {
         <PaginatedTable :columns="columns" :data="adminStore.users" :hidden-columns="['Blocked']" :pagination="true">
           <template #actions="{ row }">
             <div v-if="true" class="flex space-x-2">
-              <button v-if="!row.Blocked" @click="openModal('block', row.Id)">
+              <button v-if="!row.Blocked" @click="openModal('block', row.Id, row.NickName)">
                 <img src="/lock.png" alt="Lock" class="w-6 h-6 hover:opacity-80 transition-opacity duration-200" />
               </button>
 
-              <button v-else @click="openModal('unblock', row.Id)">
+              <button v-else @click="openModal('unblock', row.Id, row.NickName)">
                 <img src="/unlock.png" alt="Unlock" class="w-6 h-6 hover:opacity-80 transition-opacity duration-200" />
               </button>
-              <button @click="openModal('delete', row.Id)">
+              <button @click="openModal('delete', row.Id, row.NickName)">
                 <svg class="hover:stroke-2 w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                   stroke-width="1" stroke="red">
                   <path stroke-linecap="round" stroke-linejoin="round"
