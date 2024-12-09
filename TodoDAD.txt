@@ -4,13 +4,14 @@ G0. Geral
 [] - Se tentar aceder pelo url redirecionar para o login ou not authorized
 [] - Esconder paginas front-end
 [] - User o end point get all boards
-[] - Melhorar desing home e single player game (dentro do jogo)
+[x] - Melhorar desing home e single player game (dentro do jogo)
 [] - Se rota no url nao existir retornar para a home ex: /jogar
 [] - Melhorar performance dos controladores
 [] - Colocar informacões nas tabelas para quando nao existem dados
 [] - Remocer ids das tabelas
 [] - Remover actions de tabelas que nao precisem
 [] - Limpar todas as stores e ver se os dados ja existem antes de os ir buscar no 
+[] - Sons nos jogos
 
 G1. USER REGISTRATION, AUTHENTICATION, PROFILE, END SESSION, 
 ACCOUNT
@@ -21,7 +22,7 @@ REMOVAL
 [] - Apos selecionar uma foto ser possivel selecionar outra a partir da imagem ou do titulo photo 
 [] - Ao registrar users e admins tentar colocar as mensagens de erro com \n
 [] - Remover email/password pré defenida no login
-[] - Users com conta bloqueada nao consegue fazer login
+[x] - Users com conta bloqueada nao consegue fazer login
 
 G2. BRAIN COINS AND TRANSACTIONS
 
