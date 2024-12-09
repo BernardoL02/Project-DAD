@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\ScoreBoardController;
 use App\Http\Controllers\TransactionController;
+use App\Models\User;
 
 Route::post('/auth/register',[UserController::class, 'store']);
 Route::post('/auth/login', [AuthController::class, "login"]);
@@ -26,16 +27,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/users/me/notifications', [UserController::class , 'getNotifications']);
 
     //------Administrator -----
-
-    Route::get('/admin/users', [AdministratorController::class, 'index']);
-    Route::post('/admin/register', [AdministratorController::class, 'store']);
-    Route::post('/admin/block/{nickname}', [AdministratorController::class, 'blockUser']);
-    Route::post('/admin/unblock/{nickname}', [AdministratorController::class, 'unblockUser']);
-    Route::delete('/admin/delete/{nickname}', [AdministratorController::class, 'destroy']);
+    Route::get('/admin/users', [AdministratorController::class, 'index'])->can("viewAny", User::class);
+    Route::post('/admin/register', [AdministratorController::class, 'store'])->can("create", User::class);
+    Route::post('/admin/block/{nickname}', [AdministratorController::class, 'blockUser'])->can('block', User::class);
+    Route::post('/admin/unblock/{nickname}', [AdministratorController::class, 'unblockUser'])->can('unblock', User::class);
+    Route::delete('/admin/delete/{nickname}', [AdministratorController::class, 'destroy'])->can('delete', User::class);
     Route::get('/admin/transactions', [AdministratorController::class, 'viewTransactions']);
 
     // ----- Games -----
-    Route::get('/games', [GameController::class, 'index']);
+    Route::get('/games', [GameController::class, 'index'])->can("viewAny", Game::class);
     Route::get('/games/single', [GameController::class, 'mySinglePlayerGames']);
     Route::get('/games/multi', [GameController::class, 'myMultiPlayerGames']);
     Route::get('/games/{game}', [GameController::class, 'show']);
@@ -55,7 +55,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 // ------ Score Boards ----
-
 Route::get('/scoreboard/single', [ScoreBoardController::class, 'globalSinglePlayerScoreboard']);
 Route::get('/scoreboard/multiplayer', [ScoreBoardController::class, 'multiplayerScoreboard']);
 Route::get('/users/{nickname}', [UserController::class , 'profileUser']);

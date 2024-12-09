@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, inject } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useErrorStore } from '@/stores/error'
@@ -14,6 +14,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const user = ref(null)
   const token = ref(sessionStorage.getItem('token') || '')
+  const socket = inject('socket')
 
   const notifications = ref([])
 
@@ -227,7 +228,12 @@ export const useAuthStore = defineStore('auth', () => {
   // This function is "private" - not exported by the store
   const clearUser = () => {
     resetIntervalToRefreshToken()
+    if (user.value) {
+      socket.emit('logout', user.value)
+    }
     user.value = null
+    token.value = ''
+    sessionStorage.removeItem('token')
     axios.defaults.headers.common.Authorization = ''
   }
 
@@ -240,6 +246,7 @@ export const useAuthStore = defineStore('auth', () => {
       axios.defaults.headers.common.Authorization = 'Bearer ' + token.value
       const responseUser = await axios.get('users/me')
       user.value = responseUser.data.data
+      socket.emit('login', user.value)
       repeatRefreshToken()
       return user.value
     } catch (e) {
@@ -312,6 +319,7 @@ export const useAuthStore = defineStore('auth', () => {
         axios.defaults.headers.common.Authorization = 'Bearer ' + token.value
         const responseUser = await axios.get('users/me')
         user.value = responseUser.data.data
+        socket.emit('login', user.value)
         repeatRefreshToken()
         return true
       } catch {
@@ -376,6 +384,13 @@ export const useAuthStore = defineStore('auth', () => {
     return intervalToRefreshToken
   }
 
+  const getFirstLastName = (fullName) => {
+    const names = fullName.trim().split(' ')
+    const firstName = names[0] ?? ''
+    const lastName = names.length > 1 ? names[names.length - 1] : ''
+    return (firstName + ' ' + lastName).trim()
+  }
+
   return {
     user,
     name,
@@ -385,6 +400,7 @@ export const useAuthStore = defineStore('auth', () => {
     type,
     coins,
     photo_filename,
+    getFirstLastName,
     userPhotoUrl,
     login,
     logout,

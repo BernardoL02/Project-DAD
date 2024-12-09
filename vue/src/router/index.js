@@ -18,6 +18,7 @@ import PlayerHistoryMultiPlayer from '@/components/Multiplayer/PlayerHistoryMult
 import ChangePassword from '@/components/Profile/ChangePassword.vue'
 import ManageUsers from '@/components/Administration/ManageUsers.vue'
 import AdminTransactions from '@/components/Administration/AdminTransactions.vue'
+import MultiPlayerLobbys from '@/components/Multiplayer/MuiltiPlayerLobbys.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -46,6 +47,11 @@ const router = createRouter({
       path: '/multiplayer',
       name: 'multi-player',
       component: MultiPlayer
+    },
+    {
+      path: '/multiplayer/lobbys',
+      name: 'lobbys',
+      component: MultiPlayerLobbys
     },
     {
       path: '/multiplayer/history',

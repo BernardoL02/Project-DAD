@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useAdminStore } from '@/stores/admin'
 import { useAuthStore } from '@/stores/auth'
 import PaginatedTable from '@/components/ui/table/StandardActionsTable.vue'
@@ -96,6 +96,11 @@ onMounted(async () => {
   await adminStore.getUsers()
   loading.value = false
 })
+
+onUnmounted(async () => {
+  adminStore.users = []
+})
+
 </script>
 
 <template>
