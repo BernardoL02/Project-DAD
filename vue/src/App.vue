@@ -149,7 +149,7 @@
                           <div v-if="notification.type === 'Bonus'" class="flex flex-col text-gray-500">
                             <span v-if="notification.msg" class="text-xs"> {{
                               notification.msg
-                            }}</span>
+                              }}</span>
                             <span v-else class="text-xs">You receive a bonus of {{ notification.coins }} coins</span>
                           </div>
 

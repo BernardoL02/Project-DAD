@@ -2,7 +2,7 @@ G1. USER REGISTRATION, AUTHENTICATION, PROFILE, END SESSION, ACCOUNT
 REMOVAL
 
 [] - Verificar se a autenticação está a 100% (tokens a dar refresh etc..)
-[] - Update da foto
+[x] - Update da foto
 [x] - Create transaction when deleting account (Não faz sentido)
 [] - Verifica se tudo funciona como admin, e eles apenas nao podem remover a sua conta
 

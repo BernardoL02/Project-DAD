@@ -11,6 +11,8 @@ export const usescoreBoardStore = defineStore('scoreBoard', () => {
   const topPlayer1 = ref(null)
   const topPlayer2 = ref(null)
   const topPlayer3 = ref(null)
+  const topPlayer4 = ref(null)
+  const topPlayer5 = ref(null)
 
   const fetchAllScoreboards = async () => {
     loading.value = true
@@ -100,6 +102,8 @@ export const usescoreBoardStore = defineStore('scoreBoard', () => {
     allScoreboards,
     topPlayer1,
     topPlayer2,
-    topPlayer3
+    topPlayer3,
+    topPlayer4,
+    topPlayer5
   }
 })

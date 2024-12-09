@@ -11,7 +11,6 @@ class ScoreBoardController extends Controller
 {
     public function globalSinglePlayerScoreboard()
     {
-        try {
             $boards = Board::all();
 
             $allScoreboards = [];
@@ -48,10 +47,6 @@ class ScoreBoardController extends Controller
             }
 
             return response()->json(['scoreboards' => $allScoreboards]);
-
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'An unexpected error occurred.', 'details' => $e->getMessage()], 500);
-        }
     }
 
 
