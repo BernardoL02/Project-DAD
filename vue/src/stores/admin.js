@@ -27,22 +27,28 @@ export const useAdminStore = defineStore('admin', () => {
   })
 
   const handleDateChange = (newRange) => {
-    dateRange.value = newRange.map((date) =>
-      date ? new Date(date).toISOString().split('T')[0] : null
-    )
+    // Ensure the date range contains valid Date objects or null
+    dateRange.value = newRange.map((date) => (date ? new Date(date).toISOString() : null))
   }
 
   const filteredTransactions = computed(() => {
+    // If no start and end date, return all transactions
     if (!dateRange.value[0] && !dateRange.value[1]) {
       return transactions.value
     }
 
+    // Parse the date range into timestamp (start of the day)
     const [start, end] = dateRange.value.map((date) =>
       date ? new Date(date).setHours(0, 0, 0, 0) : null
     )
 
+    // Filter transactions based on the date range
     return transactions.value.filter((transaction) => {
+      if (!transaction.date) return false // Skip transactions with no date
+
       const transactionDate = new Date(transaction.date).setHours(0, 0, 0, 0)
+
+      // Check if the transaction falls within the range
       return (!start || transactionDate >= start) && (!end || transactionDate <= end)
     })
   })
@@ -82,6 +88,7 @@ export const useAdminStore = defineStore('admin', () => {
     try {
       await axios.patch('admin/block/' + parseInt(id))
       await getUsers()
+      storeError.setSuccessMessages('User blocked successfully!', {}, 200, 'Blocked Success')
     } catch (err) {
       console.log('entrou')
       error.value = 'Failed to block an user'
@@ -98,6 +105,7 @@ export const useAdminStore = defineStore('admin', () => {
     try {
       await axios.patch('admin/unblock/' + parseInt(id))
       await getUsers()
+      storeError.setSuccessMessages('User unblocked successfully!', {}, 200, 'Unblocked Success')
     } catch (err) {
       error.value = 'Failed to unblocking an user'
       storeError.setErrorMessages(
@@ -113,24 +121,21 @@ export const useAdminStore = defineStore('admin', () => {
     try {
       await axios.delete('admin/delete/' + id)
       await getUsers()
+
+      storeError.setSuccessMessages(
+        'Your have deleted the user successfully!',
+        {},
+        200,
+        'Deleted Success'
+      )
     } catch (err) {
-      if (err.response) {
-        // Captura os detalhes do erro do servidor
-        const message = err.response.data?.message || 'Erro desconhecido.'
-        const status = err.response.status || 'Status não definido.'
-
-        // Exibe a mensagem personalizada no console (ou em outro lugar no app)
-        console.error(`Erro ${status}: ${message}`)
-
-        // Configura o estado de erro no frontend
-        error.value = `Falha ao excluir o usuário: ${message}`
-        storeError.setErrorMessages(
-          message,
-          err.response?.data?.errors,
-          status,
-          'Erro ao deletar usuário'
-        )
-      }
+      error.value = 'Failed to unblocking an user'
+      storeError.setErrorMessages(
+        err.response?.data?.message,
+        err.response?.data?.errors,
+        err.response?.data?.status,
+        'Error deleting User'
+      )
     }
   }
 

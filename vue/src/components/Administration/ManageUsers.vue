@@ -121,7 +121,7 @@ onUnmounted(async () => {
           :pagination="true"
         >
           <template #actions="{ row }">
-            <div v-if="authStore.nickname !== row.NickName" class="flex space-x-2">
+            <div v-if="true" class="flex space-x-2">
               <button v-if="!row.Blocked" @click="openModal('block', row.Id)">
                 <img
                   src="/lock.png"
