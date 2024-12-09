@@ -49,7 +49,6 @@ onMounted(async () => {
     gameStore.boardFilter = '3x4'
   }
 
-  console.log('Best Results Single Player:', gameStore.bestResultsSinglePlayer)
 })
 
 const startGame = async (size, cost, board_id) => {

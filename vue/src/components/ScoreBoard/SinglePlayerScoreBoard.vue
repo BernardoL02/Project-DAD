@@ -35,7 +35,8 @@ const onBoardClick = (size) => {
         <div class="text-center mb-6">
           <p class="text-lg text-gray-700 font-semibold">Global Top 10 Single-Player Games</p>
           <p class="text-sm text-gray-500 mt-2">
-            This table shows the global best performances across different board sizes.
+            The table shows the top 10 global single-player performances across board sizes, with each user appearing
+            only once based on their highest score.
           </p>
         </div>
 
@@ -60,6 +61,17 @@ const onBoardClick = (size) => {
       <div v-else>
         <!-- Paginated Table com os dados filtrados -->
         <PaginatedTable :columns="columns" :data="filteredScoreboards" :pagination="false" :showActions="false" />
+
+        <div class="bg-white p-6 rounded-lg shadow-md mt-6">
+          <p class="text-sm text-gray-700 font-semibold mb-1">Sorting Criteria</p>
+          <p class="text-xs text-gray-500">
+            1. <strong>Best Time</strong> - The fastest time achieved by players for completing games on each board
+            size. <br />
+            2. <strong>Turns</strong> - The total number of moves players made to complete a game on each board size.
+          </p>
+
+        </div>
+
         <!-- Exibe mensagem caso não haja pontuações -->
         <div v-if="!loading && filteredScoreboards.length === 0" class="text-center text-gray-400 mt-4">
           No scores available
