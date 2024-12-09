@@ -114,3 +114,16 @@ watch(
         </div>
     </div>
 </template>
+
+<style scoped>
+th,
+td {
+    height: 48px;
+    vertical-align: middle;
+}
+
+td img {
+    height: 24px;
+    width: 24px;
+}
+</style>

@@ -134,7 +134,7 @@ export const useGameStore = defineStore('game', () => {
           began_at: game.began_at || 'N/A',
           total_time: game.total_time ? game.total_time + 's' : 'N/A',
           total_turns_winner: game.total_turns_winner || 'N/A',
-          replay // Adiciona o replay ao objeto retornado
+          replay
         }
       })
 
@@ -370,8 +370,8 @@ export const useGameStore = defineStore('game', () => {
   const registerAction = (position) => {
     console.log(position)
     replayActions.value.push({
-      time: elapsedTime.value, // Time of action
-      position: position // Position of card flipped
+      time: Date.now() - startTime.value.getTime(), // Captura o tempo decorrido em milissegundos
+      position: position // Posição da carta virada
     })
   }
 

@@ -13,7 +13,7 @@ const nickname = ref('')
 const responseData = ref('')
 const updatedAvatar = ref(null)
 
-const avatar = ref(null);
+const avatar = ref(null)
 const uploadButton = ref(true)
 
 const handlePhotoUpload = (event) => {
@@ -22,7 +22,7 @@ const handlePhotoUpload = (event) => {
   if (file) {
     uploadButton.value = false
     updatedAvatar.value = file
-    avatar.value = URL.createObjectURL(file);
+    avatar.value = URL.createObjectURL(file)
   }
 }
 
@@ -55,59 +55,89 @@ const submitRegister = async () => {
             <label for="register-name" class="block text-sm font-medium text-gray-600 mb-1">
               Name
             </label>
-            <input type="name" id="register-name" v-model="name" placeholder="Enter your name"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" />
+            <input
+              type="name"
+              id="register-name"
+              v-model="name"
+              placeholder="Enter your name"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+            />
           </div>
 
           <div>
             <label for="register-email" class="block text-sm font-medium text-gray-600 mb-1">
               Email
             </label>
-            <input type="email" id="register-email" v-model="email" placeholder="Enter your email"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" />
+            <input
+              type="email"
+              id="register-email"
+              v-model="email"
+              placeholder="Enter your email"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+            />
           </div>
 
           <div>
             <label for="nickname" class="block text-sm font-medium text-gray-600 mb-1">
               Nickname
             </label>
-            <input type="text" id="nickname" v-model="nickname" placeholder="Enter your nickname"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" />
+            <input
+              type="text"
+              id="nickname"
+              v-model="nickname"
+              placeholder="Enter your nickname"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+            />
           </div>
 
           <div>
             <label for="register-password" class="block text-sm font-medium text-gray-600 mb-1">
               Password
             </label>
-            <input type="password" id="register-password" v-model="password" placeholder="Create a password"
-              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400" />
+            <input
+              type="password"
+              id="register-password"
+              v-model="password"
+              placeholder="Create a password"
+              class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+            />
           </div>
 
           <div class="mb-4">
-            <label for="avatar" class="block text-sm font-medium text-gray-600 mb-2">
-              Photo
-            </label>
+            <label for="avatar" class="block text-sm font-medium text-gray-600 mb-2"> Photo </label>
 
             <!-- Custom File Input -->
             <div v-show="uploadButton" class="flex items-center justify-left w-full">
-              <label for="avatar"
-                class="flex flex-col items-center bg-sky-500 text-white rounded-lg shadow-lg px-4 py-2 cursor-pointer hover:bg-sky-600 transition-colors">
+              <label
+                for="avatar"
+                class="flex flex-col items-center bg-sky-500 text-white rounded-lg shadow-lg px-4 py-2 cursor-pointer hover:bg-sky-600 transition-colors"
+              >
                 <span class="text-xs">Choose a File</span>
                 <!-- Input oculto -->
-                <input type="file" id="avatar" @change="handlePhotoUpload" accept=".png, .jpeg, .jpg"
-                  class="form-control w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hidden" />
+                <input
+                  type="file"
+                  id="avatar"
+                  @change="handlePhotoUpload"
+                  accept=".png, .jpeg, .jpg"
+                  class="form-control w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hidden"
+                />
               </label>
             </div>
 
             <div v-show="avatar" class="flex justify-start">
-              <img :src="avatar" alt="User Profile Picture"
-                class=" w-28 h-28 border-4 border-white rounded-full  shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl" />
+              <img
+                :src="avatar"
+                alt="User Profile Picture"
+                class="w-28 h-28 border-4 border-white rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl"
+              />
             </div>
           </div>
 
           <div class="pt-4">
-            <button @click.prevent="submitRegister"
-              class="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition focus:ring-4 focus:ring-gray-400 focus:outline-none">
+            <button
+              @click.prevent="submitRegister"
+              class="w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition focus:ring-4 focus:ring-gray-400 focus:outline-none"
+            >
               Register
             </button>
           </div>

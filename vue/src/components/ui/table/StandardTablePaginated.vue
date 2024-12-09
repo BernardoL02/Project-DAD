@@ -66,7 +66,7 @@ watch(
       <tbody>
         <tr v-for="(row, rowIndex) in paginatedData" :key="'row-' + rowIndex" class="odd:bg-white even:bg-gray-100">
           <td v-for="(value, colIndex) in row" :key="'cell-' + rowIndex + '-' + colIndex"
-            class="border border-gray-300 px-4 py-2">
+            class="border border-gray-300 px-4 py-2 ">
             {{ value }}
           </td>
         </tr>
