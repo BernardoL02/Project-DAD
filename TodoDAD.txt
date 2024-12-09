@@ -1,32 +1,64 @@
-G1. USER REGISTRATION, AUTHENTICATION, PROFILE, END SESSION, ACCOUNT
+
+G0. Geral
+
+[] - Se tentar aceder pelo url redirecionar para o login ou not authorized
+[] - Esconder paginas front-end
+[] - User o end point get all boards
+[] - Melhorar desing home e single player game (dentro do jogo)
+[] - Se rota no url nao existir retornar para a home ex: /jogar
+[] - Melhorar performance dos controladores
+[] - Colocar informacões nas tabelas para quando nao existem dados
+[] - Remocer ids das tabelas
+[] - Remover actions de tabelas que nao precisem
+
+G1. USER REGISTRATION, AUTHENTICATION, PROFILE, END SESSION, 
+ACCOUNT
 REMOVAL
 
 [] - Verificar se a autenticação está a 100% (tokens a dar refresh etc..)
-[x] - Update da foto
-[x] - Create transaction when deleting account (Não faz sentido)
 [] - Verifica se tudo funciona como admin, e eles apenas nao podem remover a sua conta
+[] - Apos selecionar uma foto ser possivel selecionar outra a partir da imagem ou do titulo photo 
+[] - Ao registrar users e admins tentar colocar as mensagens de erro com \n
+[] - Remover email/password pré defenida no login
+[] - Users com conta bloqueada nao consegue fazer login
 
 G2. BRAIN COINS AND TRANSACTIONS
 
-[] - Bonus de 1 coin quando acaba o jogo
 [] - Filtros nas transactions
+
+G3. SINGLE-PLAYER GAMES
+
+[] - Adaptar a pagina para o user Anonymou
+[] - Proteger rotas front-end para quando o user nao tem coins nao conseguir jogar
 
 G4. MULTIPLAYER GAMES
 
 [] - Tudo
-[] - Notificações
-[] - Policy para multiplayer games (update)
+[] - Se jogador ficar inativo por 20 segundos é expulso
+[] - Transacões por ganhos no multiplayer e notificacoes
+[] - Verificar se os estados dos jogos estão corretos (Ex: pending = jogos que ainda nao comecaram e estão à espera de jogadores)
+[] - Policy para multiplayer games 
+[] - Cada jogo custa 5 moedas, vencedor recebe todas as coins em jogo - 3
+[] - Os jogos comecam quando quem criou der play ou quando atinge o limite maximo do loby
+[] - Aumentar o numero de vitorias e de derrotas de cada jogador
 
 G5. GAME HISTORY AND SCORING BOARDS
 
 [] - ver os dados das tabelas(validar)
 [] - Ver os jogadores involvidos no game multiplayer
+[] - Validar se todos os dados pedidos estao a ser apresentados
+[] - Colocar ação ver detalhes nos jogos muliplayer
+[] - Single Player Score board colocar descircão da ordenacao da tabela
 
 G6. Administrator
 
 
 []- Tudo
 
+[] - Colocar loading na página das transactions
+[] - Colocar filtro por name e clear filters a funcionar
+[] - Filtros na pagina de all users
+[] - Coloca nome em vez de id nas confirmacoes de block/unblock/delete user
 +
 
 [] - Administrators cannot create, modify,
@@ -38,13 +70,11 @@ of all games from all players on the platform
 [] - Administrators will also have access to their own profile, where they can view and perform all the
 same actions as any other user, except for the option to remove their own account
 
-[] - Mudar block e unblock para patch
+[x] - Mudar block e unblock para patch
 
 G7. STATISTICS
 
 [] - Tudo
-
-
 
 G8. CUSTOM FEATURES AND IMPLEMENTATION DETAILS
 
@@ -56,3 +86,14 @@ G8. CUSTOM FEATURES AND IMPLEMENTATION DETAILS
 
 [] - Adding sound effects to the game
 [] - All the site has to be responsive
+
+
+
+
+
+
+
+
+
+
+

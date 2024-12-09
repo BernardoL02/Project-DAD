@@ -138,10 +138,18 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
-  if ((to.name == 'singlePlayerHistory' || to.name == 'Profile') && !authStore.user) {
+  const sizeAllowed = to.params.size === '3x4'
+
+  if (to.name === 'SinglePlayerGameBoard' && !sizeAllowed && !authStore.user) {
     next({ name: 'login' })
     return
   }
+
+  if ((to.name === 'singlePlayerHistory' || to.name === 'Profile') && !authStore.user) {
+    next({ name: 'login' })
+    return
+  }
+
   next()
 })
 

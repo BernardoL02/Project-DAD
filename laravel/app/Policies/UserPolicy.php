@@ -39,7 +39,6 @@ class UserPolicy
         return $user->isAdmin() && $user->id !== $targetUser->id;
     }
 
-
     public function deleteMyAccount(User $user)
     {
         return $user->isPlayer();
