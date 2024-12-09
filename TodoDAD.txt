@@ -10,6 +10,7 @@ G0. Geral
 [] - Colocar informacões nas tabelas para quando nao existem dados
 [] - Remocer ids das tabelas
 [] - Remover actions de tabelas que nao precisem
+[] - Limpar todas as stores e ver se os dados ja existem antes de os ir buscar no 
 
 G1. USER REGISTRATION, AUTHENTICATION, PROFILE, END SESSION, 
 ACCOUNT
@@ -41,6 +42,7 @@ G4. MULTIPLAYER GAMES
 [] - Cada jogo custa 5 moedas, vencedor recebe todas as coins em jogo - 3
 [] - Os jogos comecam quando quem criou der play ou quando atinge o limite maximo do loby
 [] - Aumentar o numero de vitorias e de derrotas de cada jogador
+[] - Remover console.log espalhados pelo códgo
 
 G5. GAME HISTORY AND SCORING BOARDS
 
@@ -48,7 +50,7 @@ G5. GAME HISTORY AND SCORING BOARDS
 [] - Ver os jogadores involvidos no game multiplayer
 [] - Validar se todos os dados pedidos estao a ser apresentados
 [] - Colocar ação ver detalhes nos jogos muliplayer
-[] - Single Player Score board colocar descircão da ordenacao da tabela
+[x] - Single Player Score board colocar descircão da ordenacao da tabela
 
 G6. Administrator
 
