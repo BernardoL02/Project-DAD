@@ -11,6 +11,9 @@ export const useAdminStore = defineStore('admin', () => {
   const error = ref(null)
   const transactions = ref([])
   const dateRange = ref([null, null])
+  const filterType = ref('')
+  const typeFilter = ref('All')
+  const paymentMethodFilter = ref('All')
 
   const formatDate = (date) => {
     if (!date) return ''
@@ -27,34 +30,49 @@ export const useAdminStore = defineStore('admin', () => {
   })
 
   const handleDateChange = (newRange) => {
-    // Ensure the date range contains valid Date objects or null
-    dateRange.value = newRange.map((date) => (date ? new Date(date).toISOString() : null))
+    dateRange.value = newRange.map(
+      (date) => (date ? new Date(date).setHours(0, 0, 0, 0) : null) // Store as timestamps for consistency
+    )
+  }
+  const filterByPaymentMethod = (method) => {
+    paymentMethodFilter.value = method
   }
 
   const filteredTransactions = computed(() => {
-    // If no start and end date, return all transactions
-    if (!dateRange.value[0] && !dateRange.value[1]) {
-      return transactions.value
+    // Filter by date range
+    const filteredByDate =
+      !dateRange.value[0] && !dateRange.value[1]
+        ? transactions.value
+        : transactions.value.filter((transaction) => {
+            const transactionDate = new Date(transaction.date).setHours(0, 0, 0, 0) // Normalize transaction date
+            const [start, end] = dateRange.value
+            return (!start || transactionDate >= start) && (!end || transactionDate <= end)
+          })
+
+    // Filter by type
+    const filteredByType =
+      typeFilter.value === 'All'
+        ? filteredByDate
+        : filteredByDate.filter((transaction) => transaction.type === typeFilter.value)
+
+    // Filter by payment method
+    if (paymentMethodFilter.value === 'All') {
+      return filteredByType
     }
 
-    // Parse the date range into timestamp (start of the day)
-    const [start, end] = dateRange.value.map((date) =>
-      date ? new Date(date).setHours(0, 0, 0, 0) : null
+    return filteredByType.filter(
+      (transaction) => transaction.paymentMethod === paymentMethodFilter.value
     )
-
-    // Filter transactions based on the date range
-    return transactions.value.filter((transaction) => {
-      if (!transaction.date) return false // Skip transactions with no date
-
-      const transactionDate = new Date(transaction.date).setHours(0, 0, 0, 0)
-
-      // Check if the transaction falls within the range
-      return (!start || transactionDate >= start) && (!end || transactionDate <= end)
-    })
   })
+
+  const filterByType = (type) => {
+    typeFilter.value = type
+  }
 
   const resetFilters = () => {
     dateRange.value = [null, null]
+    filterType.value = ''
+    getTransactions()
   }
 
   const getUsers = async () => {
@@ -71,6 +89,7 @@ export const useAdminStore = defineStore('admin', () => {
         Type: user.type == 'A' ? 'Administrator' : 'Player',
         Blocked: user.blocked
       }))
+      filterType.value = ''
     } catch (err) {
       error.value = 'Failed to load usersPlease try again.'
       storeError.setErrorMessages(
@@ -220,6 +239,8 @@ export const useAdminStore = defineStore('admin', () => {
         reference: transaction.payment_reference || '-',
         coins: transaction.brain_coins
       }))
+
+      dateRange.value = [null, null]
     } catch (err) {
       error.value = 'Failed to load user profiles. Please try again.'
       storeError.setErrorMessages(
@@ -248,6 +269,8 @@ export const useAdminStore = defineStore('admin', () => {
     handleDateChange,
     filteredTransactions,
     resetFilters,
-    formattedDateRange
+    formattedDateRange,
+    filterByType,
+    filterByPaymentMethod
   }
 })

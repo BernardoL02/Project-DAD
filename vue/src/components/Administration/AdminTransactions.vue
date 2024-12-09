@@ -1,13 +1,32 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useAdminStore } from '@/stores/admin'
 import PaginatedTable from '@/components/ui/table/StandardTablePaginated.vue'
 import DatePicker from 'vue-datepicker-next'
+import DropdownButton from '@/components/ui/DropdownButton.vue'
 import 'vue-datepicker-next/index.css'
 
 const adminStore = useAdminStore()
 
+const typeOptions = ['All', 'Game', 'Purchase', 'Bonus']
+const paymentMethodOptions = ['All', 'MB', 'Paypal', 'MBWAY', 'IBAN', 'VISA']
+
+const selectedType = ref('All') // Default to 'All'
+const selectedPaymentMethod = ref('All')
+
+const handleSelect = (value, filterType) => {
+  if (filterType === 'type') {
+    selectedType.value = value
+    adminStore.filterByType(value) // Filter by type
+  } else if (filterType === 'paymentMethod') {
+    selectedPaymentMethod.value = value
+    adminStore.filterByPaymentMethod(value) // Filter by payment method
+  }
+}
+
 const handleResetFilters = () => {
+  selectedType.value = 'All' // Reset to 'All'
+  selectedPaymentMethod.value = 'All'
   adminStore.resetFilters()
 }
 
@@ -20,9 +39,9 @@ onMounted(() => {
   <h1 class="text-3xl font-bold text-center">Transaction History</h1>
   <div class="max-w-7xl mx-auto mt-10">
     <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-      <div class="flex flex-row sm:flex-row sm:justify-between gap-5">
+      <div class="flex flex-col sm:flex-row sm:justify-between gap-5">
         <div class="w-full sm:w-auto">
-          <label for="began_at" class="block text-sm font-medium text-gray-700">Began At</label>
+          <label for="began_at" class="block text-sm font-medium text-gray-700">Date Range</label>
           <DatePicker
             v-model="adminStore.dateRange"
             range
@@ -33,33 +52,25 @@ onMounted(() => {
             @change="adminStore.handleDateChange"
           />
         </div>
+
         <div class="w-full sm:w-auto">
-          <label for="difficulty" class="block text-sm font-medium text-gray-700 pb-2"
-            >Difficulty</label
+          <label for="type" class="block text-sm font-medium text-gray-700 pb-2"
+            >Transaction Type</label
           >
           <DropdownButton
-            ref="dropdownRefs.difficultyDropdown"
-            :options="difficultyOptions"
-            v-model="adminStore.difficultyFilter"
-            @select="(value) => handleSelect(value, 'difficulty')"
+            :options="typeOptions"
+            v-model="selectedType"
+            @select="(value) => handleSelect(value, 'type')"
           />
         </div>
         <div class="w-full sm:w-auto">
-          <label for="board" class="block text-sm font-medium text-gray-700 pb-2">Board</label>
+          <label for="paymentMethod" class="block text-sm font-medium text-gray-700 pb-2"
+            >Payment Method</label
+          >
           <DropdownButton
-            ref="dropdownRefs.boardDropdown"
-            :options="boardOptions"
-            v-model="adminStore.boardFilter"
-            @select="(value) => handleSelect(value, 'board')"
-          />
-        </div>
-        <div class="w-full sm:w-auto">
-          <label for="status" class="block text-sm font-medium text-gray-700 pb-2">Status</label>
-          <DropdownButton
-            ref="dropdownRefs.statusDropdown"
-            :options="statusOptions"
-            v-model="adminStore.statusFilter"
-            @select="(value) => handleSelect(value, 'status')"
+            :options="paymentMethodOptions"
+            v-model="selectedPaymentMethod"
+            @select="(value) => handleSelect(value, 'paymentMethod')"
           />
         </div>
       </div>
@@ -76,7 +87,7 @@ onMounted(() => {
     <div class="space-y-6">
       <PaginatedTable
         :columns="['Id', 'Name', 'Date', 'Type', 'Value', 'Payment Method', 'Reference', 'Coins']"
-        :data="adminStore.transactions"
+        :data="adminStore.filteredTransactions"
       />
     </div>
   </div>
