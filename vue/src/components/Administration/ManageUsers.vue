@@ -1,15 +1,14 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useAdminStore } from '@/stores/admin'
-import { useAuthStore } from '@/stores/auth'
 import PaginatedTable from '@/components/ui/table/StandardActionsTable.vue'
 import ConfirmationModal from '@/components/ui/ConfirmationModal.vue'
 import DropdownButton from '@/components/ui/DropdownButton.vue'
 
 const columns = ['Id', 'Name', 'Email', 'NickName', 'Type']
 const PlayerTypeOptions = ['All', 'Administrator', 'Player']
+const AccountTypeOptions = ['All', 'Blocked', 'Unblocked']
 const adminStore = useAdminStore()
-const authStore = useAuthStore()
 const loading = ref(false)
 const showModal = ref(false)
 const modalTitle = ref('')
@@ -17,8 +16,7 @@ const modalMessage = ref('')
 const actionType = ref('')
 const targetNickname = ref('')
 const showRegisterModal = ref(false)
-
-const searchTerm = ref('')
+const selectedStatus = ref('All')
 const name = ref('')
 const email = ref('')
 const nickname = ref('')
@@ -40,6 +38,11 @@ const openModal = (type, id, nickname) => {
   showModal.value = true
 }
 
+const handleResetFilters = () => {
+  selectedStatus.value = 'All'
+  adminStore.resetFilters()
+}
+
 const handleCancel = () => {
   showModal.value = false
 }
@@ -57,17 +60,14 @@ const handleConfirm = async () => {
   showModal.value = false
 }
 
-// Função para abrir o modal de registro
 const openRegisterModal = () => {
   showRegisterModal.value = true
 }
 
-// Função para fechar o modal de registro
 const closeRegisterModal = () => {
   showRegisterModal.value = false
 }
 
-// Função para lidar com upload de foto
 const handlePhotoUpload = (event) => {
   const file = event.target.files[0]
   if (file) {
@@ -77,7 +77,6 @@ const handlePhotoUpload = (event) => {
   }
 }
 
-// Função para submeter o registro
 const submitRegister = async () => {
   const formData = new FormData()
   formData.append('name', name.value)
@@ -96,7 +95,6 @@ const submitRegister = async () => {
 
 onMounted(async () => {
   loading.value = true
-  authStore.fetchProfile()
   await adminStore.getUsers()
   loading.value = false
 })
@@ -116,19 +114,30 @@ onUnmounted(async () => {
           <input
             type="text"
             id="search"
-            v-model="searchTerm"
+            v-model="adminStore.searchTerm"
             placeholder="Search by Nickname or Email"
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+            class="w-64 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+          />
+        </div>
+
+        <div class="w-full sm:w-auto">
+          <label for="gameStatus" class="block text-sm font-medium text-gray-700 pb-2">
+            Account Status
+          </label>
+          <DropdownButton
+            :options="AccountTypeOptions"
+            v-model="selectedStatus"
+            @select="adminStore.setSelectedStatus"
           />
         </div>
         <div class="w-full sm:w-auto">
           <label for="gameStatus" class="block text-sm font-medium text-gray-700 pb-2">
-            Game Status
+            Player Type
           </label>
           <DropdownButton
             :options="PlayerTypeOptions"
-            v-model="adminStore.gameStatusFilter"
-            @select="(value) => adminStore.filterByGameStatus(value)"
+            v-model="adminStore.selectedType"
+            @select="adminStore.setSelectedType"
           />
         </div>
       </div>
@@ -149,7 +158,7 @@ onUnmounted(async () => {
       <div v-else>
         <PaginatedTable
           :columns="columns"
-          :data="adminStore.users"
+          :data="adminStore.filteredUsers"
           :hidden-columns="['Blocked']"
           :pagination="true"
         >
