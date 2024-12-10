@@ -10,6 +10,7 @@ const adminStore = useAdminStore()
 
 const statusOptions = ['All', 'Pending', 'In Progress', 'Ended', 'Interrupted']
 const gameTypeOptions = ['All', 'Single-Player', 'Multi-Player']
+const boardSizeOptions = ['All', '3x4', '4x4', '6x6']
 
 const loading = computed(() => adminStore.loading)
 
@@ -30,7 +31,9 @@ onMounted(() => {
     <div class="bg-white p-6 rounded-lg shadow-md mb-6">
       <div class="flex flex-col sm:flex-row sm:justify-between gap-5">
         <div class="w-full sm:w-auto">
-          <label for="began_at" class="block text-sm font-medium text-gray-700">Date Range</label>
+          <label for="began_at" class="block text-sm font-medium text-gray-700 pb-2"
+            >Date Range</label
+          >
           <DatePicker
             v-model="adminStore.dateRange"
             range
@@ -59,6 +62,16 @@ onMounted(() => {
             :options="gameTypeOptions"
             v-model="adminStore.gameTypeFilter"
             @select="(value) => adminStore.filterByGameType(value)"
+          />
+        </div>
+        <div class="w-full sm:w-auto">
+          <label for="gameStatus" class="block text-sm font-medium text-gray-700 pb-2">
+            Board Size
+          </label>
+          <DropdownButton
+            :options="boardSizeOptions"
+            v-model="adminStore.boardSizeFilter"
+            @select="(value) => adminStore.filterByBoardSize(value)"
           />
         </div>
       </div>
