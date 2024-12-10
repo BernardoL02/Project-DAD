@@ -12,6 +12,7 @@ G0. Geral
 [] - Remover actions de tabelas que nao precisem
 [] - Limpar todas as stores e ver se os dados ja existem antes de os ir buscar no 
 [] - Sons nos jogos
+[] - Rotas no botao hamburger
 
 G1. USER REGISTRATION, AUTHENTICATION, PROFILE, END SESSION, 
 ACCOUNT

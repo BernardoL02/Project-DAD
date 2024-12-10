@@ -153,6 +153,7 @@ export const useGameStore = defineStore('game', () => {
 
   const getMultiPlayerGame = async (gameId) => {
     storeError.resetMessages()
+
     const baseUrl = axios.defaults.baseURL.replace('/api', '')
 
     try {
@@ -185,6 +186,7 @@ export const useGameStore = defineStore('game', () => {
           : avatarNoneAssetURL,
         participants_count: gameData.participants_count || '-',
         participants: gameData.participants.map((participant) => ({
+          name: participant.name,
           player_name: participant.player_name,
           player_won: participant.player_won,
           pairs_discovered: participant.pairs_discovered,

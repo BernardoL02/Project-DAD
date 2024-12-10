@@ -39,7 +39,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/games', [GameController::class, 'index'])->can("viewAny", Game::class);
     Route::get('/games/single', [GameController::class, 'mySinglePlayerGames'])->can("view", Game::class);
     Route::get('/games/multi', [GameController::class, 'myMultiPlayerGames'])->can("view", Game::class);
-    Route::get('/games/{game}', [GameController::class, 'show']);
+    Route::get('/games/{game}', [GameController::class, 'show'])->can("show", "game");
     Route::post('/games', [GameController::class, 'store'])->can("create", Game::class);
     Route::patch('/games/{game}', [GameController::class, 'updateGameStatus'])->can("update", "game");
 

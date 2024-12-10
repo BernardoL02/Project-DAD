@@ -20,6 +20,7 @@ class MultiPlayerGameResource extends JsonResource
             return $this->multiplayerGamesPlayed->map(function ($player) {
                 return [
                     'user_id' => $player->user_id,
+                    'name' => $player->user->name,
                     'player_name' => $player->user->nickname,
                     'player_won' => $player->player_won ? 'Yes' : 'No',
                     'pairs_discovered' => $player->pairs_discovered,
