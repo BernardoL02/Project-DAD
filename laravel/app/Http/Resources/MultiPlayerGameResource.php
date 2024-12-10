@@ -41,10 +41,12 @@ class MultiPlayerGameResource extends JsonResource
             'created_user' => [
                 'id' => $this->createdUser?->id,
                 'nickname' => $this->createdUser?->nickname,
+                'photo_filename' => $this->createdUser?->photo_filename,
             ],
             'winner_user' => [
                 'id' => $this->winnerUser?->id,
                 'nickname' => $this->winnerUser?->nickname,
+                'photo_filename' => $this->winnerUser?->photo_filename,
             ],
             'participants_count' => count( $participants),
             'participants' => $participants,
