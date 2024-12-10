@@ -64,13 +64,13 @@ G6. Administrator
 [x] - Coloca nome em vez de id nas confirmacoes de block/unblock/delete user
 +
 
-[] - Administrators cannot create, modify,
+[x] - Administrators cannot create, modify,
 or delete transactions; they can only view them
 
-[] - Administrators can access the history
+[x] - Administrators can access the history
 of all games from all players on the platform
 
-[] - Administrators will also have access to their own profile, where they can view and perform all the
+[x] - Administrators will also have access to their own profile, where they can view and perform all the
 same actions as any other user, except for the option to remove their own account
 
 [x] - Mudar block e unblock para patch

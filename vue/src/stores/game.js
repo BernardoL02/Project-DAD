@@ -120,7 +120,7 @@ export const useGameStore = defineStore('game', () => {
                 ? '4x4'
                 : game.board_id === 3
                   ? '6x6'
-                  : 'N/A',
+                  : '-',
           status:
             game.status === 'PE'
               ? 'Pending'
@@ -130,10 +130,10 @@ export const useGameStore = defineStore('game', () => {
                   ? 'Ended'
                   : game.status === 'I'
                     ? 'Interrupted'
-                    : 'N/A',
-          began_at: game.began_at || 'N/A',
-          total_time: game.total_time ? game.total_time + 's' : 'N/A',
-          total_turns_winner: game.total_turns_winner || 'N/A',
+                    : '-',
+          began_at: game.began_at || '-',
+          total_time: game.total_time ? game.total_time + 's' : '-',
+          total_turns_winner: game.total_turns_winner || '-',
           replay
         }
       })
@@ -163,7 +163,7 @@ export const useGameStore = defineStore('game', () => {
               ? '4x4'
               : game.board_id === 3
                 ? '6x6'
-                : 'N/A',
+                : '-',
         created_user:
           game.created_user.nickname === authStore.nickname ? 'You' : game.created_user.nickname,
         winner_user:
@@ -178,10 +178,10 @@ export const useGameStore = defineStore('game', () => {
                 ? 'Ended'
                 : game.status === 'I'
                   ? 'Interrupted'
-                  : 'N/A',
-        began_at: game.began_at || 'N/A',
-        total_time: game.total_time + 's' || 'N/A',
-        pairs_discovered: game.pairs_discovered || 'N/A'
+                  : '-',
+        began_at: game.began_at || '-',
+        total_time: game.total_time + 's' || '-',
+        pairs_discovered: game.pairs_discovered || '-'
       }))
       games.value = updatedGames
     } catch (e) {
@@ -245,11 +245,11 @@ export const useGameStore = defineStore('game', () => {
       const timeB = parseFloat(b.total_time.replace('s', '')) || 0
 
       const turnsA =
-        a.total_turns_winner === 'N/A'
+        a.total_turns_winner === '-'
           ? Number.MAX_SAFE_INTEGER
           : parseInt(a.total_turns_winner, 10) || 0
       const turnsB =
-        b.total_turns_winner === 'N/A'
+        b.total_turns_winner === '-'
           ? Number.MAX_SAFE_INTEGER
           : parseInt(b.total_turns_winner, 10) || 0
 
@@ -276,8 +276,8 @@ export const useGameStore = defineStore('game', () => {
       const timeB = parseFloat(b.total_time.replace('s', '')) || 0
 
       if (timeA === timeB) {
-        const pairsA = a.pairs_discovered === 'N/A' ? 0 : a.pairs_discovered
-        const pairsB = b.pairs_discovered === 'N/A' ? 0 : b.pairs_discovered
+        const pairsA = a.pairs_discovered === '-' ? 0 : a.pairs_discovered
+        const pairsB = b.pairs_discovered === '-' ? 0 : b.pairs_discovered
 
         if (pairsA === pairsB) {
           const playersA = a.participants_count || 0

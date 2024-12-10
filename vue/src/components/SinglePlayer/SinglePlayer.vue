@@ -48,7 +48,6 @@ onMounted(async () => {
   if (gameStore.boardFilter === 'All') {
     gameStore.boardFilter = '3x4'
   }
-
 })
 
 const startGame = async (size, cost, board_id) => {

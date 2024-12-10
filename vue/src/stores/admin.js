@@ -1,12 +1,10 @@
 import { ref, computed } from 'vue'
 import { useErrorStore } from '@/stores/error'
-import { useAuthStore } from '@/stores/auth'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
 export const useAdminStore = defineStore('admin', () => {
   const storeError = useErrorStore()
-  const authStore = useAuthStore()
 
   const games = ref([])
   const users = ref([])
@@ -42,23 +40,20 @@ export const useAdminStore = defineStore('admin', () => {
   }
 
   const filteredTransactions = computed(() => {
-    // Filter by date range
     const filteredByDate =
       !dateRange.value[0] && !dateRange.value[1]
         ? transactions.value
         : transactions.value.filter((transaction) => {
-            const transactionDate = new Date(transaction.date).setHours(0, 0, 0, 0) // Normalize transaction date
+            const transactionDate = new Date(transaction.date).setHours(0, 0, 0, 0)
             const [start, end] = dateRange.value
             return (!start || transactionDate >= start) && (!end || transactionDate <= end)
           })
 
-    // Filter by type
     const filteredByType =
       typeFilter.value === 'All'
         ? filteredByDate
         : filteredByDate.filter((transaction) => transaction.type === typeFilter.value)
 
-    // Filter by payment method
     if (paymentMethodFilter.value === 'All') {
       return filteredByType
     }
@@ -103,8 +98,10 @@ export const useAdminStore = defineStore('admin', () => {
 
   const resetFilters = () => {
     dateRange.value = [null, null]
-    filterType.value = ''
-    getTransactions()
+    typeFilter.value = 'All'
+    paymentMethodFilter.value = 'All'
+    gameStatusFilter.value = 'All'
+    gameTypeFilter.value = 'All'
   }
 
   const getUsers = async () => {
@@ -203,22 +200,13 @@ export const useAdminStore = defineStore('admin', () => {
               ? '4x4'
               : game.board_id === 3
                 ? '6x6'
-                : 'N/A',
-        created_user:
-          game.created_user_id === authStore.user_id
-            ? 'You'
-            : game.created_user_id
-              ? game.created_user_id
-              : '',
+                : '-',
+        created_user: game.created_user.nickname || '-',
 
         winner_user:
-          game.winner_user_id === authStore.user_id
-            ? 'You'
-            : game.winner_user_id
-              ? game.winner_user_id
-              : game.created_user_id === authStore.user_id
-                ? 'You'
-                : game.created_user_id || '',
+          game.status === 'E' && game.type === 'S'
+            ? game.created_user.nickname
+            : game.winner_user.nickname,
         Type: game.type === 'S' ? 'Single-Player' : 'Multi-Player',
         status:
           game.status === 'PE'
@@ -229,9 +217,9 @@ export const useAdminStore = defineStore('admin', () => {
                 ? 'Ended'
                 : game.status === 'I'
                   ? 'Interrupted'
-                  : 'N/A',
-        began_at: game.began_at || 'N/A',
-        total_time: game.total_time ? game.total_time + 's' : 'N/A'
+                  : '-',
+        began_at: game.began_at || '-',
+        total_time: game.total_time ? game.total_time + 's' : '-'
       }))
       games.value = updatedGames
     } catch (e) {
