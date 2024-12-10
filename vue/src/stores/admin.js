@@ -20,6 +20,7 @@ export const useAdminStore = defineStore('admin', () => {
   const searchTerm = ref('')
   const selectedType = ref('All')
   const selectedStatus = ref('All')
+  const boardSizeFilter = ref('All')
 
   const formatDate = (date) => {
     if (!date) return ''
@@ -102,6 +103,7 @@ export const useAdminStore = defineStore('admin', () => {
   const filteredGames = computed(() => {
     let filtered = games.value
 
+    // Filter by Date Range
     if (dateRange.value[0] || dateRange.value[1]) {
       const [start, end] = dateRange.value
       filtered = filtered.filter((game) => {
@@ -110,16 +112,27 @@ export const useAdminStore = defineStore('admin', () => {
       })
     }
 
+    // Filter by Game Status
     if (gameStatusFilter.value !== 'All') {
       filtered = filtered.filter((game) => game.status === gameStatusFilter.value)
     }
 
+    // Filter by Game Type
     if (gameTypeFilter.value !== 'All') {
       filtered = filtered.filter((game) => game.Type === gameTypeFilter.value)
     }
 
+    // Filter by Board Size
+    if (boardSizeFilter.value !== 'All') {
+      filtered = filtered.filter((game) => game.board_id === boardSizeFilter.value)
+    }
+
     return filtered
   })
+
+  const filterByBoardSize = (size) => {
+    boardSizeFilter.value = size
+  }
   const filterByGameType = (type) => {
     gameTypeFilter.value = type
   }
@@ -396,6 +409,8 @@ export const useAdminStore = defineStore('admin', () => {
     setSelectedType,
     selectedType,
     setSelectedStatus,
-    selectedStatus
+    selectedStatus,
+    boardSizeFilter,
+    filterByBoardSize
   }
 })
