@@ -127,7 +127,6 @@ export const useAuthStore = defineStore('auth', () => {
         error.response?.data?.message || 'An error occurred while fetching transactions.',
         'Transaction Fetch Error'
       )
-      throw error
     }
   }
 

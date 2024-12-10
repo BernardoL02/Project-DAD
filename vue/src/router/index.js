@@ -182,6 +182,12 @@ router.beforeEach(async (to, from, next) => {
         return
       }
     } else {
+      //Se for jogar e nao tiver moeadas
+      if (to.name === 'SinglePlayerGameBoard' && to.params.size !== '3x4' && authStore.coins == 0) {
+        next({ name: 'single-player' })
+        return
+      }
+
       //Rotas que player não pode aceder
       if (
         to.name === 'login' ||
