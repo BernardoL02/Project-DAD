@@ -17,11 +17,11 @@ G1. USER REGISTRATION, AUTHENTICATION, PROFILE, END SESSION,
 ACCOUNT
 REMOVAL
 
+[] - Remover email/password pré defenida no login
 [] - Verificar se a autenticação está a 100% (tokens a dar refresh etc..)
-[] - Verifica se tudo funciona como admin, e eles apenas nao podem remover a sua conta
+[x] - Verifica se tudo funciona como admin, e eles apenas nao podem remover a sua conta
 [x] - Apos selecionar uma foto ser possivel selecionar outra a partir da imagem ou do titulo photo 
 [] - Ao registrar users e admins tentar colocar as mensagens de erro com \n
-[] - Remover email/password pré defenida no login
 [x] - Users com conta bloqueada nao consegue fazer login
 
 G2. BRAIN COINS AND TRANSACTIONS

@@ -72,7 +72,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="max-w-4xl mx-auto mt-10">
+  <div class="max-w-5xl mx-auto mt-10">
     <!-- Mensagem de carregamento -->
     <div v-if="isLoading" class="text-center text-lg">Loading games...</div>
 
