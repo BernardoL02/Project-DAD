@@ -18,6 +18,14 @@ export const useAuthStore = defineStore('auth', () => {
 
   const notifications = ref([])
 
+  const isAdmin = computed(() => {
+    return user.value ? user.value.type === 'A' : false
+  })
+
+  const isPlayer = computed(() => {
+    return user.value ? user.value.type === 'P' : false
+  })
+
   const name = computed(() => {
     return user.value ? user.value.name : ''
   })
@@ -119,7 +127,6 @@ export const useAuthStore = defineStore('auth', () => {
         error.response?.data?.message || 'An error occurred while fetching transactions.',
         'Transaction Fetch Error'
       )
-      throw error
     }
   }
 
@@ -142,8 +149,6 @@ export const useAuthStore = defineStore('auth', () => {
         error.response?.data?.status,
         'Notification Error'
       )
-      console.error('Error deleting a notificaiton:', error.response?.data || error.message)
-      throw error
     }
   }
 
@@ -402,6 +407,8 @@ export const useAuthStore = defineStore('auth', () => {
 
   return {
     user,
+    isAdmin,
+    isPlayer,
     name,
     nickname,
     userFirstLastName,

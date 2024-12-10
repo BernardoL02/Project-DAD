@@ -1,12 +1,10 @@
 import { ref, computed } from 'vue'
 import { useErrorStore } from '@/stores/error'
-import { useAuthStore } from '@/stores/auth'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 
 export const useAdminStore = defineStore('admin', () => {
   const storeError = useErrorStore()
-  const authStore = useAuthStore()
 
   const games = ref([])
   const users = ref([])
@@ -19,6 +17,10 @@ export const useAdminStore = defineStore('admin', () => {
   const paymentMethodFilter = ref('All')
   const gameStatusFilter = ref('All')
   const gameTypeFilter = ref('All')
+  const searchTerm = ref('')
+  const selectedType = ref('All')
+  const selectedStatus = ref('All')
+  const boardSizeFilter = ref('All')
 
   const formatDate = (date) => {
     if (!date) return ''
@@ -41,24 +43,54 @@ export const useAdminStore = defineStore('admin', () => {
     paymentMethodFilter.value = method
   }
 
+  const filteredUsers = computed(() => {
+    const term = searchTerm.value.toLowerCase().trim()
+    const type = selectedType.value
+    const status = selectedStatus.value
+
+    return users.value.filter((user) => {
+      const matchesSearch =
+        !term ||
+        user.NickName?.toLowerCase().includes(term) ||
+        user.Email?.toLowerCase().includes(term)
+      const matchesType = type === 'All' || user.Type === type
+      const matchesStatus = status === 'All' || user.Blocked === status
+
+      return matchesSearch && matchesType && matchesStatus
+    })
+  })
+
+  const setSearchTerm = (term) => {
+    searchTerm.value = term
+  }
+  const setSelectedType = (type) => {
+    selectedType.value = type
+  }
+
+  const setSelectedStatus = (status) => {
+    if (status === 'Blocked') {
+      selectedStatus.value = 1
+    } else if (status === 'Unblocked') {
+      selectedStatus.value = 0
+    } else {
+      selectedStatus.value = 'All'
+    }
+  }
   const filteredTransactions = computed(() => {
-    // Filter by date range
     const filteredByDate =
       !dateRange.value[0] && !dateRange.value[1]
         ? transactions.value
         : transactions.value.filter((transaction) => {
-            const transactionDate = new Date(transaction.date).setHours(0, 0, 0, 0) // Normalize transaction date
+            const transactionDate = new Date(transaction.date).setHours(0, 0, 0, 0)
             const [start, end] = dateRange.value
             return (!start || transactionDate >= start) && (!end || transactionDate <= end)
           })
 
-    // Filter by type
     const filteredByType =
       typeFilter.value === 'All'
         ? filteredByDate
         : filteredByDate.filter((transaction) => transaction.type === typeFilter.value)
 
-    // Filter by payment method
     if (paymentMethodFilter.value === 'All') {
       return filteredByType
     }
@@ -71,6 +103,7 @@ export const useAdminStore = defineStore('admin', () => {
   const filteredGames = computed(() => {
     let filtered = games.value
 
+    // Filter by Date Range
     if (dateRange.value[0] || dateRange.value[1]) {
       const [start, end] = dateRange.value
       filtered = filtered.filter((game) => {
@@ -79,16 +112,27 @@ export const useAdminStore = defineStore('admin', () => {
       })
     }
 
+    // Filter by Game Status
     if (gameStatusFilter.value !== 'All') {
       filtered = filtered.filter((game) => game.status === gameStatusFilter.value)
     }
 
+    // Filter by Game Type
     if (gameTypeFilter.value !== 'All') {
       filtered = filtered.filter((game) => game.Type === gameTypeFilter.value)
     }
 
+    // Filter by Board Size
+    if (boardSizeFilter.value !== 'All') {
+      filtered = filtered.filter((game) => game.board_id === boardSizeFilter.value)
+    }
+
     return filtered
   })
+
+  const filterByBoardSize = (size) => {
+    boardSizeFilter.value = size
+  }
   const filterByGameType = (type) => {
     gameTypeFilter.value = type
   }
@@ -103,8 +147,13 @@ export const useAdminStore = defineStore('admin', () => {
 
   const resetFilters = () => {
     dateRange.value = [null, null]
-    filterType.value = ''
-    getTransactions()
+    typeFilter.value = 'All'
+    paymentMethodFilter.value = 'All'
+    gameStatusFilter.value = 'All'
+    gameTypeFilter.value = 'All'
+    searchTerm.value = ''
+    selectedType.value = 'All'
+    selectedStatus.value = 'All'
   }
 
   const getUsers = async () => {
@@ -203,22 +252,13 @@ export const useAdminStore = defineStore('admin', () => {
               ? '4x4'
               : game.board_id === 3
                 ? '6x6'
-                : 'N/A',
-        created_user:
-          game.created_user_id === authStore.user_id
-            ? 'You'
-            : game.created_user_id
-              ? game.created_user_id
-              : '',
+                : '-',
+        created_user: game.created_user.nickname || '-',
 
         winner_user:
-          game.winner_user_id === authStore.user_id
-            ? 'You'
-            : game.winner_user_id
-              ? game.winner_user_id
-              : game.created_user_id === authStore.user_id
-                ? 'You'
-                : game.created_user_id || '',
+          game.status === 'E' && game.type === 'S'
+            ? game.created_user.nickname
+            : game.winner_user.nickname,
         Type: game.type === 'S' ? 'Single-Player' : 'Multi-Player',
         status:
           game.status === 'PE'
@@ -229,17 +269,17 @@ export const useAdminStore = defineStore('admin', () => {
                 ? 'Ended'
                 : game.status === 'I'
                   ? 'Interrupted'
-                  : 'N/A',
-        began_at: game.began_at || 'N/A',
-        total_time: game.total_time ? game.total_time + 's' : 'N/A'
+                  : '-',
+        began_at: game.began_at || '-',
+        total_time: game.total_time ? game.total_time + 's' : '-'
       }))
       games.value = updatedGames
-    } catch (e) {
+    } catch (err) {
       storeError.setErrorMessages(
-        e.response?.data?.message || 'An error occurred',
-        e.response?.data?.errors || [],
-        e.response?.status || 500,
-        "Error fetching user's single games!"
+        err.response?.data?.message,
+        err.response?.data?.errors,
+        err.response?.data?.status,
+        'Error Getting Games'
       )
     } finally {
       loading.value = false
@@ -329,14 +369,12 @@ export const useAdminStore = defineStore('admin', () => {
 
       dateRange.value = [null, null]
     } catch (err) {
-      error.value = 'Failed to load user profiles. Please try again.'
       storeError.setErrorMessages(
         err.response?.data?.message,
         err.response?.data?.errors,
         err.response?.data?.status,
-        'Profile Fetch Error'
+        'Error Get Transactions'
       )
-      console.error('Error fetching profiles:', err)
     } finally {
       loading.value = false
     }
@@ -364,6 +402,15 @@ export const useAdminStore = defineStore('admin', () => {
     gameStatusFilter,
     filterByGameStatus,
     filterByGameType,
-    gameTypeFilter
+    gameTypeFilter,
+    filteredUsers,
+    searchTerm,
+    setSearchTerm,
+    setSelectedType,
+    selectedType,
+    setSelectedStatus,
+    selectedStatus,
+    boardSizeFilter,
+    filterByBoardSize
   }
 })

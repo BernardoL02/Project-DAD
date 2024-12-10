@@ -26,8 +26,15 @@ class GameResource extends JsonResource
             'ended_at' => $this->ended_at,
             'total_time' => $this->total_time,
             'board_id' => $this->board_id,
-            'created_user' => new UserResource($this->whenLoaded('createdUser')),
-            'winner_user' => new UserResource($this->whenLoaded('winnerUser')),
+            'created_user' => [
+                'id' => $this->createdUser?->id,
+                'nickname' => $this->createdUser?->nickname,
+            ],
+
+            'winner_user' => [
+                'id' => $this->winnerUser?->id,
+                'nickname' => $this->winnerUser?->nickname,
+            ],
             'participants_count' => $this->participants_count,
             'user' => $this->whenLoaded('user', function () {
                 return [

@@ -12,6 +12,17 @@ export const useTransactionStore = defineStore('transaction', () => {
   const loading = ref(false)
   const error = ref(null)
   const dateRange = ref([null, null])
+  const filterType = ref('')
+  const typeFilter = ref('All')
+  const paymentMethodFilter = ref('All')
+
+  const filterByType = (type) => {
+    typeFilter.value = type
+  }
+
+  const filterByPaymentMethod = (method) => {
+    paymentMethodFilter.value = method
+  }
 
   const formatDate = (date) => {
     if (!date) return ''
@@ -128,7 +139,6 @@ export const useTransactionStore = defineStore('transaction', () => {
         error.response?.data?.message || 'An error occurred while fetching transactions.',
         'Transaction Fetch Error'
       )
-      throw error
     }
   }
 
@@ -139,22 +149,36 @@ export const useTransactionStore = defineStore('transaction', () => {
   }
 
   const filteredTransactions = computed(() => {
-    if (!dateRange.value[0] && !dateRange.value[1]) {
-      return transactions.value
+    // Filter by Date Range
+    const filteredByDate =
+      !dateRange.value[0] && !dateRange.value[1]
+        ? transactions.value
+        : transactions.value.filter((transaction) => {
+            const transactionDate = new Date(transaction.date).setHours(0, 0, 0, 0)
+            const [start, end] = dateRange.value.map((date) =>
+              date ? new Date(date).setHours(0, 0, 0, 0) : null
+            )
+            return (!start || transactionDate >= start) && (!end || transactionDate <= end)
+          })
+
+    const filteredByType =
+      typeFilter.value === 'All'
+        ? filteredByDate
+        : filteredByDate.filter((transaction) => transaction.type === typeFilter.value)
+
+    if (paymentMethodFilter.value === 'All') {
+      return filteredByType
     }
 
-    const [start, end] = dateRange.value.map((date) =>
-      date ? new Date(date).setHours(0, 0, 0, 0) : null
+    return filteredByType.filter(
+      (transaction) => transaction.paymentMethod === paymentMethodFilter.value
     )
-
-    return transactions.value.filter((transaction) => {
-      const transactionDate = new Date(transaction.date).setHours(0, 0, 0, 0)
-      return (!start || transactionDate >= start) && (!end || transactionDate <= end)
-    })
   })
 
   const resetFilters = () => {
     dateRange.value = [null, null]
+    typeFilter.value = 'All'
+    paymentMethodFilter.value = 'All'
   }
 
   return {
@@ -168,6 +192,9 @@ export const useTransactionStore = defineStore('transaction', () => {
     getTransactions,
     handleDateChange,
     filteredTransactions,
-    resetFilters
+    resetFilters,
+    filterByPaymentMethod,
+    filterType,
+    filterByType
   }
 })

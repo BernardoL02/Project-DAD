@@ -17,11 +17,11 @@ G1. USER REGISTRATION, AUTHENTICATION, PROFILE, END SESSION,
 ACCOUNT
 REMOVAL
 
+[] - Remover email/password pré defenida no login
 [] - Verificar se a autenticação está a 100% (tokens a dar refresh etc..)
-[] - Verifica se tudo funciona como admin, e eles apenas nao podem remover a sua conta
+[x] - Verifica se tudo funciona como admin, e eles apenas nao podem remover a sua conta
 [x] - Apos selecionar uma foto ser possivel selecionar outra a partir da imagem ou do titulo photo 
 [] - Ao registrar users e admins tentar colocar as mensagens de erro com \n
-[] - Remover email/password pré defenida no login
 [x] - Users com conta bloqueada nao consegue fazer login
 
 G2. BRAIN COINS AND TRANSACTIONS
@@ -30,8 +30,8 @@ G2. BRAIN COINS AND TRANSACTIONS
 
 G3. SINGLE-PLAYER GAMES
 
-[] - Adaptar a pagina para o user Anonymou
-[] - Proteger rotas front-end para quando o user nao tem coins nao conseguir jogar
+[x] - Adaptar a pagina para o user Anonymou
+[x] - Proteger rotas front-end para quando o user nao tem coins nao conseguir jogar
 
 G4. MULTIPLAYER GAMES
 
@@ -64,13 +64,13 @@ G6. Administrator
 [x] - Coloca nome em vez de id nas confirmacoes de block/unblock/delete user
 +
 
-[] - Administrators cannot create, modify,
+[x] - Administrators cannot create, modify,
 or delete transactions; they can only view them
 
-[] - Administrators can access the history
+[x] - Administrators can access the history
 of all games from all players on the platform
 
-[] - Administrators will also have access to their own profile, where they can view and perform all the
+[x] - Administrators will also have access to their own profile, where they can view and perform all the
 same actions as any other user, except for the option to remove their own account
 
 [x] - Mudar block e unblock para patch

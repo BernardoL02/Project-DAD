@@ -2,7 +2,6 @@ import HomeComponent from '@/components/HomeComponent.vue'
 import PlayerHistory from '@/components/SinglePlayer/PlayerHistory.vue'
 import PlayerProfile from '@/components/Profile/PlayerProfile.vue'
 import SinglePlayer from '@/components/SinglePlayer/SinglePlayer.vue'
-import WebSocketTester from '@/components/WebSocketTester.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import SinglePlayerScoreBoard from '@/components/ScoreBoard/SinglePlayerScoreBoard.vue'
 import MultiPlayerScoreBoard from '@/components/ScoreBoard/MultiPlayerScoreBoard.vue'
@@ -19,7 +18,7 @@ import ChangePassword from '@/components/Profile/ChangePassword.vue'
 import ManageUsers from '@/components/Administration/ManageUsers.vue'
 import AdminTransactions from '@/components/Administration/AdminTransactions.vue'
 import MultiPlayerLobbys from '@/components/Multiplayer/MuiltiPlayerLobbys.vue'
-import AdministrateGames from '@/components/Administration/AdministrateGames.vue'
+import AdminGames from '@/components/Administration/AdminGames.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,11 +27,6 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeComponent
-    },
-    {
-      path: '/websocket',
-      name: 'websocket',
-      component: WebSocketTester
     },
     {
       path: '/singleplayer',
@@ -121,9 +115,15 @@ const router = createRouter({
       component: AdminTransactions
     },
     {
-      path: '/administrateGames',
-      name: 'administrateGames',
-      component: AdministrateGames
+      path: '/adminGames',
+      name: 'adminGames',
+      component: AdminGames
+    },
+    // Rota para rotas nao encontradas
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'not-found',
+      redirect: { name: 'home' }
     }
   ]
 })
@@ -144,15 +144,66 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
-  const sizeAllowed = to.params.size === '3x4'
+  if (!authStore.user) {
+    //Permitir apenas jogar single player 3x4
+    if (to.name === 'SinglePlayerGameBoard' && to.params.size !== '3x4' && !authStore.user) {
+      next({ name: 'login' })
+      return
+    }
 
-  if (to.name === 'SinglePlayerGameBoard' && !sizeAllowed && !authStore.user) {
-    next({ name: 'login' })
-    return
+    //Rotas que anónima pode aceder
+    if (
+      to.name !== 'login' &&
+      to.name !== 'home' &&
+      to.name !== 'registration' &&
+      to.name !== 'single-player' &&
+      to.name !== 'singlePlayerScore' &&
+      to.name !== 'multiPlayerScore' &&
+      to.name !== 'SinglePlayerGameBoard'
+    ) {
+      next({ name: 'login' })
+      return
+    }
+  } else {
+    //Rotas que admin pode aceder
+    if (authStore.isAdmin) {
+      if (
+        to.name !== 'home' &&
+        to.name !== 'singlePlayerScore' &&
+        to.name !== 'multiPlayerScore' &&
+        to.name !== 'ManageUsers' &&
+        to.name !== 'adminTransactions' &&
+        to.name !== 'adminGames' &&
+        to.name !== 'Profile' &&
+        to.name !== 'ProfileUpdate' &&
+        to.name !== 'changePassword'
+      ) {
+        next({ name: 'home' })
+        return
+      }
+    } else {
+      //Se for jogar e nao tiver moeadas
+      if (to.name === 'SinglePlayerGameBoard' && to.params.size !== '3x4' && authStore.coins == 0) {
+        next({ name: 'single-player' })
+        return
+      }
+
+      //Rotas que player não pode aceder
+      if (
+        to.name === 'login' ||
+        to.name === 'registration' ||
+        to.name === 'ManageUsers' ||
+        to.name === 'adminTransactions' ||
+        to.name === 'adminGames'
+      ) {
+        next({ name: 'home' })
+        return
+      }
+    }
   }
 
-  if ((to.name === 'singlePlayerHistory' || to.name === 'Profile') && !authStore.user) {
-    next({ name: 'login' })
+  if (!to.matched.length) {
+    next({ name: 'home' })
     return
   }
 

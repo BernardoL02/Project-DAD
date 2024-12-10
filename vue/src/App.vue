@@ -18,18 +18,6 @@
             </RouterLink>
           </div>
 
-          <!-- Menu Hamburger para telas pequenas -->
-          <div class="flex items-center lg:hidden">
-            <button
-              @click="toggleMenu"
-              class="text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium"
-            >
-              <span v-if="isMenuOpen">&#10005;</span>
-              <span v-else>&#9776;</span>
-              <!-- Ícone do hambúrguer -->
-            </button>
-          </div>
-
           <!-- Links à esquerda -->
           <div :class="{ 'hidden lg:flex': true, 'flex flex-col lg:flex-row lg:space-x-8': true }">
             <RouterLink
@@ -46,6 +34,7 @@
             </RouterLink>
 
             <RouterLink
+              v-if="authStore.isPlayer || !authStore.user"
               :to="{ name: 'single-player' }"
               :class="[
                 'px-3 py-2 rounded-md text-sm font-medium transition-colors',
@@ -59,6 +48,7 @@
             </RouterLink>
 
             <RouterLink
+              v-if="authStore.isPlayer"
               to="/multiplayer"
               :class="[
                 'px-3 py-2 rounded-md text-sm font-medium transition-colors',
@@ -70,7 +60,9 @@
             >
               Multi-Player
             </RouterLink>
+
             <RouterLink
+              v-if="authStore.isPlayer"
               :to="{ name: 'store' }"
               :class="[
                 'px-3 py-2 rounded-md text-sm font-medium transition-colors',
@@ -100,7 +92,7 @@
               </label>
               <!-- Dropdown Menu -->
               <div
-                class="absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col bg-white shadow-lg rounded-lg w-40 z-10 mt-2 transition-all duration-300 ease-in-out"
+                class="absolute border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col bg-white shadow-lg rounded-lg w-32 z-10 mt-2 transition-all duration-300 ease-in-out"
               >
                 <RouterLink
                   to="/scoreBoard/singlePlayer"
@@ -129,66 +121,69 @@
               </div>
             </div>
 
-            <div class="relative group pt-[6px]">
-              <label
-                for=""
-                :class="[
-                  'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                  route.path === '/ManageUsers' || route.path === '/RegisterAdmin'
-                    ? 'text-indigo-500 font-semibold'
-                    : 'text-gray-900 hover:text-sky-600'
-                ]"
-                active-class="text-blue-600 font-semibold"
-              >
-                DashBoard
-              </label>
-              <div
-                class="absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col bg-white shadow-lg rounded-lg w-40 z-10 mt-2 transition-all duration-300 ease-in-out"
-              >
-                <RouterLink
-                  :to="{ name: 'ManageUsers' }"
-                  :class="[
-                    'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                    route.path === '/ManageUsers'
-                      ? 'text-indigo-500 font-semibold'
-                      : 'text-gray-900 hover:text-sky-600'
-                  ]"
-                  active-class="text-blue-600 font-semibold"
-                >
-                  Manage Users
-                </RouterLink>
+            <RouterLink
+              v-if="authStore.isAdmin"
+              :to="{ name: 'ManageUsers' }"
+              :class="[
+                'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                route.path === '/singleplayer'
+                  ? 'text-indigo-500 font-semibold'
+                  : 'text-gray-900 hover:text-sky-600'
+              ]"
+              active-class="text-blue-600 font-semibold"
+            >
+              Manage Users
+            </RouterLink>
 
-                <RouterLink
-                  :to="{ name: 'adminTransactions' }"
-                  :class="[
-                    'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                    route.path === '/adminTransactions'
-                      ? 'text-indigo-500 font-semibold'
-                      : 'text-gray-900 hover:text-sky-600'
-                  ]"
-                  active-class="text-blue-600 font-semibold"
-                >
-                  All Transactions
-                </RouterLink>
-                <RouterLink
-                  :to="{ name: 'administrateGames' }"
-                  :class="[
-                    'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                    route.path === '/administrateGames'
-                      ? 'text-indigo-500 font-semibold'
-                      : 'text-gray-900 hover:text-sky-600'
-                  ]"
-                  active-class="text-blue-600 font-semibold"
-                >
-                  All Games
-                </RouterLink>
-              </div>
-            </div>
+            <RouterLink
+              v-if="authStore.isAdmin"
+              :to="{ name: 'adminTransactions' }"
+              :class="[
+                'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                route.path === '/singleplayer'
+                  ? 'text-indigo-500 font-semibold'
+                  : 'text-gray-900 hover:text-sky-600'
+              ]"
+              active-class="text-blue-600 font-semibold"
+            >
+              All Transactions
+            </RouterLink>
+
+            <RouterLink
+              v-if="authStore.isAdmin"
+              :to="{ name: 'adminGames' }"
+              :class="[
+                'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                route.path === '/singleplayer'
+                  ? 'text-indigo-500 font-semibold'
+                  : 'text-gray-900 hover:text-sky-600'
+              ]"
+              active-class="text-blue-600 font-semibold"
+            >
+              All Games
+            </RouterLink>
+
+            <RouterLink
+              v-if="authStore.isAdmin"
+              :to="{ name: 'adminGames' }"
+              :class="[
+                'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                route.path === '/singleplayer'
+                  ? 'text-indigo-500 font-semibold'
+                  : 'text-gray-900 hover:text-sky-600'
+              ]"
+              active-class="text-blue-600 font-semibold"
+            >
+              Statistics
+            </RouterLink>
           </div>
 
           <div v-if="authStore.user" class="flex flex-row space-x-7">
             <div>
-              <div class="relative group flex items-center space-x-6 pt-3">
+              <div
+                v-if="authStore.isPlayer"
+                class="relative group flex items-center space-x-6 pt-3"
+              >
                 <!-- Foto do Perfil -->
                 <div class="relative inline-block">
                   <!-- Bell Icon -->
@@ -286,7 +281,7 @@
               </div>
             </div>
 
-            <!-- Login/Register ou Perfil do Usuário -->
+            <!-- Login/Register ou Perfil -->
             <div class="relative group flex flex-row items-center">
               <div>
                 <div class="relative group flex items-center space-x-6">
@@ -348,50 +343,6 @@
       </div>
     </header>
 
-    <!-- Menu de navegação em telas pequenas (exibido quando o hamburger é clicado) -->
-    <div v-if="isMenuOpen" class="lg:hidden bg-gray-100">
-      <div class="space-y-4 p-4">
-        <RouterLink
-          to="/"
-          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium"
-        >
-          Home
-        </RouterLink>
-        <RouterLink
-          to="/testers/laravel"
-          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium"
-        >
-          Laravel Tester
-        </RouterLink>
-        <RouterLink
-          to="/singlePlayer"
-          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium"
-        >
-          Single-Player
-        </RouterLink>
-
-        <RouterLink
-          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium"
-        >
-          Score Board
-        </RouterLink>
-
-        <RouterLink
-          to="/ManageUsers"
-          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium"
-        >
-          Manage Users
-        </RouterLink>
-
-        <RouterLink
-          to="/playerProfile"
-          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium"
-        >
-          Profile
-        </RouterLink>
-      </div>
-    </div>
-
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <RouterView />
     </main>
@@ -400,7 +351,6 @@
 
 <script setup>
 import Toaster from './components/ui/toast/Toaster.vue'
-import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -420,11 +370,5 @@ const handleDeleteNotificaitonClick = async (notificationId) => {
   if (success) {
     authStore.getNotifications()
   }
-}
-
-const isMenuOpen = ref(false)
-
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value
 }
 </script>

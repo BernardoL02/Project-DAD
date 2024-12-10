@@ -19,7 +19,14 @@ class GameController extends Controller
      */
     public function index(Request $request)
     {
-        $games = Game::orderBy('began_at', 'desc')->get();
+       $games = Game::with([
+        'createdUser' => function ($query) {
+            $query->withTrashed();
+        },
+        'winnerUser' => function ($query) {
+            $query->withTrashed();
+        },
+        ])->orderBy('began_at', 'desc')->get();
 
         return GameResource::collection($games);
     }
