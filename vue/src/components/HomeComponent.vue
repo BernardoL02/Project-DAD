@@ -1,8 +1,12 @@
 <script setup>
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+
 </script>
 
 <template>
-    <div class="bg-gradient-to-b from-blue-100 to-blue-50 min-h-screen flex flex-col items-center rounded-lg">
+    <div class="bg-gradient-to-b from-blue-100 to-blue-50 pb-4 flex flex-col items-center rounded-lg">
         <!-- Banner -->
         <div
             class="w-full relative bg-gradient-to-r from-sky-500 to-indigo-700 text-white py-16 rounded-lg animate-fade-in">
@@ -17,12 +21,13 @@
         </div>
 
         <!-- Main Content -->
-        <div class="max-w-6xl w-full px-6 py-12 space-y-16">
+        <div class="max-w-6xl w-full px-6 pt-10 space-y-10">
             <!-- About the Game -->
             <section class="text-center space-y-4 animate-fade-in">
                 <h2 class="text-3xl font-bold text-gray-800">What is Memory Game?</h2>
                 <p class="text-lg text-gray-600 max-w-3xl mx-auto">
-                    Memory Game is a fun and challenging game designed to test your memory and skills. Play solo or with
+                    Memory Game is a fun and challenging game designed to test your memory and skills. <br> Play solo or
+                    with
                     friends
                     and see who can remember more!
                 </p>
@@ -54,10 +59,11 @@
             </section>
 
             <!-- Call to Action -->
-            <section class="text-center space-y-6 animate-fade-in">
-                <p class="text-lg text-gray-700">Want to get started? <br> Create an account and join the fun!</p>
+            <section class="text-center animate-fade-in">
+                <p v-if="!authStore.user" class="text-lg text-gray-700 pb-4">Want to get started? <br> Create an account
+                    and join the fun!</p>
                 <div class="flex justify-center gap-4">
-                    <router-link to="/registration"
+                    <router-link v-if="!authStore.user" to="/registration"
                         class="bg-sky-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-sky-600 transition-transform transform hover:scale-105 hover:shadow-lg">
                         Register Now
                     </router-link>
