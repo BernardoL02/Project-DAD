@@ -190,6 +190,7 @@ export const useAdminStore = defineStore('admin', () => {
     }
   }
   const getAllGames = async () => {
+    loading.value = true
     storeError.resetMessages()
     try {
       const response = await axios.get('games')
@@ -240,6 +241,8 @@ export const useAdminStore = defineStore('admin', () => {
         e.response?.status || 500,
         "Error fetching user's single games!"
       )
+    } finally {
+      loading.value = false
     }
   }
   const register = async (userData) => {

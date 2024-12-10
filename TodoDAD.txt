@@ -61,7 +61,7 @@ G6. Administrator
 [] - Colocar loading na página das transactions
 [] - Colocar filtro por name e clear filters a funcionar
 [] - Filtros na pagina de all users
-[] - Coloca nome em vez de id nas confirmacoes de block/unblock/delete user
+[x] - Coloca nome em vez de id nas confirmacoes de block/unblock/delete user
 +
 
 [] - Administrators cannot create, modify,
