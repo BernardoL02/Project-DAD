@@ -84,71 +84,41 @@ onMounted(async () => {
         <div class="flex flex-row sm:flex-row sm:justify-between gap-5">
           <div class="w-full sm:w-auto">
             <label for="began_at" class="block text-sm font-medium text-gray-700">Began At</label>
-            <DatePicker
-              v-model="gameStore.beginDateFilter"
-              range
-              format="YYYY-MM-DD"
-              value-format="YYYY-MM-DD"
+            <DatePicker v-model="gameStore.beginDateFilter" range format="YYYY-MM-DD" value-format="YYYY-MM-DD"
               class="max-w-[225px] focus:ring-sky-500 focus:border-sky-500 pt-[12px] text-sm font-medium text-gray-700 focus:outline-none focus:ring-2"
-              :placeholder="formattedDateRange"
-              @change="handleDateChange"
-            />
+              :placeholder="formattedDateRange" @change="handleDateChange" />
           </div>
           <div class="w-full sm:w-auto">
-            <label for="difficulty" class="block text-sm font-medium text-gray-700 pb-2"
-              >Difficulty</label
-            >
-            <DropdownButton
-              ref="dropdownRefs.difficultyDropdown"
-              :options="difficultyOptions"
-              v-model="gameStore.difficultyFilter"
-              @select="(value) => handleSelect(value, 'difficulty')"
-            />
+            <label for="difficulty" class="block text-sm font-medium text-gray-700 pb-2">Difficulty</label>
+            <DropdownButton ref="dropdownRefs.difficultyDropdown" :options="difficultyOptions"
+              v-model="gameStore.difficultyFilter" @select="(value) => handleSelect(value, 'difficulty')" />
           </div>
           <div class="w-full sm:w-auto">
             <label for="board" class="block text-sm font-medium text-gray-700 pb-2">Board</label>
-            <DropdownButton
-              ref="dropdownRefs.boardDropdown"
-              :options="boardOptions"
-              v-model="gameStore.boardFilter"
-              @select="(value) => handleSelect(value, 'board')"
-            />
+            <DropdownButton ref="dropdownRefs.boardDropdown" :options="boardOptions" v-model="gameStore.boardFilter"
+              @select="(value) => handleSelect(value, 'board')" />
           </div>
           <div class="w-full sm:w-auto">
             <label for="status" class="block text-sm font-medium text-gray-700 pb-2">Status</label>
-            <DropdownButton
-              ref="dropdownRefs.statusDropdown"
-              :options="statusOptions"
-              v-model="gameStore.statusFilter"
-              @select="(value) => handleSelect(value, 'status')"
-            />
+            <DropdownButton ref="dropdownRefs.statusDropdown" :options="statusOptions" v-model="gameStore.statusFilter"
+              @select="(value) => handleSelect(value, 'status')" />
           </div>
         </div>
 
         <div class="flex justify-end text-xs pt-5 mb-[-15px]">
-          <button
-            @click="handleResetFilters"
-            class="text-gray-500 hover:text-black hover:border-gray-700"
-          >
+          <button @click="handleResetFilters" class="text-gray-500 hover:text-black hover:border-gray-700">
             Reset Filters
           </button>
         </div>
       </div>
 
-      <PaginatedTable
-        :data="gameStore.filteredGames"
-        :columns="tableColumns"
-        :hiddenColumns="['replay']"
-        :pagination="true"
-      >
+      <PaginatedTable :data="gameStore.filteredGames" :columns="tableColumns" :hiddenColumns="['replay']"
+        :pagination="true">
         <template #actions="{ row }">
           <div class="flex justify-center items-center h-full">
             <div class="relative group inline-block">
-              <button
-                v-if="row.replay"
-                @click="replayStore.handleReplay(row.replay, row.difficulty)"
-                class="text-blue-500 hover:underline"
-              >
+              <button v-if="row.replay" @click="replayStore.handleReplay(row.replay, row.difficulty)"
+                class="text-blue-500 hover:underline">
                 <img src="/replay.png" alt="Replay" class="w-6 h-6" />
               </button>
               <span v-if="row.replay"
@@ -162,41 +132,27 @@ onMounted(async () => {
     </div>
 
     <!-- Modal -->
-    <div
-      v-if="replayStore.showModal"
-      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-    >
+    <div v-if="replayStore.showModal"
+      class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
         <h2 class="text-2xl font-bold mb-4">Replay</h2>
 
-        <div
-          class="grid gap-2 mb-4"
-          :style="{ gridTemplateRows: `repeat(${replayStore.selectedReplay.board.length}, 1fr)` }"
-        >
-          <div
-            v-for="(row, rowIndex) in replayStore.selectedReplay.board"
-            :key="rowIndex"
-            class="grid"
-            :style="{ gridTemplateColumns: `repeat(${row.length}, 1fr)` }"
-          >
+        <div class="grid gap-2 mb-4"
+          :style="{ gridTemplateRows: `repeat(${replayStore.selectedReplay.board.length}, 1fr)` }">
+          <div v-for="(row, rowIndex) in replayStore.selectedReplay.board" :key="rowIndex" class="grid"
+            :style="{ gridTemplateColumns: `repeat(${row.length}, 1fr)` }">
             <div v-for="(cell, colIndex) in row" :key="colIndex" class="relative w-20 h-28 m-1">
-              <div
-                class="card w-full h-full relative"
-                :class="{
-                  flipped:
-                    replayStore.showFlipped[rowIndex][colIndex] === true ||
-                    replayStore.showFlipped[rowIndex][colIndex] === 'matched'
-                }"
-              >
+              <div class="card w-full h-full relative" :class="{
+                flipped:
+                  replayStore.showFlipped[rowIndex][colIndex] === true ||
+                  replayStore.showFlipped[rowIndex][colIndex] === 'matched'
+              }">
                 <div class="card-back bg-gray-800 rounded-lg">
                   <img src="/Cards/semFace.png" class="w-full object-cover" />
                 </div>
-                <div
-                  class="card-front rounded-lg"
-                  :class="{
-                    'opacity-50': replayStore.showFlipped[rowIndex][colIndex] === 'matched'
-                  }"
-                >
+                <div class="card-front rounded-lg" :class="{
+                  'opacity-50': replayStore.showFlipped[rowIndex][colIndex] === 'matched'
+                }">
                   <img :src="`/Cards/${cell}`" class="w-full object-cover" />
                 </div>
               </div>
@@ -210,24 +166,13 @@ onMounted(async () => {
             <span v-else-if="!replayStore.isPaused">⏸️</span>
             <span v-else>▶️</span>
           </button>
-          <input
-            type="range"
-            min="0"
-            :max="replayStore.maxTime"
-            step="100"
-            v-model="replayStore.currentTime"
-            @mousedown="replayStore.pauseReplay"
-            @mouseup="replayStore.updateProgress"
-            class="w-full"
-          />
+          <input type="range" min="0" :max="replayStore.maxTime" step="100" v-model="replayStore.currentTime"
+            @mousedown="replayStore.pauseReplay" @mouseup="replayStore.updateProgress" class="w-full" />
           <span class="ml-2">{{ (replayStore.currentTime / 1000).toFixed(1) }}s</span>
         </div>
 
         <div class="flex justify-end">
-          <button
-            @click="closeModal"
-            class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-          >
+          <button @click="closeModal" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
             Close
           </button>
         </div>

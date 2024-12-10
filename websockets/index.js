@@ -70,38 +70,70 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("addGame", (callback) => {
+  socket.on("createLobby", (board, callback) => {
     if (!util.checkAuthenticatedUser(socket, callback)) {
       return;
     }
-    const game = lobby.addGame(socket.data.user, socket.id);
+    const game = lobby.createLobby(socket.data.user, socket.id, board);
     io.to("lobby").emit("lobbyChanged", lobby.getGames());
     if (callback) {
       callback(game);
     }
   });
 
-  socket.on("joinGame", (id, callback) => {
+  socket.on("joinlobby", (id, callback) => {
     if (!util.checkAuthenticatedUser(socket, callback)) {
       return;
     }
+
     const game = lobby.getGame(id);
-    if (socket.data.user.id == game.player1.id) {
-      if (callback) {
-        callback({
-          errorCode: 3,
-          errorMessage: "User cannot join a game that he created!",
-        });
-      }
-      return;
+    if (!game) {
+      return callback({ errorCode: 5, errorMessage: "Game not found!" });
     }
-    game.player2 = socket.data.user;
-    game.player2SocketId = socket.id;
-    lobby.removeGame(id);
+
+    if (!game.players) {
+      game.players = [game.player1];
+    }
+
+    if (game.players.length >= game.maxPlayers) {
+      return callback({ errorCode: 8, errorMessage: "Lobby is full!" });
+    }
+
+    if (game.players.some((player) => player.id === socket.data.user.id)) {
+      return callback({
+        errorCode: 9,
+        errorMessage: "You have already joined this lobby!",
+      });
+    }
+
+    const playerCopy = { ...socket.data.user, ready: false };
+    game.players.push(playerCopy);
+
     io.to("lobby").emit("lobbyChanged", lobby.getGames());
     if (callback) {
       callback(game);
     }
+  });
+
+  socket.on("setReady", ({ gameId, playerId }, callback) => {
+    const game = lobby.setReady(gameId, playerId);
+    if (!game) {
+      return callback({ errorCode: 5, errorMessage: "Game not found!" });
+    }
+
+    console.log("Emitting updated game state to all clients:", game);
+    io.to("lobby").emit("lobbyChanged", lobby.getGames());
+    callback(game);
+  });
+
+  socket.on("leaveLobby", (gameId, callback) => {
+    if (!util.checkAuthenticatedUser(socket, callback)) {
+      return;
+    }
+
+    const games = lobby.leaveLobby(gameId, socket.data.user.id);
+    io.to("lobby").emit("lobbyChanged", games);
+    callback(games);
   });
 
   socket.on("removeGame", (id, callback) => {
@@ -123,5 +155,36 @@ io.on("connection", (socket) => {
     if (callback) {
       callback(game);
     }
+  });
+
+  socket.on("startGame", (id, callback) => {
+    const game = lobby.getGame(id);
+    if (!game) {
+      return callback({ errorCode: 5, errorMessage: "Game not found!" });
+    }
+
+    // Verifica se há pelo menos dois jogadores no lobby
+    if (game.players.length < 2) {
+      return callback({
+        errorCode: 6,
+        errorMessage: "Need at least two players to start the game!",
+      });
+    }
+
+    // Verifica se todos os jogadores, exceto o player1, estão prontos
+    const allReady = game.players.slice(1).every((player) => player.ready);
+
+    if (!allReady) {
+      return callback({
+        errorCode: 7,
+        errorMessage: "Not all players are ready!",
+      });
+    }
+
+    // Define o status do jogo como 'started'
+    game.status = "started";
+
+    io.to("lobby").emit("lobbyChanged", lobby.getGames());
+    callback(game);
   });
 });

@@ -1,43 +1,197 @@
 <script setup>
+import { useLobbyStore } from '@/stores/lobby'
 import { useAuthStore } from '@/stores/auth'
-import { useLobbyStore } from '@/stores/lobby';
+import { computed } from 'vue'
 
-const storeAuth = useAuthStore()
 const storeLobby = useLobbyStore()
+const storeAuth = useAuthStore()
+
+const myLobbies = computed(() =>
+    storeLobby.games.filter(
+        (game) => game.player1.id === storeAuth.user.id || game.players.some(player => player.id === storeAuth.user.id)
+    )
+);
+
+const otherLobbies = computed(() =>
+    storeLobby.games.filter(
+        (game) => game.player1.id !== storeAuth.user.id && !game.players.some(player => player.id === storeAuth.user.id)
+    )
+);
+
+
 </script>
 
 <template>
-    <div class="divide-y divide-solid divide-gray-200">
-        <div v-for="game in storeLobby.games" :key="game.id" class="flex ps-2 pe-1">
-            <div class="flex flex-col grow">
-                <div class="text-base pe-4 grow leading-10 flex space-x-2">
-                    <span class="pl-1">{{ storeAuth.getFirstLastName(game.player1.name) }}</span>
+    <div class="space-y-8 px-8">
+        <!-- Lobbys Criados pelo Usuário -->
+        <div v-if="myLobbies.length > 0">
+            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Your Lobbies</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div v-for="game in myLobbies" :key="game.id"
+                    class="max-w-4xl p-4 border rounded-lg bg-white shadow-md mb-6 relative">
+
+                    <div class="flex items-center space-x-4">
+                        <div
+                            class="w-24 h-36 bg-gray-200 rounded-lg flex flex-col items-center justify-center p-2 shadow-md relative">
+                            <img :src="storeAuth.getPhotoUrl(game.player1.photo_filename)" alt="Player Avatar"
+                                class="w-16 h-16 rounded-full mb-2" />
+                            <img src="/king.png" alt="Crown"
+                                class="absolute top-0 right-0 w-6 h-6 transform translate-x-2 -translate-y-2" />
+                            <p class="text-gray-900 font-bold text-center text-sm">{{
+                                storeAuth.getFirstLastName(game.player1.name) }}</p>
+                        </div>
+
+                        <div v-for="player in game.players.slice(1)" :key="player.id"
+                            class="w-24 h-36 bg-gray-200 rounded-lg flex flex-col items-center justify-center p-2 shadow">
+                            <img :src="storeAuth.getPhotoUrl(player.photo_filename)" alt="Player Avatar"
+                                class="w-16 h-16 rounded-full mb-2" />
+                            <p class="text-gray-900 font-bold text-center text-sm">{{
+                                storeAuth.getFirstLastName(player.name) }}</p>
+                            <span class="text-sm font-bold" :class="player.ready ? 'text-green-500' : 'text-red-500'">
+                                {{ player.ready ? 'Ready' : 'UnReady' }}
+                            </span>
+                        </div>
+
+
+                        <!-- Espaços disponíveis com botão "+" ou área escura sem "+" -->
+                        <div v-for="i in game.maxPlayers - game.players.length" :key="i"
+                            class="w-24 h-36 rounded-lg flex items-center justify-center" :class="{
+                                'bg-gray-300 cursor-pointer hover:bg-green-500': game.player1.id !== storeAuth.user.id,
+                                'bg-gray-400': game.player1.id === storeAuth.user.id
+                            }"
+                            @click="game.player1.id !== storeAuth.user.id ? storeLobby.joinGame(game.id) : null">
+                            <span v-if="game.player1.id !== storeAuth.user.id"
+                                class="text-gray-600 text-4xl hover:text-white">+</span>
+                        </div>
+
+
+                        <!-- Espaços extras para manter o layout alinhado como se fossem sempre 5 jogadores -->
+                        <div v-for="i in 5 - game.maxPlayers" :key="'extra-' + i"
+                            class="w-24 h-36 bg-transparent rounded-lg flex items-center justify-center">
+                        </div>
+                    </div>
+
+                    <div class="mt-4 flex justify-between items-center">
+                        <p class="text-gray-500 text-sm">
+                            <strong>Board:</strong> ({{ game.board.board_cols }}x{{ game.board.board_rows }}) |
+                            <strong>Players:</strong> {{ game.players.length }}/{{ game.maxPlayers }} |
+                            Lobby ID: {{ game.id }}
+                        </p>
+
+                        <!-- Botões Ready e Leave para jogadores que não são donos -->
+                        <div v-if="game.players.some(player => player.id === storeAuth.user.id && player.id !== game.player1.id)"
+                            class="flex space-x-4">
+                            <button @click="storeLobby.setReady(game.id, storeAuth.user.id)"
+                                class="w-24 px-4 py-1 rounded text-white text-center"
+                                :class="game.players.find(player => player.id === storeAuth.user.id)?.ready ? 'bg-red-500' : 'bg-green-500'">
+                                {{ game.players.find(player => player.id === storeAuth.user.id)?.ready ? 'UnReady' :
+                                    'Ready' }}
+                            </button>
+
+                            <button @click="storeLobby.leaveLobby(game.id)"
+                                class="px-4 py-2 bg-red-500 text-white font-bold rounded hover:bg-red-600">
+                                Leave
+                            </button>
+                        </div>
+
+                        <!-- Botão Start Game e Leave para o dono -->
+                        <div v-else class="flex space-x-4">
+                            <button
+                                :disabled="!(game.player1.id === storeAuth.user.id && game.players.length > 1 && game.players.slice(1).every(player => player.ready))"
+                                @click="storeLobby.startGame(game.id)"
+                                class="px-6 py-2 font-bold rounded shadow transition-colors" :class="{
+                                    'bg-blue-500 text-white hover:bg-blue-600': game.player1.id === storeAuth.user.id,
+                                    'bg-gray-400 text-gray-200 cursor-not-allowed': game.player1.id !== storeAuth.user.id
+                                }">
+                                Start Game
+                            </button>
+
+                            <!-- Botão Leave para o dono -->
+                            <button @click="storeLobby.leaveLobby(game.id)"
+                                class="px-4 py-2 bg-red-500 text-white font-bold rounded hover:bg-red-600">
+                                Leave
+                            </button>
+                        </div>
+
+                    </div>
                 </div>
-                <span class="text-xs ps-1 pb-2 -mt-1 text-gray-500">
-                    {{ new Date(game.created_at).toLocaleTimeString([], {
-                        hour: "2-digit", minute: "2-digit", second:
-                            "2-digit"
-                    }) }}</span>
             </div>
-            <div class="py-1 flex items-center min-w-[1.9rem]">
-                <button v-show="storeLobby.canRemoveGame(game)" type="button"
-                    class="inline-block rounded bg-red-500 p-2 m-0.5 text-white"
-                    @click="storeLobby.removeGame(game.id)">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
-                        stroke="currentColor" class="size-4">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                    </svg>
-                </button>
-                <button v-show="storeLobby.canJoinGame(game)" type="button"
-                    class="rounded bg-cyan-500 p-2 m-0.5 text-white" @click="storeLobby.joinGame(game.id)">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3"
-                        stroke="currentColor" class="size-4">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" />
-                    </svg>
-                </button>
+        </div>
+
+
+        <!-- Outros Lobbys Disponíveis -->
+        <div v-if="otherLobbies.length > 0">
+            <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Available Lobbies</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div v-for="game in otherLobbies" :key="game.id"
+                    class="max-w-4xl p-4 border rounded-lg bg-white shadow-md mb-6">
+                    <div class="flex items-center space-x-2 justify-center">
+                        <!-- Retângulos dos jogadores existentes -->
+                        <div class="w-24 h-36 bg-gray-200 rounded-lg flex flex-col items-center justify-center p-2 relative"
+                            v-for="player in game.players" :key="player.id">
+                            <img :src="storeAuth.getPhotoUrl(player.photo_filename)" alt="Player Avatar"
+                                class="w-16 h-16 rounded-full mb-2" />
+                            <img v-if="player.id === game.player1.id" src="/king.png" alt="Crown"
+                                class="absolute top-0 right-0 w-6 h-6 transform translate-x-2 -translate-y-2" />
+                            <p class="text-gray-900 font-bold text-center text-sm">
+                                {{ storeAuth.getFirstLastName(player.name) }}
+                            </p>
+
+                            <!-- Texto Ready/UnReady abaixo da foto -->
+                            <span v-if="player.id !== game.player1.id" class="text-sm font-bold mt-1"
+                                :class="player.ready ? 'text-green-500' : 'text-red-500'">
+                                {{ player.ready ? 'Ready' : 'UnReady' }}
+                            </span>
+                        </div>
+
+                        <!-- Espaços disponíveis com botão "+" -->
+                        <div v-for="i in game.maxPlayers - game.players.length" :key="i"
+                            class="w-24 h-36 bg-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:bg-green-500"
+                            @click="storeLobby.joinlobby(game.id)">
+                            <span class="text-gray-600 text-4xl hover:text-white">+</span>
+                        </div>
+
+                        <!-- Espaços extras para manter o layout alinhado como se fossem sempre 5 jogadores -->
+                        <div v-for="i in 5 - game.maxPlayers" :key="'extra-' + i"
+                            class="w-24 h-36 bg-transparent rounded-lg flex items-center justify-center">
+                        </div>
+                    </div>
+
+                    <!-- Informações adicionais do lobby com botão Ready/UnReady alinhado à direita -->
+                    <div class="mt-4 flex justify-between items-center">
+                        <p class="text-gray-500 text-sm">
+                            <strong>Board:</strong> ({{ game.board.board_cols }}x{{ game.board.board_rows }}) |
+                            <strong>Players:</strong> {{ game.players.length }}/{{ game.maxPlayers }} |
+                            Lobby ID: {{ game.id }}
+                        </p>
+                        <!-- Div que contém os botões Ready e Leave -->
+                        <div v-if="game.players.some(player => player.id === storeAuth.user.id)"
+                            class="flex space-x-4 h-10">
+                            <button @click="storeLobby.setReady(game.id, storeAuth.user.id)"
+                                class="w-24 px-4 py-1 rounded text-white text-center"
+                                :class="game.players.find(player => player.id === storeAuth.user.id)?.ready ? 'bg-red-500' : 'bg-green-500'">
+                                {{ game.players.find(player => player.id === storeAuth.user.id)?.ready ? 'UnReady' :
+                                    'Ready' }}
+                            </button>
+
+                            <!-- Botão Leave Lobby -->
+                            <button @click="storeLobby.leaveLobby(game.id)"
+                                class="px-4 py-2 bg-red-500 text-white font-bold rounded hover:bg-red-600 transition-transform transform hover:scale-105">
+                                Leave
+                            </button>
+                        </div>
+
+                        <!-- Placeholder para manter o espaço fixo caso os botões não estejam presentes -->
+                        <div v-else class="h-10"></div>
+                    </div>
+                </div>
             </div>
+        </div>
+
+
+        <!-- Mensagem Caso Não Haja Lobbys -->
+        <div v-if="myLobbies.length === 0 && otherLobbies.length === 0" class="text-center text-gray-500">
+            No lobbies available. Create a new one!
         </div>
     </div>
 </template>

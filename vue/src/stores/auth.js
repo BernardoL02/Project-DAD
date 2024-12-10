@@ -58,6 +58,14 @@ export const useAuthStore = defineStore('auth', () => {
     return avatarNoneAssetURL
   })
 
+  const getPhotoUrl = (photoFilename) => {
+    if (photoFilename) {
+      const baseUrl = axios.defaults.baseURL.replace('/api', '')
+      return `${baseUrl}/storage/photos/${photoFilename}`
+    }
+    return avatarNoneAssetURL
+  }
+
   // -------------- Profile --------------
 
   const fetchProfile = async () => {
@@ -412,6 +420,7 @@ export const useAuthStore = defineStore('auth', () => {
     notifications,
     updateUserInfo,
     updatePassword,
-    deleteAccount
+    deleteAccount,
+    getPhotoUrl
   }
 })

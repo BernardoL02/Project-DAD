@@ -39,65 +39,57 @@ export const useLobbyStore = defineStore('lobby', () => {
   })
 
   // add a game to the lobby
-  const addGame = () => {
+  const CreateLobby = (board) => {
     storeError.resetMessages()
-    socket.emit('addGame', (response) => {
+    socket.emit('createLobby', board, (response) => {
       if (webSocketServerResponseHasError(response)) {
         return
       }
+      console.log('Game created:', response)
     })
-  }
-
-  // remove a game from the lobby
-  const removeGame = (id) => {
-    storeError.resetMessages()
-    socket.emit('removeGame', id, (response) => {
-      if (webSocketServerResponseHasError(response)) {
-        return
-      }
-    })
-  }
-
-  // Whether the current user can remove a specific game from the lobby
-  const canRemoveGame = (game) => {
-    return game.player1.id === storeAuth.userId
   }
 
   // join a game of the lobby
-  const joinGame = (id) => {
+  const joinlobby = (id) => {
     storeError.resetMessages()
-    socket.emit('joinGame', id, async (response) => {
-      // callback executed after the join is complete
+    socket.emit('joinlobby', id, (response) => {
       if (webSocketServerResponseHasError(response)) {
         return
       }
-      const APIresponse = await axios.post('games', {
-        player1_id: response.player1.id,
-        player2_id: response.player2.id
-      })
-      const newGameOnDB = APIresponse.data.data
-      newGameOnDB.player1SocketId = response.player1SocketId
-      newGameOnDB.player2SocketId = response.player2SocketId
-      // After adding game to the DB emit a message to the server to start the game
-      socket.emit('startGame', newGameOnDB, (startedGame) => {
-        console.log('Game has started', startedGame)
-      })
+      fetchGames()
     })
   }
 
-  // Whether the current user can join a specific game from the lobby
-  const canJoinGame = (game) => {
-    return storeAuth.user && game.player1.id !== storeAuth.userId
+  //Set Ready Player on lobby
+  const setReady = (gameId, playerId) => {
+    storeError.resetMessages()
+    console.log(gameId)
+    socket.emit('setReady', { gameId, playerId }, (response) => {
+      if (webSocketServerResponseHasError(response)) return
+      console.log('Player ready status toggled:', response)
+      fetchGames() // Atualiza os jogos após alterar o status de ready
+    })
+  }
+
+  //Leave Lobby
+  const leaveLobby = (gameId) => {
+    storeError.resetMessages()
+    socket.emit('leaveLobby', gameId, (response) => {
+      if (webSocketServerResponseHasError(response)) {
+        return
+      }
+      console.log('Left lobby:', response)
+      fetchGames()
+    })
   }
 
   return {
     games,
     totalGames,
     fetchGames,
-    addGame,
-    joinGame,
-    canJoinGame,
-    removeGame,
-    canRemoveGame
+    CreateLobby,
+    joinlobby,
+    setReady,
+    leaveLobby
   }
 })

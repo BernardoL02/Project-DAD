@@ -447,7 +447,7 @@ export const useGameStore = defineStore('game', () => {
         )
       }
     } else {
-      const pairCount = Math.floor(totalCards / 2) // Número máximo de pares
+      const pairCount = Math.floor(totalCards / 2)
 
       const shuffledAvailableCards = shuffleArray([...availableCards])
       for (let i = 0; i < pairCount; i++) {
