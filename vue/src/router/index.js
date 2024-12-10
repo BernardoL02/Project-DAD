@@ -18,7 +18,7 @@ import ChangePassword from '@/components/Profile/ChangePassword.vue'
 import ManageUsers from '@/components/Administration/ManageUsers.vue'
 import AdminTransactions from '@/components/Administration/AdminTransactions.vue'
 import MultiPlayerLobbys from '@/components/Multiplayer/MuiltiPlayerLobbys.vue'
-import AdministrateGames from '@/components/Administration/AdministrateGames.vue'
+import AdminGames from '@/components/Administration/AdminGames.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -115,9 +115,9 @@ const router = createRouter({
       component: AdminTransactions
     },
     {
-      path: '/administrateGames',
-      name: 'administrateGames',
-      component: AdministrateGames
+      path: '/adminGames',
+      name: 'adminGames',
+      component: AdminGames
     },
     // Rota para rotas nao encontradas
     {
@@ -158,7 +158,8 @@ router.beforeEach(async (to, from, next) => {
       to.name !== 'registration' &&
       to.name !== 'single-player' &&
       to.name !== 'singlePlayerScore' &&
-      to.name !== 'multiPlayerScore'
+      to.name !== 'multiPlayerScore' &&
+      to.name !== 'SinglePlayerGameBoard'
     ) {
       next({ name: 'login' })
       return
@@ -172,7 +173,7 @@ router.beforeEach(async (to, from, next) => {
         to.name !== 'multiPlayerScore' &&
         to.name !== 'ManageUsers' &&
         to.name !== 'adminTransactions' &&
-        to.name !== 'administrateGames' &&
+        to.name !== 'adminGames' &&
         to.name !== 'Profile' &&
         to.name !== 'ProfileUpdate' &&
         to.name !== 'changePassword'
@@ -187,7 +188,7 @@ router.beforeEach(async (to, from, next) => {
         to.name === 'registration' ||
         to.name === 'ManageUsers' ||
         to.name === 'adminTransactions' ||
-        to.name === 'administrateGames'
+        to.name === 'adminGames'
       ) {
         next({ name: 'home' })
         return

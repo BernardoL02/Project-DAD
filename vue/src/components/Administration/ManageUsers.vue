@@ -110,7 +110,7 @@ onUnmounted(async () => {
     <div class="bg-white p-6 rounded-lg shadow-md mb-6">
       <div class="flex flex-col sm:flex-row sm:justify-between gap-5">
         <div class="w-full sm:w-auto">
-          <label for="search" class="block text-sm font-medium text-gray-700 pb-2">Search:</label>
+          <label for="search" class="block text-sm font-medium text-gray-700 pb-2">Search</label>
           <input
             type="text"
             id="search"
