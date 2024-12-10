@@ -21,6 +21,7 @@ const updatedName = ref(authStore.name)
 const updatedEmail = ref(authStore.email)
 const updatedNickname = ref(authStore.nickname)
 const updatedAvatar = ref(null)
+const fileInput = ref(null);
 
 const updateUserInfo = async () => {
   const updatedData = new FormData();
@@ -36,6 +37,10 @@ const updateUserInfo = async () => {
   await authStore.updateUserInfo(updatedData);
   await authStore.fetchProfile();
 }
+
+const triggerFileInput = () => {
+  fileInput.value.click();
+};
 </script>
 
 <template>
@@ -85,8 +90,17 @@ const updateUserInfo = async () => {
               </div>
 
               <div v-show="avatar" class="flex justify-start">
-                <img :src="avatar" alt="User Profile Picture"
-                  class=" w-28 h-28 border-4 border-white rounded-full  shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl" />
+                <span>
+                  <!-- O input é oculto, mas é clicado ao clicar na imagem -->
+                  <input type="file" id="avatar" @change="handlePhotoUpload" accept=".png, .jpeg, .jpg"
+                    class="form-control w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 hidden"
+                    ref="fileInput" />
+
+                  <!-- Imagem de avatar que é clicável -->
+                  <img :src="avatar" alt="User Profile Picture"
+                    class="w-28 h-28 border-4 border-white rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl"
+                    @click="triggerFileInput" />
+                </span>
               </div>
 
             </div>

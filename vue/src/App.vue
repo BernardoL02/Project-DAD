@@ -170,6 +170,18 @@
                 >
                   All Transactions
                 </RouterLink>
+                <RouterLink
+                  :to="{ name: 'administrateGames' }"
+                  :class="[
+                    'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                    route.path === '/administrateGames'
+                      ? 'text-indigo-500 font-semibold'
+                      : 'text-gray-900 hover:text-sky-600'
+                  ]"
+                  active-class="text-blue-600 font-semibold"
+                >
+                  All Games
+                </RouterLink>
               </div>
             </div>
           </div>

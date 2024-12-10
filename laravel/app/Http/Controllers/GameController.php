@@ -66,25 +66,6 @@ class GameController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(StoreGameRequest $request, Game $game)
-    {
-        $game->fill($request->validated());
-
-        $game->save();
-
-        return new GameResource($game);
-    }
-
-    public function destroy(Game $game)
-    {
-        $game->delete();
-
-        return response()->json(null, 204);
-    }
-
     public function mySinglePlayerGames(Request $request)
     {
         $user = $request->user();

@@ -259,8 +259,9 @@ export const useAuthStore = defineStore('auth', () => {
       return user.value
     } catch (e) {
       clearUser()
+
       storeError.setErrorMessages(
-        'Login failed. Please check your credentials.',
+        e.response.data.message,
         e.response.data.errors,
         e.response.status,
         'Authentication Error!'

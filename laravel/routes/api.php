@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\ScoreBoardController;
 use App\Http\Controllers\TransactionController;
+use App\Models\Transaction;
 use App\Models\User;
 
 Route::post('/auth/register',[UserController::class, 'store']);
@@ -23,36 +24,34 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/users/me', [UserController::class , 'showMe']);
     Route::post('/users/me', [UserController::class, 'update']);
     Route::patch('/users/me', [UserController::class, 'updatePassword']);
-    Route::delete('/users/me', [UserController::class, 'destroy']);
+    Route::delete('/users/me', [UserController::class, 'destroy'])->can("deleteMyAccount", User::class);
     Route::get('/users/me/notifications', [UserController::class , 'getNotifications']);
 
     //------Administrator -----
     Route::get('/admin/users', [AdministratorController::class, 'index'])->can("viewAny", User::class);
     Route::post('/admin/register', [AdministratorController::class, 'store'])->can("create", User::class);
-    Route::patch('/admin/block/{id}', [AdministratorController::class, 'blockUser'])->can('block', User::class);
-    Route::patch('/admin/unblock/{id}', [AdministratorController::class, 'unblockUser'])->can('unblock', User::class);
-    Route::delete('/admin/delete/{id}', [AdministratorController::class, 'destroy'])->can('delete', User::class);
-    Route::get('/admin/transactions', [AdministratorController::class, 'viewTransactions']);
+    Route::patch('/admin/block/{user}', [AdministratorController::class, 'blockUser'])->can('block', 'user');
+    Route::patch('/admin/unblock/{user}', [AdministratorController::class, 'unblockUser'])->can('unblock', 'user');
+    Route::delete('/admin/delete/{user}', [AdministratorController::class, 'destroy'])->can('delete', 'user');
+    Route::get('/admin/transactions', [AdministratorController::class, 'viewTransactions'])->can("viewAll", Transaction::class);
 
     // ----- Games -----
     Route::get('/games', [GameController::class, 'index'])->can("viewAny", Game::class);
-    Route::get('/games/single', [GameController::class, 'mySinglePlayerGames']);
-    Route::get('/games/multi', [GameController::class, 'myMultiPlayerGames']);
+    Route::get('/games/single', [GameController::class, 'mySinglePlayerGames'])->can("view", Game::class);
+    Route::get('/games/multi', [GameController::class, 'myMultiPlayerGames'])->can("view", Game::class);
     Route::get('/games/{game}', [GameController::class, 'show']);
-    Route::post('/games', [GameController::class, 'store']);
-    Route::put('/games/{game}', [GameController::class, 'update']);
-    Route::delete('/games/{game}', [GameController::class, 'destroy']);
-    Route::patch('/games/{game}', [GameController::class, 'updateGameStatus']);
-
-    // ----- Boards -----
-    Route::get('/boards', [BoardController::class, 'index']);
+    Route::post('/games', [GameController::class, 'store'])->can("create", Game::class);
+    Route::patch('/games/{game}', [GameController::class, 'updateGameStatus'])->can("update", "game");
 
     // ----- Transactions -----
-    Route::get('/transactions', [TransactionController::class, 'index']);
-    Route::post('/transactions', [TransactionController::class, 'store']);
-    Route::patch('/transactions/{transaction}', [TransactionController::class, 'changeTransactionStatus']);
+    Route::get('/transactions', [TransactionController::class, 'index'])->can("viewAny", Transaction::class);
+    Route::post('/transactions', [TransactionController::class, 'store'])->can("create", Transaction::class);
+    Route::patch('/transactions/{transaction}', [TransactionController::class, 'changeTransactionStatus'])->can("update",Transaction::class);
 
 });
+
+// ----- Boards -----
+Route::get('/boards', [BoardController::class, 'index']);
 
 // ------ Score Boards ----
 Route::get('/scoreboard/single', [ScoreBoardController::class, 'globalSinglePlayerScoreboard']);

@@ -19,6 +19,7 @@ import ChangePassword from '@/components/Profile/ChangePassword.vue'
 import ManageUsers from '@/components/Administration/ManageUsers.vue'
 import AdminTransactions from '@/components/Administration/AdminTransactions.vue'
 import MultiPlayerLobbys from '@/components/Multiplayer/MuiltiPlayerLobbys.vue'
+import AdministrateGames from '@/components/Administration/AdministrateGames.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -118,6 +119,11 @@ const router = createRouter({
       path: '/adminTransactions',
       name: 'adminTransactions',
       component: AdminTransactions
+    },
+    {
+      path: '/administrateGames',
+      name: 'administrateGames',
+      component: AdministrateGames
     }
   ]
 })
@@ -138,10 +144,18 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
-  if ((to.name == 'singlePlayerHistory' || to.name == 'Profile') && !authStore.user) {
+  const sizeAllowed = to.params.size === '3x4'
+
+  if (to.name === 'SinglePlayerGameBoard' && !sizeAllowed && !authStore.user) {
     next({ name: 'login' })
     return
   }
+
+  if ((to.name === 'singlePlayerHistory' || to.name === 'Profile') && !authStore.user) {
+    next({ name: 'login' })
+    return
+  }
+
   next()
 })
 

@@ -24,18 +24,23 @@ class UserPolicy
         return $user->isAdmin();
     }
 
-    public function block(User $user)
+    public function block(User $user, User $targetUser)
     {
-        return $user->isAdmin();
+        return $user->isAdmin() && $user->id !== $targetUser->id;
     }
 
-    public function unblock(User $user)
+    public function unblock(User $user, User $targetUser)
     {
-        return $user->isAdmin();
+        return $user->isAdmin() && $user->id !== $targetUser->id;
     }
 
-    public function delete(User $user)
+    public function delete(User $user, User $targetUser)
     {
-        return $user->isAdmin();
+        return $user->isAdmin() && $user->id !== $targetUser->id;
+    }
+
+    public function deleteMyAccount(User $user)
+    {
+        return $user->isPlayer();
     }
 }

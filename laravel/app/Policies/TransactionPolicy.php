@@ -2,10 +2,9 @@
 
 namespace App\Policies;
 
-use App\Models\Game;
 use App\Models\User;
 
-class GamePolicy
+class TransactionPolicy
 {
     /**
      * Create a new policy instance.
@@ -15,24 +14,24 @@ class GamePolicy
         //
     }
 
-    public function viewAny(?User $user): bool
+    public function viewAll(User $user)
     {
         return $user->isAdmin();
     }
 
-    public function view(?User $user): bool
+    public function viewAny(User $user)
     {
         return $user->isPlayer();
     }
 
-    public function create(?User $user): bool
+    public function create(User $user)
     {
         return $user->isPlayer();
     }
 
-    public function update(?User $user, Game $game): bool
+    public function update(User $user)
     {
-        return $user->isPlayer() && $user->id === $game->created_user_id;
+        return $user->isPlayer();
     }
+
 }
-

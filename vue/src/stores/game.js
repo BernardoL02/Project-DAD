@@ -193,7 +193,6 @@ export const useGameStore = defineStore('game', () => {
       )
     }
   }
-
   const filteredGames = computed(() => {
     let filtered = games.value
 
