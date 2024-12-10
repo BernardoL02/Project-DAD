@@ -1,4 +1,4 @@
-import { ref, computed, inject } from 'vue'
+import { ref, computed, inject, nextTick } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useErrorStore } from '@/stores/error'
@@ -8,7 +8,6 @@ export const useLobbyStore = defineStore('lobby', () => {
   const storeAuth = useAuthStore()
   const storeError = useErrorStore()
   const socket = inject('socket')
-
   const games = ref([])
 
   const totalGames = computed(() => games.value.length)
@@ -20,6 +19,10 @@ export const useLobbyStore = defineStore('lobby', () => {
     }
     return false
   }
+
+  // ------------------------------------------------------
+  // Lobby
+  // ------------------------------------------------------
 
   // fetch lobby games from the Websocket server
   const fetchGames = () => {
@@ -83,6 +86,117 @@ export const useLobbyStore = defineStore('lobby', () => {
     })
   }
 
+  // ------------------------------------------------------
+  // Chat
+  // ------------------------------------------------------
+
+  const chatPanel = ref(null)
+  const setChatPanel = (panel) => {
+    if (panel) {
+      console.log('Chat panel set:', panel)
+      chatPanel.value = panel
+    } else {
+      console.error('Chat panel is null or undefined')
+    }
+  }
+
+  const openChats = ref([])
+  const activeChatIndex = ref(0)
+  const isChatOpen = ref(false)
+
+  const toggleChat = (state) => {
+    isChatOpen.value = state
+  }
+
+  const sendPrivateMessage = (user, message) => {
+    console.log('sendPrivateMessage called with:', user, message)
+    socket.emit('privateMessage', { destinationUser: user, message }, (response) => {
+      if (response.success) {
+        console.log(`Message sent to ${user.name}: ${message}`)
+        const existingChat = openChats.value.find((chat) => chat.user.id === user.id)
+        if (existingChat) {
+          existingChat.messages.push({ sender: 'You', text: message })
+        }
+      } else {
+        storeError.setErrorMessages(response.errorMessage)
+      }
+    })
+  }
+
+  socket.on('privateMessage', (payload) => {
+    console.log('Received payload:', payload)
+
+    const existingChatIndex = openChats.value.findIndex((chat) => chat.user.id === payload.user.id)
+
+    if (existingChatIndex !== -1) {
+      // Chat já existe: adiciona a mensagem e abre o chat com a pessoa correta
+      openChats.value[existingChatIndex].messages.push({
+        sender: payload.user.nickname,
+        text: payload.message
+      })
+      activeChatIndex.value = existingChatIndex
+    } else {
+      // Chat não existe: cria um novo chat e adiciona a mensagem
+      openChats.value.push({
+        user: payload.user,
+        messages: [{ sender: payload.user.nickname, text: payload.message }]
+      })
+      activeChatIndex.value = openChats.value.length - 1
+    }
+
+    // Abre o painel de chat e o chat com a pessoa correta
+    nextTick(() => {
+      chatPanel.value?.openPanel(
+        openChats.value[activeChatIndex.value].user,
+        openChats.value[activeChatIndex.value].messages
+      )
+    })
+
+    // Se o chat não estiver aberto, abre o painel de chat
+    if (!isChatOpen.value) {
+      toggleChat(true)
+    }
+  })
+
+  const openChatPanel = (user) => {
+    if (user.id === storeAuth.user.id) {
+      storeError.setErrorMessages('Cannot open chat with yourself.')
+      return
+    }
+
+    const existingChatIndex = openChats.value.findIndex((chat) => chat.user.id === user.id)
+    if (existingChatIndex === -1) {
+      openChats.value.push({ user, messages: [] })
+      activeChatIndex.value = openChats.value.length - 1
+    } else {
+      activeChatIndex.value = existingChatIndex
+    }
+
+    nextTick(() => {
+      chatPanel.value?.openPanel(
+        openChats.value[activeChatIndex.value].user,
+        openChats.value[activeChatIndex.value].messages
+      )
+    })
+    if (toggleChat) {
+      toggleChat(true)
+    }
+  }
+
+  const closeChat = (index) => {
+    openChats.value.splice(index, 1)
+    if (activeChatIndex.value >= openChats.value.length) {
+      activeChatIndex.value = openChats.value.length - 1
+    }
+  }
+
+  const switchChatPanel = (index) => {
+    activeChatIndex.value = index
+    nextTick(() => {
+      chatPanel.value?.openPanel(openChats.value[index].user, openChats.value[index].messages)
+    })
+  }
+
   return {
     games,
     totalGames,
@@ -90,6 +204,15 @@ export const useLobbyStore = defineStore('lobby', () => {
     CreateLobby,
     joinlobby,
     setReady,
-    leaveLobby
+    leaveLobby,
+    sendPrivateMessage,
+    setChatPanel,
+    openChats,
+    activeChatIndex,
+    openChatPanel,
+    closeChat,
+    switchChatPanel,
+    isChatOpen,
+    toggleChat
   }
 })

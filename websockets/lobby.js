@@ -57,6 +57,14 @@ exports.createLobby = () => {
     return getGames();
   };
 
+  const leaveAllLobbies = (userId) => {
+    for (const [gameId, game] of games.entries()) {
+      if (game.players.some((player) => player.id === userId)) {
+        leaveLobby(gameId, userId);
+      }
+    }
+  };
+
   const setReady = (gameId, playerId) => {
     const game = games.get(gameId);
     if (!game) return null;
@@ -95,5 +103,6 @@ exports.createLobby = () => {
     existsGame,
     leaveLobby,
     setReady,
+    leaveAllLobbies,
   };
 };
