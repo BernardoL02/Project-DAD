@@ -13,6 +13,7 @@ export const useGameStore = defineStore('game', () => {
   const notificationStore = useNotificationStore()
 
   const games = ref([])
+  const game = ref([])
   const statusFilter = ref('')
   const beginDateFilter = ref([null, null])
   const boardFilter = ref('All')
@@ -149,6 +150,62 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
+  const getMultiPlayerGame = async (gameId) => {
+    storeError.resetMessages()
+    try {
+      const response = await axios.get('games/' + gameId)
+      const gameData = response.data.data
+
+      game.value = {
+        id: gameData.id,
+        board_id:
+          gameData.board_id === 1
+            ? '3x4'
+            : gameData.board_id === 2
+              ? '4x4'
+              : gameData.board_id === 3
+                ? '6x6'
+                : '-',
+        created_user:
+          gameData.created_user.nickname === authStore.nickname
+            ? 'You'
+            : gameData.created_user.nickname,
+        winner_user:
+          gameData.winner_user.nickname === authStore.nickname
+            ? 'You'
+            : gameData.winner_user.nickname,
+        participants_count: gameData.participants_count || '-',
+        participants: gameData.participants.map((participant) => ({
+          player_name: participant.player_name,
+          player_won: participant.player_won,
+          pairs_discovered: participant.pairs_discovered,
+          photo_filename: participant.photo_filename
+        })),
+        status:
+          gameData.status === 'PE'
+            ? 'Pending'
+            : gameData.status === 'PL'
+              ? 'In Progress'
+              : gameData.status === 'E'
+                ? 'Ended'
+                : gameData.status === 'I'
+                  ? 'Interrupted'
+                  : '-',
+        began_at: gameData.began_at || '-',
+        ended_at: gameData.ended_at || '-',
+        total_time: gameData.total_time ? `${gameData.total_time}s` : '-',
+        total_turns_winner: gameData.total_turns_winner || '-'
+      }
+    } catch (e) {
+      storeError.setErrorMessages(
+        e.response?.data?.message || 'An error occurred',
+        e.response?.data?.errors || [],
+        e.response?.status || 500,
+        'Error getting game!'
+      )
+    }
+  }
+
   const getMultiPlayerGames = async () => {
     storeError.resetMessages()
     try {
@@ -193,6 +250,7 @@ export const useGameStore = defineStore('game', () => {
       )
     }
   }
+
   const filteredGames = computed(() => {
     let filtered = games.value
 
@@ -570,8 +628,10 @@ export const useGameStore = defineStore('game', () => {
 
   return {
     games,
+    game,
     getSinglePlayerGames,
     getMultiPlayerGames,
+    getMultiPlayerGame,
     createSinglePlayer,
     sendPostOnExit,
     sendPostOnGameEnd,

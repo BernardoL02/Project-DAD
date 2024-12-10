@@ -19,6 +19,7 @@ import ManageUsers from '@/components/Administration/ManageUsers.vue'
 import AdminTransactions from '@/components/Administration/AdminTransactions.vue'
 import MultiPlayerLobbys from '@/components/Multiplayer/MuiltiPlayerLobbys.vue'
 import AdminGames from '@/components/Administration/AdminGames.vue'
+import MultiplayerGameDetails from '@/components/Multiplayer/MultiplayerGameDetails.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -52,6 +53,12 @@ const router = createRouter({
       path: '/multiplayer/history',
       name: 'multiPlayerHistory',
       component: PlayerHistoryMultiPlayer
+    },
+    {
+      path: '/multiplayer/game/:gameId',
+      name: 'MultiplayerGameDetails',
+      component: MultiplayerGameDetails,
+      props: (route) => ({ gameId: Number(route.params.gameId) })
     },
     {
       path: '/scoreBoard/singlePlayer',
