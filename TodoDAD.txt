@@ -1,12 +1,8 @@
 
 G0. Geral
 
-[] - Validar novamente se todas as rotas do backend estão protegidas
-[] - Esconder paginas front-end (Falta as novas do multiplayer)
-[] - Procurar por consoles e trow's
-[] - Resolver erro quando estamos num jogo e damos logout
-
 [] - Se tentar aceder pelo url redirecionar para o login ou not authorized
+[] - Esconder paginas front-end
 [] - User o end point get all boards
 [x] - Melhorar desing home e single player game (dentro do jogo)
 [] - Se rota no url nao existir retornar para a home ex: /jogar
@@ -34,8 +30,8 @@ G2. BRAIN COINS AND TRANSACTIONS
 
 G3. SINGLE-PLAYER GAMES
 
-[] - Adaptar a pagina para o user Anonymou
-[] - Proteger rotas front-end para quando o user nao tem coins nao conseguir jogar
+[x] - Adaptar a pagina para o user Anonymou
+[x] - Proteger rotas front-end para quando o user nao tem coins nao conseguir jogar
 
 G4. MULTIPLAYER GAMES
 
@@ -51,7 +47,7 @@ G4. MULTIPLAYER GAMES
 
 G5. GAME HISTORY AND SCORING BOARDS
 
-[x] - ver os dados das tabelas(validar)
+[] - ver os dados das tabelas(validar)
 [] - Ver os jogadores involvidos no game multiplayer
 [] - Validar se todos os dados pedidos estao a ser apresentados
 [] - Colocar ação ver detalhes nos jogos muliplayer
@@ -63,8 +59,8 @@ G6. Administrator
 []- Tudo
 
 [] - Colocar loading na página das transactions
-[x] - Colocar filtro por name e clear filters a funcionar
-[x] - Filtros na pagina de all users
+[] - Colocar filtro por name e clear filters a funcionar
+[] - Filtros na pagina de all users
 [x] - Coloca nome em vez de id nas confirmacoes de block/unblock/delete user
 +
 
