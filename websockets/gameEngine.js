@@ -1,12 +1,11 @@
-exports.createGameEngine = () => {
-  // Inicializa o jogo
+exports.createGameEngine = (lobby) => {
   const initGame = (gameFromDB) => {
     gameFromDB.gameStatus = null;
     gameFromDB.currentPlayerIndex = 0;
     gameFromDB.matchedPairs = [];
     gameFromDB.selectedCards = [];
+    gameFromDB.isLocked = false;
 
-    // Reinicia o estado das cartas (flipped) no board
     if (Array.isArray(gameFromDB.board)) {
       gameFromDB.board = gameFromDB.board.map((card) => ({
         ...card,
@@ -19,14 +18,20 @@ exports.createGameEngine = () => {
     return gameFromDB;
   };
 
-  // Jogada para virar uma carta
-  const flipCard = (game, index, playerSocketId, io) => {
+  const flipCard = (game, index, playerSocketId, io, lobby) => {
     const currentPlayer = game.players[game.currentPlayerIndex];
 
     if (playerSocketId !== currentPlayer.socketId) {
       return {
         errorCode: 12,
         errorMessage: "Invalid play: It is not your turn!",
+      };
+    }
+
+    if (game.isLocked) {
+      return {
+        errorCode: 14,
+        errorMessage: "Please wait, the current turn is being processed.",
       };
     }
 
@@ -49,6 +54,8 @@ exports.createGameEngine = () => {
     if (!game.totalMoves) game.totalMoves = 0;
 
     if (game.selectedCards.length === 2) {
+      game.isLocked = true; // Bloqueia novas jogadas durante a verificação
+
       const [firstIndex, secondIndex] = game.selectedCards;
 
       game.totalMoves += 1;
@@ -66,11 +73,12 @@ exports.createGameEngine = () => {
         game.currentPlayerIndex =
           (game.currentPlayerIndex + 1) % game.players.length;
 
+        game.isLocked = false; // Desbloqueia após a verificação
+
         // Verifica se o jogo terminou
         if (game.matchedPairs.length === game.board.length) {
           game.status = "ended";
 
-          // Cria um array com o total de pares encontrados por cada jogador
           const pairsFoundByPlayers = game.players.map((player) => ({
             nickname: player.nickname,
             pairsFound: player.pairsFound,
@@ -82,6 +90,10 @@ exports.createGameEngine = () => {
             pairsFoundByPlayers,
             game,
           });
+
+          lobby.deleteGame(game.id);
+
+          io.to("lobby").emit("lobbyChanged", lobby.getGames());
         } else {
           io.to(game.players.map((p) => p.socketId)).emit("gameUpdated", game);
         }
@@ -91,14 +103,8 @@ exports.createGameEngine = () => {
     return game;
   };
 
-  // Verifica se o jogo terminou
-  const gameEnded = (game) => {
-    return game.matchedPairs.length === game.board.length;
-  };
-
   return {
     initGame,
     flipCard,
-    gameEnded,
   };
 };

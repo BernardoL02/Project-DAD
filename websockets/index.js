@@ -81,7 +81,6 @@ io.on("connection", (socket) => {
       return;
     }
     const games = lobby.getGames();
-    console.log("Games fetched:", games);
     if (callback) {
       callback(games);
     }
@@ -256,7 +255,6 @@ io.on("connection", (socket) => {
     }
 
     const generatedBoard = generateRandomBoard(game.rows, game.cols);
-    console.log("Generated Board:", generatedBoard);
 
     game = lobby.setGameBoard(gameId, generatedBoard);
     if (!game) {
@@ -268,8 +266,6 @@ io.on("connection", (socket) => {
 
     game = gameEngine.initGame(game);
     game.status = "started";
-
-    console.log("Game initialized:", game);
 
     game.players.forEach((player) => {
       io.to(player.socketId).emit("gameStarted", game);
@@ -285,7 +281,7 @@ io.on("connection", (socket) => {
       return callback({ errorCode: 5, errorMessage: "Game not found!" });
     }
 
-    const result = gameEngine.flipCard(game, index, socket.id, io);
+    const result = gameEngine.flipCard(game, index, socket.id, io, lobby);
     if (result.errorCode) {
       return callback(result);
     }

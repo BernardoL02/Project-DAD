@@ -37,7 +37,6 @@ exports.createLobby = () => {
     if (game) {
       game.board = board; // Atualiza o board corretamente
       games.set(gameId, game); // Salva o jogo atualizado no mapa
-      console.log("Board updated in game:", game);
       return game; // Retorna o jogo atualizado
     } else {
       console.error(`Game with ID ${gameId} not found in setGameBoard`);
@@ -54,6 +53,13 @@ exports.createLobby = () => {
 
     // Remove o jogador que está saindo
     game.players = game.players.filter((player) => player.id !== userId);
+
+    // Verifica quantos jogadores restam
+    if (game.players.length == 0) {
+      // Se restar apenas um jogador, deleta o jogo
+      deleteGame(gameId);
+      return getGames();
+    }
 
     // Se o usuário é o dono do lobby e há mais jogadores, define um novo dono
     if (game.player1.id === userId && game.players.length > 0) {
@@ -79,7 +85,6 @@ exports.createLobby = () => {
     const player = game.players.find((p) => p.id === playerId);
     if (player) {
       player.ready = !player.ready;
-      console.log(`Player ${playerId} ready state set to:`, player.ready);
     }
 
     return game;
@@ -100,7 +105,6 @@ exports.createLobby = () => {
   const deleteGame = (gameId) => {
     if (games.has(gameId)) {
       games.delete(gameId);
-      console.log(`Game with ID ${gameId} has been deleted.`);
     }
   };
 
