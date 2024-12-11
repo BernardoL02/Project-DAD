@@ -78,4 +78,9 @@ class Game extends Model
             $query->where('board_cols', $cols)->where('board_rows', $rows);
         });
     }
+
+    public function participants()
+    {
+        return $this->belongsToMany(User::class, 'multiplayer_games_played', 'game_id', 'user_id');
+    }
 }

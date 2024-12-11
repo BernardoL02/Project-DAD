@@ -63,11 +63,20 @@ watch(
         </tr>
       </thead>
 
-      <tbody>
+      <tbody v-if="data.length != 0">
         <tr v-for="(row, rowIndex) in paginatedData" :key="'row-' + rowIndex" class="odd:bg-white even:bg-gray-100">
           <td v-for="(value, colIndex) in row" :key="'cell-' + rowIndex + '-' + colIndex"
             class="border border-gray-300 px-4 py-2 ">
             {{ value }}
+          </td>
+        </tr>
+      </tbody>
+      <tbody v-else>
+        <tr>
+          <td colspan="100%">
+            <p style="color: gray; text-align: center; margin: 20px 0;">
+              No data available
+            </p>
           </td>
         </tr>
       </tbody>

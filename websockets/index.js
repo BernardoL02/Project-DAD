@@ -36,7 +36,7 @@ io.on("connection", (socket) => {
   socket.on("logout", (user) => {
     if (user && user.id) {
       socket.leave("user_" + user.id);
-      lobby.leaveLobby(socket.id);
+      lobby.leaveAllLobbies(user.id);
       io.to("lobby").emit("lobbyChanged", lobby.getGames());
       socket.leave("lobby");
       util.getRoomGamesPlaying(socket).forEach(([roomName, room]) => {
@@ -51,8 +51,25 @@ io.on("connection", (socket) => {
     socket.data.user = undefined;
   });
 
-  socket.on("echo", (message) => {
-    socket.emit("echo", message);
+  socket.on("privateMessage", (clientMessageObj, callback) => {
+    const destinationRoomName = "user_" + clientMessageObj?.destinationUser?.id;
+    if (io.sockets.adapter.rooms.get(destinationRoomName)) {
+      const payload = {
+        user: socket.data.user,
+        message: clientMessageObj.message,
+      };
+      io.to(destinationRoomName).emit("privateMessage", payload);
+      if (callback) {
+        callback({ success: true });
+      }
+    } else {
+      if (callback) {
+        callback({
+          errorCode: 1,
+          errorMessage: `User "${clientMessageObj?.destinationUser?.name}" is not online!`,
+        });
+      }
+    }
   });
 
   // ------------------------------------------------------
