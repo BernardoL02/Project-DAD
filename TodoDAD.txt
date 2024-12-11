@@ -1,14 +1,8 @@
-
 G0. Geral
 
 [] - Proteger rotas front end e backend estatisticas e multiplayer
-[] - User o end point get all boards
-[x] - Melhorar desing home e single player game (dentro do jogo)
-[] - Se rota no url nao existir retornar para a home ex: /jogar
-[] - Melhorar performance dos controladores
-[] - Colocar informacões nas tabelas para quando nao existem dados
-[] - Remocer ids das tabelas
-[] - Remover actions de tabelas que nao precisem
+[x] - Melhorar performance dos controladores
+[] - Remover ids das tabelas
 [] - Limpar todas as stores e ver se os dados ja existem antes de os ir buscar no 
 [] - Sons nos jogos
 [] - Rotas no botao hamburger
@@ -18,20 +12,8 @@ ACCOUNT
 REMOVAL
 
 [] - Remover email/password pré defenida no login
-[] - Verificar se a autenticação está a 100% (tokens a dar refresh etc..)
-[x] - Verifica se tudo funciona como admin, e eles apenas nao podem remover a sua conta
-[x] - Apos selecionar uma foto ser possivel selecionar outra a partir da imagem ou do titulo photo 
-[] - Ao registrar users e admins tentar colocar as mensagens de erro com \n
-[x] - Users com conta bloqueada nao consegue fazer login
-
-G2. BRAIN COINS AND TRANSACTIONS
-
-[] - Filtros nas transactions
-
-G3. SINGLE-PLAYER GAMES
-
-[x] - Adaptar a pagina para o user Anonymou
-[x] - Proteger rotas front-end para quando o user nao tem coins nao conseguir jogar
+[x] - Apos selecionar uma foto ser possivel selecionar outra a partir da imagem no register admin
+[] - Puxar o botão de register admin para cima da tabela
 
 G4. MULTIPLAYER GAMES
 
@@ -41,54 +23,27 @@ G4. MULTIPLAYER GAMES
 [] - Verificar se os estados dos jogos estão corretos (Ex: pending = jogos que ainda nao comecaram e estão à espera de jogadores)
 [] - Policy para multiplayer games 
 [] - Cada jogo custa 5 moedas, vencedor recebe todas as coins em jogo - 3
-[] - Os jogos comecam quando quem criou der play ou quando atinge o limite maximo do loby
 [] - Aumentar o numero de vitorias e de derrotas de cada jogador
-[] - Remover console.log espalhados pelo códgo
+[] - Remover console.log espalhados pelo código
 
 G5. GAME HISTORY AND SCORING BOARDS
 
-[] - ver os dados das tabelas(validar)
 [] - Ver os jogadores involvidos no game multiplayer
 [] - Validar se todos os dados pedidos estao a ser apresentados
-[] - Colocar ação ver detalhes nos jogos muliplayer
-[x] - Single Player Score board colocar descircão da ordenacao da tabela
-
-G6. Administrator
-
-
-[]- Tudo
-
-[] - Colocar loading na página das transactions
-[] - Colocar filtro por name e clear filters a funcionar
-[] - Filtros na pagina de all users
-[x] - Coloca nome em vez de id nas confirmacoes de block/unblock/delete user
-+
-
-[x] - Administrators cannot create, modify,
-or delete transactions; they can only view them
-
-[x] - Administrators can access the history
-of all games from all players on the platform
-
-[x] - Administrators will also have access to their own profile, where they can view and perform all the
-same actions as any other user, except for the option to remove their own account
-
-[x] - Mudar block e unblock para patch
 
 G7. STATISTICS
 
-[] - Tudo
+[] - Player Stactistics
+[] - Adicionar total de compras por mês
+[] - Total Transactions ser o total de purchase e não de tudo
 
 G8. CUSTOM FEATURES AND IMPLEMENTATION DETAILS
 
-[] - Eager Loading (+performace)
-
 [x] - Dificuldade no single player
-
 [+-] - Implementamos diversos extras relacionados com os jogos (ratio w/l, etc..)
-
 [] - Adding sound effects to the game
 [] - All the site has to be responsive
+[] - Os jogos comecam quando quem criou der play ou quando atinge o limite maximo do loby(usamos o todos os players têm de dar ready menos o dono que é que da start ao game)
 
 
 
