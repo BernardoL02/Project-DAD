@@ -19,6 +19,7 @@ import ManageUsers from '@/components/Administration/ManageUsers.vue'
 import AdminTransactions from '@/components/Administration/AdminTransactions.vue'
 import MultiPlayerLobbys from '@/components/Multiplayer/MuiltiPlayerLobbys.vue'
 import AdminGames from '@/components/Administration/AdminGames.vue'
+import AllStatistics from '@/components/Statistics/AllStatistics.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -119,6 +120,11 @@ const router = createRouter({
       name: 'adminGames',
       component: AdminGames
     },
+    {
+      path: '/statistics',
+      name: 'statistics',
+      component: AllStatistics
+    },
     // Rota para rotas nao encontradas
     {
       path: '/:pathMatch(.*)*',
@@ -159,7 +165,8 @@ router.beforeEach(async (to, from, next) => {
       to.name !== 'single-player' &&
       to.name !== 'singlePlayerScore' &&
       to.name !== 'multiPlayerScore' &&
-      to.name !== 'SinglePlayerGameBoard'
+      to.name !== 'SinglePlayerGameBoard' &&
+      to.name !== 'statistics'
     ) {
       next({ name: 'login' })
       return
@@ -176,7 +183,8 @@ router.beforeEach(async (to, from, next) => {
         to.name !== 'adminGames' &&
         to.name !== 'Profile' &&
         to.name !== 'ProfileUpdate' &&
-        to.name !== 'changePassword'
+        to.name !== 'changePassword' &&
+        to.name !== 'statistics'
       ) {
         next({ name: 'home' })
         return

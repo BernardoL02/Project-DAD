@@ -165,10 +165,10 @@
 
             <RouterLink
               v-if="authStore.isAdmin"
-              :to="{ name: 'adminGames' }"
+              :to="{ name: 'statistics' }"
               :class="[
                 'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                route.path === '/singleplayer'
+                route.path === '/statistics'
                   ? 'text-indigo-500 font-semibold'
                   : 'text-gray-900 hover:text-sky-600'
               ]"
