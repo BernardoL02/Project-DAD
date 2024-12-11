@@ -3,11 +3,15 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useErrorStore } from '@/stores/error'
 import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
+import { useGameMultiplayerStore } from '@/stores/gameMultiplayer'
 
 export const useLobbyStore = defineStore('lobby', () => {
   const storeAuth = useAuthStore()
   const storeError = useErrorStore()
   const socket = inject('socket')
+  const storeGameMultiplayer = useGameMultiplayerStore()
+  const router = useRouter()
   const games = ref([])
 
   const totalGames = computed(() => games.value.length)
@@ -42,9 +46,9 @@ export const useLobbyStore = defineStore('lobby', () => {
   })
 
   // add a game to the lobby
-  const CreateLobby = (board) => {
+  const CreateLobby = (rows, cols) => {
     storeError.resetMessages()
-    socket.emit('createLobby', board, (response) => {
+    socket.emit('createLobby', rows, cols, (response) => {
       if (webSocketServerResponseHasError(response)) {
         return
       }
@@ -197,6 +201,21 @@ export const useLobbyStore = defineStore('lobby', () => {
     })
   }
 
+  // ------------------------------------------------------
+  // Multiplayer Game
+  // ------------------------------------------------------
+
+  const startGame = (gameId) => {
+    socket.emit('startGame', gameId, (game) => {
+      if (game) {
+        storeGameMultiplayer.addActiveGame(game) // Adiciona o jogo à lista de jogos ativos
+        router.push({ path: '/multiplayer/game', query: { gameId: game.id } }) // Redireciona para a rota com o gameId
+      } else {
+        console.error('Failed to start the game.')
+      }
+    })
+  }
+
   return {
     games,
     totalGames,
@@ -213,6 +232,7 @@ export const useLobbyStore = defineStore('lobby', () => {
     closeChat,
     switchChatPanel,
     isChatOpen,
-    toggleChat
+    toggleChat,
+    startGame
   }
 })

@@ -2,15 +2,17 @@ exports.createLobby = () => {
   const games = new Map();
   let id = 1;
 
-  const createLobby = (user, socketId, board) => {
-    if (!user || !board) return null;
+  const createLobby = (user, socketId, rows, cols) => {
+    if (!user || !rows || !cols) return null;
 
     id++;
-    const maxPlayers = determineMaxPlayers(board);
+    const maxPlayers = determineMaxPlayers(rows, cols);
 
     const game = {
       id: id,
-      board: board,
+      rows: rows,
+      cols: cols,
+      board: [],
       created_at: Date.now(),
       player1: user,
       player1SocketId: socketId,
@@ -24,10 +26,23 @@ exports.createLobby = () => {
   };
 
   // Função auxiliar para determinar o limite de jogadores com base no board
-  const determineMaxPlayers = (board) => {
-    if (board.board_cols === 3 && board.board_rows === 4) return 2;
-    if (board.board_cols === 4 && board.board_rows === 4) return 3;
+  const determineMaxPlayers = (rows, cols) => {
+    if (cols === 3 && rows === 4) return 2;
+    if (cols === 4 && rows === 4) return 3;
     return 5;
+  };
+
+  const setGameBoard = (gameId, board) => {
+    const game = games.get(gameId);
+    if (game) {
+      game.board = board; // Atualiza o board corretamente
+      games.set(gameId, game); // Salva o jogo atualizado no mapa
+      console.log("Board updated in game:", game);
+      return game; // Retorna o jogo atualizado
+    } else {
+      console.error(`Game with ID ${gameId} not found in setGameBoard`);
+      return null;
+    }
   };
 
   const leaveLobby = (gameId, userId) => {
@@ -78,11 +93,6 @@ exports.createLobby = () => {
     return game;
   };
 
-  const removeGame = (id) => {
-    games.delete(id);
-    return games;
-  };
-
   const existsGame = (id) => {
     return games.has(id);
   };
@@ -99,10 +109,10 @@ exports.createLobby = () => {
     getGames,
     getGame,
     createLobby,
-    removeGame,
     existsGame,
     leaveLobby,
     setReady,
     leaveAllLobbies,
+    setGameBoard,
   };
 };

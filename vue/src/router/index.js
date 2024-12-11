@@ -18,6 +18,7 @@ import ChangePassword from '@/components/Profile/ChangePassword.vue'
 import ManageUsers from '@/components/Administration/ManageUsers.vue'
 import AdminTransactions from '@/components/Administration/AdminTransactions.vue'
 import MultiPlayerLobbys from '@/components/Multiplayer/MuiltiPlayerLobbys.vue'
+import MultiPlayerGameBoard from '@/components/Multiplayer/MultiPlayerGameBoard.vue'
 import AdminGames from '@/components/Administration/AdminGames.vue'
 
 const router = createRouter({
@@ -47,6 +48,11 @@ const router = createRouter({
       path: '/multiplayer/lobbys',
       name: 'lobbys',
       component: MultiPlayerLobbys
+    },
+    {
+      path: '/multiplayer/game',
+      name: 'MultiPlayerGameBoard',
+      component: MultiPlayerGameBoard
     },
     {
       path: '/multiplayer/history',
