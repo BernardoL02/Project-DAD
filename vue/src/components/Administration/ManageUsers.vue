@@ -224,7 +224,6 @@ onUnmounted(async () => {
       />
     </div>
   </div>
-
   <div
     v-if="showRegisterModal"
     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"

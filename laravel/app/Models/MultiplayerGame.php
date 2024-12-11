@@ -22,7 +22,7 @@ class MultiplayerGame extends Model
     // Relacionamentos
     public function user()
     {
-        return $this->belongsTo(User::class)->withTrashed();
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function game()

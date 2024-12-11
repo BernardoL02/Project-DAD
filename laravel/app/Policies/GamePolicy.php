@@ -34,5 +34,10 @@ class GamePolicy
     {
         return $user->isPlayer() && $user->id === $game->created_user_id;
     }
+
+    public function show(?User $user, Game $game): bool
+    {
+        return $user->isPlayer() && $game->participants->contains('id', $user->id);
+    }
 }
 

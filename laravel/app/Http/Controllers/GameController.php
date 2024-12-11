@@ -6,11 +6,13 @@ use App\Models\Game;
 use App\Models\Board;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use App\Http\Resources\GameResource;
 use App\Http\Requests\StoreGameRequest;
-use App\Http\Resources\MultiPlayerGameResource;
-use Illuminate\Support\Facades\Log;
 use App\Http\Requests\UpdateGameRequest;
+use App\Http\Resources\MultiPlayerGameResource;
+use App\Http\Resources\MyMultiPlayerGameResource;
+use App\Http\Resources\ShowMultiplayerGameResource;
 
 class GameController extends Controller
 {
@@ -62,8 +64,28 @@ class GameController extends Controller
      */
     public function show(Game $game)
     {
-        return new GameResource($game);
+        if ($game->type == "S") {
+            return response()->json([
+                'message' => 'This game is single-player. The operation is only allowed for multiplayer games.',
+            ], 400);
+        }
+
+        $gameDetails = Game::with([
+            'createdUser',
+            'winnerUser',
+            'multiplayerGamesPlayed' => function ($query) {
+                $query->select('user_id', 'game_id', 'player_won', 'pairs_discovered')->with('user');
+            }
+        ])
+        ->find($game->id);
+
+        if (!$gameDetails) {
+            return response()->json(['error' => 'Game not found'], 404);
+        }
+
+        return new MultiPlayerGameResource($gameDetails);
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -113,7 +135,7 @@ class GameController extends Controller
             $game->pairs_discovered = $playerStats ? (int)$playerStats->pairs_discovered : 0;
         });
 
-        return MultiPlayerGameResource::collection($multiPlayerGames);
+        return MyMultiPlayerGameResource::collection($multiPlayerGames);
     }
 
 public function updateGameStatus(UpdateGameRequest $request, Game $game)
