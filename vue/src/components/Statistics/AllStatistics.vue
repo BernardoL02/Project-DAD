@@ -1,6 +1,6 @@
 <template>
   <div class="statistics-container">
-    <h1 class="text-5xl font-bold mb-10 text-center">Game Statistics</h1>
+    <h1 class="text-3xl font-bold mb-10 text-center">Game Statistics</h1>
     <div v-if="loading" class="text-center text-gray-400">Loading...</div>
     <div v-else>
       <div class="flex pb-10 space-x-4">
@@ -55,21 +55,21 @@
               </div>
               <Bar :data="horizontalBarChartData" :options="horizontalBarChartOptions" />
             </div>
-            <button
-              v-for="year in [2023, 2024]"
-              :key="year"
-              @click="changeYear(year)"
-              :class="{
-                'bg-sky-500 text-white': selectedYear === year,
-                'bg-gray-200': selectedYear !== year
-              }"
-              class="px-4 py-2 mx-2 rounded-md font-semibold"
-            >
-              {{ year }}
-            </button>
           </div>
           <div class="flex flex-wrap justify-between space-x-4">
-            <div class="chart-container p-4 w-1/2">
+            <div class="chart-container p-4 w-1/2 mt-10">
+              <button
+                v-for="year in [2023, 2024]"
+                :key="year"
+                @click="changeYear(year)"
+                :class="{
+                  'bg-sky-500 text-white': selectedYear === year,
+                  'bg-gray-200': selectedYear !== year
+                }"
+                class="px-4 py-2 mx-2 rounded-md font-semibold"
+              >
+                {{ year }}
+              </button>
               <Bar :data="chartData" />
             </div>
             <div class="chart-container p-1 w-96 h-96">

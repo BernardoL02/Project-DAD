@@ -185,18 +185,6 @@
               ]"
               active-class="text-blue-600 font-semibold"
             >
-            </RouterLink>
-            <RouterLink
-              v-if="authStore.isAdmin"
-              :to="{ name: 'adminGames' }"
-              :class="[
-                'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                route.path === '/singleplayer'
-                  ? 'text-indigo-500 font-semibold'
-                  : 'text-gray-900 hover:text-sky-600'
-              ]"
-              active-class="text-blue-600 font-semibold"
-            >
               Statistics
             </RouterLink>
           </div>
