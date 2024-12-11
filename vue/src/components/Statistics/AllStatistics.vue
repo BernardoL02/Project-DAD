@@ -85,12 +85,12 @@
           <div v-if="playerStats">
             <div class="mb-6">
               <p class="font-semibold text-xl">
-                Total Transactions:
-                <span class="text-blue-600">{{ playerStats.totalTransactions }}</span>
+                Total Purchases:
+                <span class="text-blue-600">{{ playerStats.totalPurchases }}</span>
               </p>
               <p class="font-semibold text-xl">
-                Total Value of Transactions:
-                <span class="text-blue-600">{{ playerStats.totalTransactionValue }} €</span>
+                Total Value of Purchases:
+                <span class="text-blue-600">{{ playerStats.totalPurchaseValue }} €</span>
               </p>
             </div>
             <div class="flex justify-between space-x-2">
@@ -135,7 +135,7 @@ import {
   CategoryScale,
   LinearScale
 } from 'chart.js'
-import { Bar, Pie, Doughnut, Scatter } from 'vue-chartjs'
+import { Bar, Pie, Doughnut } from 'vue-chartjs'
 
 ChartJS.register(
   CategoryScale,
@@ -231,17 +231,19 @@ const horizontalBarChartData = computed(() => {
 const playerStats = computed(() => {
   if (!transactions.value) return null
 
-  const totalPlayers = new Set(transactions.value.map((t) => t.Name)).size
-  const totalTransactions = transactions.value.length
-  const totalTransactionValue = transactions.value.reduce(
+  const purchaseTransactions = transactions.value.filter(
+    (transaction) => transaction.type === 'Purchase'
+  )
+
+  const totalPurchases = purchaseTransactions.length
+  const totalPurchaseValue = purchaseTransactions.reduce(
     (sum, transaction) => sum + (parseFloat(transaction.value) || 0),
     0
   )
 
   return {
-    totalPlayers,
-    totalTransactions,
-    totalTransactionValue
+    totalPurchases,
+    totalPurchaseValue
   }
 })
 
