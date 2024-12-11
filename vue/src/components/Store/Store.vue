@@ -77,7 +77,7 @@ onMounted(async () => {
 
 
 <template>
-  <div class="max-w-3xl mx-auto py-8 space-y-6">
+  <div class="max-w-3xl mx-auto py-8">
     <h1 class="text-3xl font-bold text-center mb-8">Store</h1>
 
     <!-- Display User's Brain Coins -->
@@ -101,7 +101,7 @@ onMounted(async () => {
     </div>
 
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
       <div v-for="item in storeItems" :key="item.id"
         class="p-6 border rounded-lg flex flex-col items-center justify-between bg-white shadow-sm">
         <img :src="item.img" :alt="`${item.name} image`" class="w-24 h-24 object-contain mb-4" />
@@ -113,6 +113,7 @@ onMounted(async () => {
         </button>
       </div>
     </div>
+
 
     <!-- Modal -->
     <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
