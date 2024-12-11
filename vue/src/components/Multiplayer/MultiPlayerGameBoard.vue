@@ -69,6 +69,10 @@ onMounted(() => {
     unregisterGuard = router.beforeEach((to, from, next) => {
         console.log('beforeEach chamado:', from.path, to.fullPath);
 
+        if (storeGameMultiplayer.gameOver) {
+            allowNavigation = true;
+        }
+
         if (allowNavigation) {
             allowNavigation = false;
             next();

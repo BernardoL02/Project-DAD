@@ -45,7 +45,7 @@ exports.createLobby = () => {
     }
   };
 
-  const leaveLobby = (gameId, userId) => {
+  const leave = (gameId, userId) => {
     const game = games.get(gameId);
     if (!game) return getGames();
 
@@ -54,13 +54,6 @@ exports.createLobby = () => {
 
     // Remove o jogador que está saindo
     game.players = game.players.filter((player) => player.id !== userId);
-
-    // Verifica quantos jogadores restam
-    if (game.players.length < 2) {
-      // Se restar apenas um jogador, deleta o jogo
-      deleteGame(gameId);
-      return getGames();
-    }
 
     // Se o usuário é o dono do lobby e há mais jogadores, define um novo dono
     if (game.player1.id === userId && game.players.length > 0) {
@@ -116,9 +109,10 @@ exports.createLobby = () => {
     getGame,
     createLobby,
     existsGame,
-    leaveLobby,
+    leave,
     setReady,
     leaveAllLobbies,
     setGameBoard,
+    deleteGame,
   };
 };

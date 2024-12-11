@@ -30,6 +30,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     return activeGames.value.find((game) => game.id === gameId)
   }
 
+  const gameOver = ref(false)
   // Inicia o jogo
   const startGame = (gameId, callback) => {
     gameOver.value = false // Reinicia o estado do jogo
@@ -75,7 +76,6 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     }
   })
 
-  const gameOver = ref(false)
   // Recebe evento de encerramento do jogo
   socket.on('gameEnded', ({ message, totalMoves, pairsFoundByPlayers }) => {
     gameOver.value = true // Define que o jogo acabou
@@ -130,15 +130,23 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     })
   }
 
-  socket.on('gameCancelled', ({ message, gameId }) => {
-    console.log(`Game ${gameId} was cancelled: ${message}`)
+  socket.on('gameCancelled', ({ message, updatedGame }) => {
+    gameOver.value = true
     storeError.setErrorMessages(message, 'Jogo Cancelado')
     router.push('/multiplayer/lobbys')
   })
 
-  socket.on('playerLeft', ({ message, gameId }) => {
-    console.log(`Player left event: ${message}`)
+  socket.on('playerLeft', ({ message, updatedGame }) => {
     storeError.setErrorMessages(message, 'Jogador Saiu')
+
+    // Atualiza o jogo no estado ativo
+    const gameIndex = activeGames.value.findIndex((game) => game.id === updatedGame.id)
+    if (gameIndex !== -1) {
+      // Substitui o jogo antigo pelo jogo atualizado
+      activeGames.value.splice(gameIndex, 1, updatedGame)
+    }
+
+    currentPlayerId.value = updatedGame.players[updatedGame.currentPlayerIndex]?.id || null
   })
 
   const leaveAllLobbies = () => {
@@ -152,7 +160,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   }
 
   const leaveGameLobby = (gameId) => {
-    socket.emit('leaveLobby', gameId, (response) => {
+    socket.emit('leaveGame', gameId, (response) => {
       if (response.errorCode) {
         console.error('Erro ao sair do lobby:', response.errorMessage)
       } else {

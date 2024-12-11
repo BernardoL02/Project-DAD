@@ -155,7 +155,7 @@ io.on("connection", (socket) => {
       return;
     }
 
-    const games = lobby.leaveLobby(gameId, socket.data.user.id);
+    const games = lobby.leave(gameId, socket.data.user.id);
     io.to("lobby").emit("lobbyChanged", games);
     callback(games);
   });
@@ -309,7 +309,7 @@ io.on("connection", (socket) => {
     callback({ success: true });
   });
 
-  socket.on("leaveLobby", (gameId, callback) => {
+  socket.on("leaveGame", (gameId, callback) => {
     if (!util.checkAuthenticatedUser(socket, callback)) {
       return;
     }
@@ -321,40 +321,44 @@ io.on("connection", (socket) => {
 
     // Guarda o nome do jogador que está saindo
     const leavingPlayer = game.players.find(
-      (player) => player.id === socket.data.user.id
+      (player) => String(player.id) === String(socket.data.user.id)
     );
+
     const leavingPlayerName = leavingPlayer
       ? leavingPlayer.nickname
       : "Um jogador";
 
     // Remove o jogador do lobby
-    lobby.leaveLobby(gameId, socket.data.user.id);
+    lobby.leave(gameId, socket.data.user.id);
 
     // Verifica o número de jogadores restantes
     const updatedGame = lobby.getGame(gameId);
 
-    if (!updatedGame) {
-      // Se o jogo foi deletado, avisa os jogadores restantes
-      io.to(gameId).emit("gameCancelled", {
-        message: `${leavingPlayerName} saiu do lobby e o jogo foi cancelado.`,
-        gameId: gameId,
-      });
-    } else if (updatedGame.players.length < 2) {
-      // Se restar apenas um jogador, cancela o jogo
-      io.to(gameId).emit("gameCancelled", {
-        message:
-          "O jogo foi cancelado porque apenas um jogador restou no lobby.",
-        gameId: gameId,
-      });
+    if (!updatedGame || updatedGame.players.length < 2) {
+      if (updatedGame) {
+        // Notifica os jogadores restantes que o jogo foi cancelado
+        updatedGame.players.forEach((player) => {
+          io.to(player.socketId).emit("gameCancelled", {
+            message:
+              "O jogo foi cancelado porque apenas um jogador restou no lobby.",
+            updatedGame,
+          });
+        });
+      }
+
+      // Deleta o jogo após notificar os jogadores
       lobby.deleteGame(gameId);
     } else {
       // Notifica os jogadores restantes que alguém saiu
-      io.to(gameId).emit("playerLeft", {
-        message: `${leavingPlayerName} saiu do lobby.`,
-        gameId: gameId,
+      updatedGame.players.forEach((player) => {
+        io.to(player.socketId).emit("playerLeft", {
+          message: `${leavingPlayerName} saiu do lobby.`,
+          updatedGame,
+        });
       });
     }
 
+    // Atualiza o lobby para todos os jogadores
     io.to("lobby").emit("lobbyChanged", lobby.getGames());
     callback({ success: true, message: "Você saiu do lobby com sucesso!" });
   });
