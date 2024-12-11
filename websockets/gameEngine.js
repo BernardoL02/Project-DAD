@@ -41,7 +41,7 @@ exports.createGameEngine = () => {
     }
 
     game.selectedCards.push(index);
-    game.board[index].flipped = true; // Marca a carta como virada
+    game.board[index].flipped = true;
 
     game.players.forEach((player) => {
       if (!player.pairsFound) player.pairsFound = 0;
@@ -69,11 +69,23 @@ exports.createGameEngine = () => {
         // Verifica se o jogo terminou
         if (game.matchedPairs.length === game.board.length) {
           game.status = "ended";
-          io.to(game.players.map((p) => p.socketId)).emit("gameEnded", game);
+
+          // Cria um array com o total de pares encontrados por cada jogador
+          const pairsFoundByPlayers = game.players.map((player) => ({
+            nickname: player.nickname,
+            pairsFound: player.pairsFound,
+          }));
+
+          io.to(game.players.map((p) => p.socketId)).emit("gameEnded", {
+            message: "Game Over! You completed the game!",
+            totalMoves: game.totalMoves,
+            pairsFoundByPlayers,
+            game,
+          });
         } else {
           io.to(game.players.map((p) => p.socketId)).emit("gameUpdated", game);
         }
-      }, 1000); // Atraso de 1 segundo para mostrar a animação
+      }, 1000);
     }
 
     return game;

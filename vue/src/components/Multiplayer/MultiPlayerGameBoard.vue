@@ -3,8 +3,10 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useGameMultiplayerStore } from '@/stores/gameMultiplayer'
 import { useAuthStore } from '@/stores/auth'
+import { useRouter } from 'vue-router'
 
 const route = useRoute()
+const router = useRouter()
 const storeGameMultiplayer = useGameMultiplayerStore()
 const storeAuth = useAuthStore()
 
@@ -29,11 +31,64 @@ const flipCard = (index) => {
     storeGameMultiplayer.flipCard(gameId, index)
 }
 
+const showModal = ref(false)
+let pendingRoute = null
+let allowNavigation = false;
+let unregisterGuard = null
+
+const confirmExit = () => {
+    console.log('Confirmar saída chamado');
+    storeGameMultiplayer.stopTimer();
+    storeGameMultiplayer.leaveGameLobby(Number(gameId)); // Sai apenas do lobby do jogo atual
+    showModal.value = false;
+    allowNavigation = true;
+
+    if (pendingRoute) {
+        router.push(pendingRoute).catch(err => console.error('Erro ao redirecionar:', err));
+        pendingRoute = null;
+    } else {
+        router.push('/multiplayer/lobbys');
+    }
+};
+
+const cancelExit = () => {
+    console.log('Cancelar saída chamado');
+    showModal.value = false;
+    pendingRoute = null;
+};
+
+const handleBeforeUnload = (event) => {
+    event.preventDefault();
+    // Apenas sai dos lobbies ao fechar ou recarregar a página
+    storeGameMultiplayer.leaveAllLobbies();
+    event.returnValue = '';
+};
+
+
 onMounted(() => {
-    startGame()
-})
+    unregisterGuard = router.beforeEach((to, from, next) => {
+        console.log('beforeEach chamado:', from.path, to.fullPath);
+
+        if (allowNavigation) {
+            allowNavigation = false;
+            next();
+        } else if (from.path.startsWith('/multiplayer/game') && !showModal.value) {
+            showModal.value = true;
+            pendingRoute = to.fullPath;
+            next(false);
+        } else {
+            next();
+        }
+    });
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    startGame();
+});
+
+
 
 onUnmounted(() => {
+    if (unregisterGuard) unregisterGuard();
+    window.removeEventListener('beforeunload', handleBeforeUnload)
     storeGameMultiplayer.stopTimer()
 })
 
@@ -91,6 +146,24 @@ watch(gameData, (newValue) => {
             <h2 class="text-lg font-bold mb-4">Game Info</h2>
             <p class="text-gray-700">Tempo: {{ timer }} seg</p>
             <p class="text-gray-700">Total de Jogadas: {{ gameData.totalMoves || 0 }}</p>
+        </div>
+        <!-- Modal de Confirmação -->
+        <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div class="bg-white p-6 rounded shadow-md w-96">
+                <h2 class="text-xl font-bold mb-4">Confirmação</h2>
+                <p class="mb-4">
+                    Tem certeza de que deseja sair do jogo? <br />
+                    O progresso será perdido.
+                </p>
+                <div class="flex justify-end space-x-4">
+                    <button class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400" @click="cancelExit">
+                        Cancelar
+                    </button>
+                    <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" @click="confirmExit">
+                        Sair
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </template>

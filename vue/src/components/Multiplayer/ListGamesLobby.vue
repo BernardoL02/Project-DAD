@@ -30,8 +30,6 @@ const otherLobbies = computed(() =>
 )
 
 
-
-
 const handleSendMessage = ({ user, message }) => {
     console.log('handleSendMessage called with:', user, message)
     storeLobby.sendPrivateMessage(user, message)
@@ -90,8 +88,8 @@ onMounted(() => {
                                 </div>
 
                                 <div v-for="player in game.players.slice(1)" :key="player.id"
-                                    @click="storeLobby.openChatPanel(player)"
-                                    class="w-24 h-36 bg-gray-200 rounded-lg flex flex-col items-center justify-center p-2 shadow">
+                                    class="w-24 h-36 bg-gray-200 rounded-lg flex flex-col items-center justify-center p-2 shadow relative"
+                                    @click="storeLobby.openChatPanel(player)">
                                     <img :src="storeAuth.getPhotoUrl(player.photo_filename)" alt="Player Avatar"
                                         class="w-16 h-16 rounded-full mb-2" />
                                     <p class="text-gray-900 font-bold text-center text-sm">{{
@@ -100,7 +98,16 @@ onMounted(() => {
                                         :class="player.ready ? 'text-green-500' : 'text-red-500'">
                                         {{ player.ready ? 'Ready' : 'UnReady' }}
                                     </span>
+
+                                    <!-- Botão de Remoção (X) -->
+                                    <button v-if="game.player1.id === storeAuth.user.id"
+                                        @click.stop="storeLobby.removePlayer(game.id, player.id)"
+                                        class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center hover:bg-red-600">
+                                        &times;
+                                    </button>
+
                                 </div>
+
 
 
                                 <!-- Espaços disponíveis com botão "+" ou área escura sem "+" -->

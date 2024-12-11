@@ -3,6 +3,8 @@ import { ref, computed, inject } from 'vue'
 import { defineStore } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import { useNotificationStore } from '@/stores/notification'
+import { useErrorStore } from '@/stores/error'
 
 export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   const activeGames = ref([])
@@ -12,6 +14,8 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   const socket = inject('socket')
   const storeAuth = useAuthStore()
   const router = useRouter()
+  const notificationStore = useNotificationStore()
+  const storeError = useErrorStore()
 
   // Adiciona um novo jogo ativo à lista
   const addActiveGame = (game) => {
@@ -28,6 +32,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
 
   // Inicia o jogo
   const startGame = (gameId, callback) => {
+    gameOver.value = false // Reinicia o estado do jogo
     socket.emit('startGame', Number(gameId), (game) => {
       if (game) {
         addActiveGame(game)
@@ -70,6 +75,30 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     }
   })
 
+  const gameOver = ref(false)
+  // Recebe evento de encerramento do jogo
+  socket.on('gameEnded', ({ message, totalMoves, pairsFoundByPlayers }) => {
+    gameOver.value = true // Define que o jogo acabou
+    const currentPlayer = pairsFoundByPlayers.find(
+      (player) => player.nickname === storeAuth.user.nickname
+    )
+
+    if (currentPlayer) {
+      notificationStore.setSuccessMessage(
+        `You completed the game in ${totalMoves} moves! You found ${currentPlayer.pairsFound} pairs.`,
+        'Congratulations!'
+      )
+    } else {
+      notificationStore.setSuccessMessage(
+        `You completed the game in ${totalMoves} moves!`,
+        'Game Over'
+      )
+    }
+
+    stopTimer()
+    router.push('/multiplayer/lobbys')
+  })
+
   // Verifica se é o turno do jogador atual
   const isCurrentPlayerTurn = computed(() => {
     return currentPlayerId.value === storeAuth.user.id
@@ -101,6 +130,37 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     })
   }
 
+  socket.on('gameCancelled', ({ message, gameId }) => {
+    console.log(`Game ${gameId} was cancelled: ${message}`)
+    storeError.setErrorMessages(message, 'Jogo Cancelado')
+    router.push('/multiplayer/lobbys')
+  })
+
+  socket.on('playerLeft', ({ message, gameId }) => {
+    console.log(`Player left event: ${message}`)
+    storeError.setErrorMessages(message, 'Jogador Saiu')
+  })
+
+  const leaveAllLobbies = () => {
+    socket.emit('leaveAllLobbies', storeAuth.user.id, (response) => {
+      if (response.errorCode) {
+        console.error('Erro ao sair de todos os lobbies:', response.errorMessage)
+      } else {
+        console.log('Saiu de todos os lobbies com sucesso')
+      }
+    })
+  }
+
+  const leaveGameLobby = (gameId) => {
+    socket.emit('leaveLobby', gameId, (response) => {
+      if (response.errorCode) {
+        console.error('Erro ao sair do lobby:', response.errorMessage)
+      } else {
+        console.log('Saiu do lobby do jogo com sucesso')
+      }
+    })
+  }
+
   return {
     activeGames,
     addActiveGame,
@@ -110,6 +170,9 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     timer,
     startTimer,
     stopTimer,
-    isCurrentPlayerTurn
+    isCurrentPlayerTurn,
+    gameOver,
+    leaveAllLobbies,
+    leaveGameLobby
   }
 })

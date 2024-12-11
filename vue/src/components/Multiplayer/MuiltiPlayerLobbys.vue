@@ -5,6 +5,7 @@ import { useBoardStore } from '@/stores/board'
 import { ref, onMounted, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 
+
 const storeLobby = useLobbyStore()
 const storeBoard = useBoardStore()
 const authStore = useAuthStore()

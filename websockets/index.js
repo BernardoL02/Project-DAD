@@ -160,6 +160,32 @@ io.on("connection", (socket) => {
     callback(games);
   });
 
+  socket.on("removePlayer", ({ gameId, playerId }, callback) => {
+    if (!util.checkAuthenticatedUser(socket, callback)) {
+      return;
+    }
+
+    const game = lobby.getGame(gameId);
+
+    if (!game) {
+      return callback({ errorCode: 5, errorMessage: "Game not found!" });
+    }
+
+    // Verifica se o usuário que está tentando remover é o dono do lobby
+    if (socket.data.user.id !== game.player1.id) {
+      return callback({
+        errorCode: 10,
+        errorMessage: "Only the lobby owner can remove players!",
+      });
+    }
+
+    // Remove o jogador
+    game.players = game.players.filter((player) => player.id !== playerId);
+
+    io.to("lobby").emit("lobbyChanged", lobby.getGames());
+    callback({ success: true, message: "Player removed successfully!" });
+  });
+
   // ------------------------------------------------------
   // Multiplayer Game
   // ------------------------------------------------------
@@ -253,8 +279,6 @@ io.on("connection", (socket) => {
     callback(game);
   });
 
-  // index.js
-
   socket.on("flipCard", ({ gameId, index }, callback) => {
     const game = lobby.getGame(gameId);
     if (!game) {
@@ -273,5 +297,65 @@ io.on("connection", (socket) => {
     }
 
     callback(game);
+  });
+
+  socket.on("leaveAllLobbies", (userId, callback) => {
+    if (!userId) {
+      return callback({ errorCode: 1, errorMessage: "User ID is missing" });
+    }
+
+    lobby.leaveAllLobbies(userId);
+    io.to("lobby").emit("lobbyChanged", lobby.getGames());
+    callback({ success: true });
+  });
+
+  socket.on("leaveLobby", (gameId, callback) => {
+    if (!util.checkAuthenticatedUser(socket, callback)) {
+      return;
+    }
+
+    const game = lobby.getGame(gameId);
+    if (!game) {
+      return callback({ errorCode: 5, errorMessage: "Game not found!" });
+    }
+
+    // Guarda o nome do jogador que está saindo
+    const leavingPlayer = game.players.find(
+      (player) => player.id === socket.data.user.id
+    );
+    const leavingPlayerName = leavingPlayer
+      ? leavingPlayer.nickname
+      : "Um jogador";
+
+    // Remove o jogador do lobby
+    lobby.leaveLobby(gameId, socket.data.user.id);
+
+    // Verifica o número de jogadores restantes
+    const updatedGame = lobby.getGame(gameId);
+
+    if (!updatedGame) {
+      // Se o jogo foi deletado, avisa os jogadores restantes
+      io.to(gameId).emit("gameCancelled", {
+        message: `${leavingPlayerName} saiu do lobby e o jogo foi cancelado.`,
+        gameId: gameId,
+      });
+    } else if (updatedGame.players.length < 2) {
+      // Se restar apenas um jogador, cancela o jogo
+      io.to(gameId).emit("gameCancelled", {
+        message:
+          "O jogo foi cancelado porque apenas um jogador restou no lobby.",
+        gameId: gameId,
+      });
+      lobby.deleteGame(gameId);
+    } else {
+      // Notifica os jogadores restantes que alguém saiu
+      io.to(gameId).emit("playerLeft", {
+        message: `${leavingPlayerName} saiu do lobby.`,
+        gameId: gameId,
+      });
+    }
+
+    io.to("lobby").emit("lobbyChanged", lobby.getGames());
+    callback({ success: true, message: "Você saiu do lobby com sucesso!" });
   });
 });

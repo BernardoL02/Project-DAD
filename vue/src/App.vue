@@ -16,17 +16,15 @@
 
           <!-- Menu Hamburger -->
           <div class="flex items-center lg:hidden">
-            <button
-              @click="toggleMenu"
-              class="text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium"
-            >
+            <button @click="toggleMenu"
+              class="text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
               <span v-if="isMenuOpen">&#10005;</span>
               <span v-else>&#9776;</span>
             </button>
           </div>
 
           <!-- Links à esquerda -->
-          <div :class="{ 'flex flex-col lg:flex-row lg:space-x-8': true }">
+          <div :class="{ 'hidden lg:flex': true, 'flex flex-col lg:flex-row lg:space-x-8': true }">
             <RouterLink to="/" :class="[
               'px-3 py-2 rounded-md text-sm font-medium transition-colors',
               route.path === '/'
@@ -123,17 +121,12 @@
               All Games
             </RouterLink>
 
-            <RouterLink
-              v-if="authStore.isAdmin"
-              :to="{ name: 'statistics' }"
-              :class="[
-                'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                route.path === '/statistics'
-                  ? 'text-indigo-500 font-semibold'
-                  : 'text-gray-900 hover:text-sky-600'
-              ]"
-              active-class="text-blue-600 font-semibold"
-            >
+            <RouterLink v-if="authStore.isAdmin" :to="{ name: 'statistics' }" :class="[
+              'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+              route.path === '/statistics'
+                ? 'text-indigo-500 font-semibold'
+                : 'text-gray-900 hover:text-sky-600'
+            ]" active-class="text-blue-600 font-semibold">
               Statistics
             </RouterLink>
           </div>
@@ -260,44 +253,31 @@
     <!-- (mostrado quando o hamburger é clicado) -->
     <div v-if="isMenuOpen" class="lg:hidden bg-gray-100">
       <div class="space-y-4 p-4">
-        <RouterLink
-          to="/"
-          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium"
-        >
+        <RouterLink to="/" class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
           Home
         </RouterLink>
 
-        <RouterLink
-          to="/singlePlayer"
-          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium"
-        >
+        <RouterLink to="/singlePlayer"
+          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
           Single-Player
         </RouterLink>
 
-        <RouterLink
-          to="/singlePlayer"
-          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium"
-        >
+        <RouterLink to="/multiplayer"
+          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
           Multi-Player
         </RouterLink>
 
-        <RouterLink
-          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium"
-        >
+        <RouterLink class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
           Score Board
         </RouterLink>
 
-        <RouterLink
-          to="/ManageUsers"
-          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium"
-        >
+        <RouterLink to="/ManageUsers"
+          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
           Manage Users
         </RouterLink>
 
-        <RouterLink
-          to="/playerProfile"
-          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium"
-        >
+        <RouterLink to="/playerProfile"
+          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
           Profile
         </RouterLink>
       </div>

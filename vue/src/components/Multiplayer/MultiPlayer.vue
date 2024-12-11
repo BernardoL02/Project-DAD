@@ -1,10 +1,11 @@
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useGameStore } from '@/stores/game'
 import { useBoardStore } from '@/stores/board'
 import { useTransactionStore } from '@/stores/transaction'
+import { useLobbyStore } from '@/stores/lobby'
 
 import PaginatedTable from '@/components/ui/table/StandardTablePaginated.vue'
 
@@ -12,6 +13,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 const gameStore = useGameStore()
 const boardStore = useBoardStore()
+const LobbyStore = useLobbyStore();
 
 const transactionStore = useTransactionStore()
 
@@ -27,6 +29,15 @@ const tableColumns = [
   'Pairs Discovered'
 ]
 
+
+const lobbyId = ref('');
+
+const joinLobby = () => {
+  if (lobbyId.value) {
+    LobbyStore.joinLobbyById(lobbyId.value);
+  }
+};
+
 onMounted(async () => {
   await gameStore.getMultiPlayerGames()
   await boardStore.getBoards()
@@ -36,27 +47,6 @@ onMounted(async () => {
     gameStore.boardFilter = '3x4'
   }
 })
-
-const startGame = async (size, cost, board_id) => {
-  var gameId = 0
-  if (authStore.user) {
-    if (authStore.coins < cost) {
-      alert("You don't have enough brain coins to play on this board!")
-      return
-    }
-
-    try {
-      gameId = await gameStore.createSinglePlayer(board_id)
-      if (0 < cost) {
-        await transactionStore.createTransactionsGames(gameId, cost)
-      }
-    } catch (error) {
-      console.error('Error starting the game:', error.message || error.response?.data)
-      return
-    }
-  }
-  router.push({ name: 'SinglePlayerGameBoard', params: { size, gameId } })
-}
 
 const onBoardClick = (size) => {
   gameStore.handleBoardSizeChange(size)
@@ -104,10 +94,10 @@ const onBoardClick = (size) => {
           class="p-6 border rounded-lg flex flex-col items-center justify-center bg-gray-50 shadow-md hover:shadow-lg">
           <p class="text-lg font-bold">Join a Lobby</p>
           <p class="text-sm text-gray-500 mt-2">Enter a lobby code to join.</p>
-          <input type="text" placeholder="Enter lobby code"
+          <input v-model="lobbyId" type="text" placeholder="Enter lobby code"
             class="w-full px-4 py-2 mt-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" />
           <div class="flex justify-center items-center mt-4 w-full">
-            <button
+            <button @click="joinLobby"
               class="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-transform transform hover:scale-105">
               Join Lobby
             </button>

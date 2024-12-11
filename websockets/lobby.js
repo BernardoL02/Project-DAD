@@ -52,21 +52,20 @@ exports.createLobby = () => {
     // Se o jogador não estiver na lista de jogadores, retorna os jogos
     if (!game.players.some((player) => player.id === userId)) return getGames();
 
-    // Se o usuário é o dono do lobby
-    if (game.player1.id === userId) {
-      // Se houver outro jogador disponível, ele se torna o novo dono
-      if (game.players.length > 1) {
-        game.players = game.players.filter((player) => player.id !== userId);
-        game.player1 = game.players[0]; // Novo dono é o primeiro jogador da lista
-        game.player1SocketId = null; // Opcional: atualizar o socket ID conforme necessário
-      } else {
-        // Se não há mais jogadores, remove o lobby
-        games.delete(gameId);
-        return getGames();
-      }
-    } else {
-      // Se o usuário não é o dono, apenas remove ele do lobby
-      game.players = game.players.filter((player) => player.id !== userId);
+    // Remove o jogador que está saindo
+    game.players = game.players.filter((player) => player.id !== userId);
+
+    // Verifica quantos jogadores restam
+    if (game.players.length < 2) {
+      // Se restar apenas um jogador, deleta o jogo
+      deleteGame(gameId);
+      return getGames();
+    }
+
+    // Se o usuário é o dono do lobby e há mais jogadores, define um novo dono
+    if (game.player1.id === userId && game.players.length > 0) {
+      game.player1 = game.players[0];
+      game.player1SocketId = game.players[0].socketId;
     }
 
     return getGames();
@@ -103,6 +102,13 @@ exports.createLobby = () => {
 
   const getGames = () => {
     return [...games.values()];
+  };
+
+  const deleteGame = (gameId) => {
+    if (games.has(gameId)) {
+      games.delete(gameId);
+      console.log(`Game with ID ${gameId} has been deleted.`);
+    }
   };
 
   return {

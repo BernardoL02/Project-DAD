@@ -5,6 +5,7 @@ import { useErrorStore } from '@/stores/error'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 import { useGameMultiplayerStore } from '@/stores/gameMultiplayer'
+import { useNotificationStore } from '@/stores/notification'
 
 export const useLobbyStore = defineStore('lobby', () => {
   const storeAuth = useAuthStore()
@@ -13,6 +14,7 @@ export const useLobbyStore = defineStore('lobby', () => {
   const storeGameMultiplayer = useGameMultiplayerStore()
   const router = useRouter()
   const games = ref([])
+  const notificationStore = useNotificationStore()
 
   const totalGames = computed(() => games.value.length)
 
@@ -37,6 +39,17 @@ export const useLobbyStore = defineStore('lobby', () => {
         return
       }
       games.value = response
+    })
+  }
+
+  const joinLobbyById = (lobbyId) => {
+    socket.emit('joinlobby', Number(lobbyId), (response) => {
+      if (response.errorCode) {
+        storeError.setErrorMessages(response.errorMessage)
+      } else {
+        notificationStore.setSuccessMessage('Successfully joined the lobby!', 'Lobby Joined')
+        router.push({ path: '/multiplayer/lobbys' })
+      }
     })
   }
 
@@ -87,6 +100,17 @@ export const useLobbyStore = defineStore('lobby', () => {
       }
       console.log('Left lobby:', response)
       fetchGames()
+    })
+  }
+
+  const removePlayer = (gameId, playerId) => {
+    socket.emit('removePlayer', { gameId, playerId }, (response) => {
+      if (response.errorCode) {
+        storeError.setErrorMessages(response.errorMessage)
+      } else {
+        notificationStore.setSuccessMessage('Player removed successfully!', 'Player Removed')
+        fetchGames() // Atualiza os jogos após a remoção
+      }
     })
   }
 
@@ -221,9 +245,11 @@ export const useLobbyStore = defineStore('lobby', () => {
     totalGames,
     fetchGames,
     CreateLobby,
+    joinLobbyById,
     joinlobby,
     setReady,
     leaveLobby,
+    removePlayer,
     sendPrivateMessage,
     setChatPanel,
     openChats,
