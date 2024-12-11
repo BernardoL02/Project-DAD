@@ -1,6 +1,6 @@
 <template>
   <div class="statistics-container">
-    <h1 class="text-3xl font-bold mb-10 text-center">Game Statistics</h1>
+    <h1 class="text-3xl font-bold mb-10 text-center">Statistics</h1>
     <div v-if="loading" class="text-center text-gray-400">Loading...</div>
     <div v-else>
       <div class="flex pb-10 space-x-4">
@@ -85,12 +85,12 @@
           <div v-if="playerStats">
             <div class="mb-6">
               <p class="font-semibold text-xl">
-                Total Transactions:
-                <span class="text-blue-600">{{ playerStats.totalTransactions }}</span>
+                Total Purchases:
+                <span class="text-blue-600">{{ playerStats.totalPurchases }}</span>
               </p>
               <p class="font-semibold text-xl">
-                Total Value of Transactions:
-                <span class="text-blue-600">{{ playerStats.totalTransactionValue }} €</span>
+                Total Value of Purchases:
+                <span class="text-blue-600">{{ playerStats.totalPurchaseValue }} €</span>
               </p>
             </div>
             <div class="flex justify-between space-x-2">
@@ -104,8 +104,15 @@
               <!-- Number of Purchases per Pack (Bar chart) -->
               <div class="w-6/12 text-center">
                 <div class="font-semibold text-xl mb-2">Number of Purchases per Pack</div>
-                <div class="chart-container p-4">
+                <div class="chart-container p-4 w-96">
                   <Bar :data="packSalesData" />
+                </div>
+              </div>
+
+              <div class="w-full text-center">
+                <div class="font-semibold text-xl mb-2">Total Purchases by Month</div>
+                <div class="chart-container p-4 w-96 h-96 mx-auto">
+                  <Pie :data="monthlyPurchaseData" />
                 </div>
               </div>
             </div>
@@ -113,7 +120,15 @@
         </div>
 
         <div v-if="selectedView === 'players'" class="chart-container p-4 w-1/2">
-          <h2 class="text-center">Players Statistics Chart (Coming Soon)</h2>
+          <div class="font-semibold text-center text-xl mb-2">
+            Total Registered Player Each Month
+          </div>
+          <div class="font-semibold text-center text-sm text-gray-500 mb-2">
+            From the current year
+          </div>
+          <div class="chart-container p-4 w-full mx-auto">
+            <Bar :data="userRegistrationData" />
+          </div>
         </div>
       </div>
     </div>
@@ -135,7 +150,7 @@ import {
   CategoryScale,
   LinearScale
 } from 'chart.js'
-import { Bar, Pie, Doughnut, Scatter } from 'vue-chartjs'
+import { Bar, Pie, Doughnut } from 'vue-chartjs'
 
 ChartJS.register(
   CategoryScale,
@@ -152,11 +167,11 @@ ChartJS.register(
 const statisticsStore = useStatisticsStore()
 
 const loading = computed(() => statisticsStore.loading)
-const totalGames = computed(() => statisticsStore.totalGames)
+const totalGames = computed(() => statisticsStore.totalGames || 0)
 const selectedYear = computed(() => statisticsStore.selectedYear)
 const transactions = computed(() => statisticsStore.transactions)
 const games = computed(() => statisticsStore.games)
-
+//const users = computed(() => statisticsStore.users)
 const selectedView = ref('game')
 
 const monthlyGameCounts = computed(() => statisticsStore.monthlyGameCounts)
@@ -228,20 +243,83 @@ const horizontalBarChartData = computed(() => {
   }
 })
 
+const userRegistrationData = computed(() => {
+  const userCounts = statisticsStore.monthlyUserCounts
+
+  // Define the fixed order of months
+  const labels = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+  ]
+
+  // Match the data to the defined label order
+  const counts = labels.map((month) => userCounts[month] || 0) // Use 0 if a month has no data
+
+  return {
+    labels,
+    datasets: [
+      {
+        label: 'Users Registered Each Month',
+        data: counts, // Use the ordered counts array
+        backgroundColor: [
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#8BC34A',
+          '#FF5722',
+          '#7F8C8D',
+          '#E91E63',
+          '#9C27B0',
+          '#2196F3',
+          '#00BCD4',
+          '#4CAF50',
+          '#FFC107'
+        ],
+        hoverBackgroundColor: [
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#8BC34A',
+          '#FF5722',
+          '#7F8C8D',
+          '#E91E63',
+          '#9C27B0',
+          '#2196F3',
+          '#00BCD4',
+          '#4CAF50',
+          '#FFC107'
+        ]
+      }
+    ]
+  }
+})
+
 const playerStats = computed(() => {
   if (!transactions.value) return null
 
-  const totalPlayers = new Set(transactions.value.map((t) => t.Name)).size
-  const totalTransactions = transactions.value.length
-  const totalTransactionValue = transactions.value.reduce(
+  const purchaseTransactions = transactions.value.filter(
+    (transaction) => transaction.type === 'Purchase'
+  )
+
+  const totalPurchases = purchaseTransactions.length
+  const totalPurchaseValue = purchaseTransactions.reduce(
     (sum, transaction) => sum + (parseFloat(transaction.value) || 0),
     0
   )
 
   return {
-    totalPlayers,
-    totalTransactions,
-    totalTransactionValue
+    totalPurchases,
+    totalPurchaseValue
   }
 })
 
@@ -304,6 +382,48 @@ const packSalesData = computed(() => {
   }
 })
 
+const monthlyPurchaseData = computed(() => {
+  const purchaseCounts = statisticsStore.monthlyPurchaseCounts
+
+  return {
+    labels: Object.keys(purchaseCounts),
+    datasets: [
+      {
+        label: 'Purchases by Month',
+        data: Object.values(purchaseCounts),
+        backgroundColor: [
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#8BC34A',
+          '#FF5722',
+          '#7F8C8D',
+          '#E91E63',
+          '#9C27B0',
+          '#2196F3',
+          '#00BCD4',
+          '#4CAF50',
+          '#FFC107'
+        ],
+        hoverBackgroundColor: [
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#8BC34A',
+          '#FF5722',
+          '#7F8C8D',
+          '#E91E63',
+          '#9C27B0',
+          '#2196F3',
+          '#00BCD4',
+          '#4CAF50',
+          '#FFC107'
+        ]
+      }
+    ]
+  }
+})
+
 const changeYear = (year) => {
   statisticsStore.selectedYear = year
 }
@@ -315,6 +435,7 @@ const setSelectedView = (view) => {
 onMounted(() => {
   statisticsStore.getAllGames()
   statisticsStore.getTransactions()
+  statisticsStore.getUsers()
 })
 </script>
 
