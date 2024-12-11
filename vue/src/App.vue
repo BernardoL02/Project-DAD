@@ -181,10 +181,7 @@
 
                           <!-- If the transaction type is 'P' (Purchase) -->
                           <div v-else-if="notification.type === 'Purchase'" class="flex flex-col text-gray-500">
-                            <span class="text-xs">{{ notification.value }}€ </span>
-                            <span class="text-xs">{{
-                              notification.paymentMethod + ' - ' + notification.reference
-                            }}</span>
+                            <span class="text-xs"> {{ notification.msg }}</span>
                           </div>
 
                           <div v-else-if="notification.type === 'Game'" class="flex flex-col text-gray-500">

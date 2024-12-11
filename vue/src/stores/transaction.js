@@ -80,13 +80,16 @@ export const useTransactionStore = defineStore('transaction', () => {
 
       const datetime = new Date().toISOString().slice(0, 19).replace('T', ' ')
 
+      const msg = `You purchased ${coins} brain coins for €${paymentDetails.value} via ${paymentDetails.type}.`
+
       const response = await axios.post('/transactions', {
         type: 'P',
         brain_coins: coins,
         payment_reference: paymentDetails.reference,
         payment_type: paymentDetails.type,
         euros: paymentDetails.value,
-        transaction_datetime: datetime
+        transaction_datetime: datetime,
+        msg: msg
       })
 
       return response.data
