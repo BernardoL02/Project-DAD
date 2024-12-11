@@ -10,13 +10,13 @@ export const useStatisticsStore = defineStore('statistics', () => {
   const error = ref(null)
   const selectedYear = ref(new Date().getFullYear()) // Default to current year
   const transactions = ref([])
+  const users = ref([])
 
   const getAllGames = async () => {
     loading.value = true
     storeError.resetMessages()
     try {
       const response = await axios.get('games')
-
       const updatedGames = response.data.data.map((game) => ({
         id: game.id,
         board_id:
@@ -61,6 +61,126 @@ export const useStatisticsStore = defineStore('statistics', () => {
     }
   }
 
+  const getUsers = async () => {
+    loading.value = true
+    error.value = null
+
+    try {
+      const response = await axios.get('admin/users')
+      users.value = response.data.map((user) => ({
+        Id: user.id,
+        Name: user.name,
+        Email: user.email,
+        NickName: user.nickname,
+        Type: user.type === 'A' ? 'Administrator' : 'Player',
+        Blocked: user.blocked,
+        RegisteredAt: user.created_at
+      }))
+    } catch (err) {
+      error.value = 'Failed to load users. Please try again.'
+      storeError.setErrorMessages(
+        err.response?.data?.message,
+        err.response?.data?.errors,
+        err.response?.data?.status,
+        'Error Get Users'
+      )
+    } finally {
+      loading.value = false
+    }
+  }
+
+  const monthlyUserCounts = computed(() => {
+    const userCounts = {}
+
+    if (!users.value || users.value.length === 0) {
+      return userCounts
+    }
+
+    // Get the current year
+    const currentYear = new Date().getFullYear()
+
+    users.value.forEach((user) => {
+      if (!user.RegisteredAt) return // Skip if registration date is missing
+
+      const registeredAt = new Date(user.RegisteredAt)
+
+      // Check if the registration year matches the current year
+      if (registeredAt.getFullYear() !== currentYear) return
+
+      const monthName = registeredAt.toLocaleString('default', { month: 'short' })
+
+      // Count users per month
+      if (!userCounts[monthName]) {
+        userCounts[monthName] = 0
+      }
+      userCounts[monthName]++
+    })
+
+    // Fill in missing months with 0
+    const allMonths = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ]
+    allMonths.forEach((month) => {
+      if (!userCounts[month]) {
+        userCounts[month] = 0
+      }
+    })
+
+    return userCounts
+  })
+
+  const monthlyPurchaseCounts = computed(() => {
+    const purchaseCounts = {}
+
+    transactions.value.forEach((transaction) => {
+      if (transaction.type === 'Purchase') {
+        const transactionDate = new Date(transaction.date)
+        const year = transactionDate.getFullYear()
+
+        if (year === selectedYear.value) {
+          const monthName = transactionDate.toLocaleString('default', { month: 'short' })
+          if (!purchaseCounts[monthName]) {
+            purchaseCounts[monthName] = 0
+          }
+          purchaseCounts[monthName]++
+        }
+      }
+    })
+
+    const allMonths = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ]
+    allMonths.forEach((month) => {
+      if (!purchaseCounts[month]) {
+        purchaseCounts[month] = 0
+      }
+    })
+
+    return purchaseCounts
+  })
+
   const filteredGames = computed(() => {
     let filtered = games.value
     return filtered
@@ -76,7 +196,6 @@ export const useStatisticsStore = defineStore('statistics', () => {
       const year = beganAt.getFullYear()
 
       if (year === selectedYear.value) {
-        const month = beganAt.getMonth()
         const monthName = beganAt.toLocaleString('default', { month: 'short' })
 
         if (!gameCounts[monthName]) {
@@ -152,6 +271,10 @@ export const useStatisticsStore = defineStore('statistics', () => {
     selectedYear,
     getTransactions,
     transactions,
-    games
+    games,
+    monthlyPurchaseCounts,
+    monthlyUserCounts,
+    users,
+    getUsers
   }
 })

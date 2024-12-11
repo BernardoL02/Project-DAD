@@ -34,7 +34,6 @@ G5. GAME HISTORY AND SCORING BOARDS
 G7. STATISTICS
 
 [] - Player Stactistics
-[] - Adicionar total de compras por mês
 
 G8. CUSTOM FEATURES AND IMPLEMENTATION DETAILS
 
