@@ -15,15 +15,22 @@ const activeChatIndex = storeLobby.activeChatIndex
 
 const myLobbies = computed(() =>
     storeLobby.games.filter(
-        (game) => game.player1.id === storeAuth.user.id || game.players.some(player => player.id === storeAuth.user.id)
+        (game) =>
+            (game.player1.id === storeAuth.user.id || game.players.some(player => player.id === storeAuth.user.id)) &&
+            (game.status === 'waiting' || game.status === 'started')
     )
 )
 
 const otherLobbies = computed(() =>
     storeLobby.games.filter(
-        (game) => game.player1.id !== storeAuth.user.id && !game.players.some(player => player.id === storeAuth.user.id)
+        (game) =>
+            !(game.player1.id === storeAuth.user.id || game.players.some(player => player.id === storeAuth.user.id)) &&
+            (game.status === 'waiting' || game.status === 'started')
     )
 )
+
+
+
 
 const handleSendMessage = ({ user, message }) => {
     console.log('handleSendMessage called with:', user, message)
@@ -99,13 +106,14 @@ onMounted(() => {
                                 <!-- Espaços disponíveis com botão "+" ou área escura sem "+" -->
                                 <div v-for="i in game.maxPlayers - game.players.length" :key="i"
                                     class="w-24 h-36 rounded-lg flex items-center justify-center" :class="{
-                                        'bg-gray-300 cursor-pointer hover:bg-green-500': game.player1.id !== storeAuth.user.id,
-                                        'bg-gray-400': game.player1.id === storeAuth.user.id
+                                        'bg-gray-300 cursor-pointer hover:bg-green-500': game.status !== 'started' && game.player1.id !== storeAuth.user.id,
+                                        'bg-gray-400': game.status === 'started' || game.player1.id === storeAuth.user.id
                                     }"
-                                    @click="game.player1.id !== storeAuth.user.id ? storeLobby.joinGame(game.id) : null">
-                                    <span v-if="game.player1.id !== storeAuth.user.id"
+                                    @click="game.status !== 'started' && game.player1.id !== storeAuth.user.id ? storeLobby.joinGame(game.id) : null">
+                                    <span v-if="game.status !== 'started' && game.player1.id !== storeAuth.user.id"
                                         class="text-gray-600 text-4xl hover:text-white">+</span>
                                 </div>
+
 
                                 <!-- Espaços extras para manter o layout alinhado como se fossem sempre 5 jogadores -->
                                 <div v-for="i in 5 - game.maxPlayers" :key="'extra-' + i"
@@ -115,21 +123,21 @@ onMounted(() => {
 
                             <div class="mt-4 flex justify-between items-center">
                                 <p class="text-gray-500 text-sm">
-                                    <strong>Board:</strong> ({{ game.board.board_cols }}x{{ game.board.board_rows
-                                    }}) |
+                                    <strong>Board:</strong> ({{ game.cols }}x{{ game.rows }}) |
                                     <strong>Players:</strong> {{ game.players.length }}/{{ game.maxPlayers }} |
-                                    Lobby ID: {{ game.id }}
+                                    <strong>Lobby ID:</strong> {{ game.id }}
+                                    <span v-if="game.status === 'started'"
+                                        class="text-blue-500 font-bold ml-4">Playing...</span>
                                 </p>
 
                                 <!-- Botões Ready e Leave para jogadores que não são donos -->
-                                <div v-if="game.players.some(player => player.id === storeAuth.user.id && player.id !== game.player1.id)"
+                                <div v-if="game.players.some(player => player.id === storeAuth.user.id && player.id !== game.player1.id) && game.status !== 'started'"
                                     class="flex space-x-4">
                                     <button @click="storeLobby.setReady(game.id, storeAuth.user.id)"
                                         class="w-24 px-4 py-1 rounded text-white text-center"
                                         :class="game.players.find(player => player.id === storeAuth.user.id)?.ready ? 'bg-red-500' : 'bg-green-500'">
                                         {{ game.players.find(player => player.id === storeAuth.user.id)?.ready ?
-                                            'UnReady' :
-                                            'Ready' }}
+                                            'UnReady' : 'Ready' }}
                                     </button>
 
                                     <button @click="storeLobby.leaveLobby(game.id)"
@@ -138,8 +146,9 @@ onMounted(() => {
                                     </button>
                                 </div>
 
+
                                 <!-- Botão Start Game e Leave para o dono -->
-                                <div v-else class="flex space-x-4">
+                                <div v-else-if="game.status !== 'started'" class="flex space-x-4">
                                     <button
                                         :disabled="game.player1.id !== storeAuth.user.id || game.players.length <= 1 || !game.players.slice(1).every(player => player.ready)"
                                         @click="storeLobby.startGame(game.id)"
@@ -150,13 +159,11 @@ onMounted(() => {
                                         Start Game
                                     </button>
 
-                                    <!-- Botão Leave para o dono -->
                                     <button @click="storeLobby.leaveLobby(game.id)"
                                         class="px-4 py-2 bg-red-500 text-white font-bold rounded hover:bg-red-600">
                                         Leave
                                     </button>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -165,7 +172,8 @@ onMounted(() => {
 
             <!-- Coluna do Chat -->
             <div>
-                <h2 v-show="storeLobby.isChatOpen" class="text-2xl font-bold mb-6 text-center text-gray-800">Your Chats
+                <h2 v-show="storeLobby.isChatOpen" class="text-2xl font-bold mb-6 text-center text-gray-800">Your
+                    Chats
                 </h2>
                 <div v-show="storeLobby.isChatOpen"
                     class="max-w-4xl p-4 border rounded-lg bg-white shadow-md mb-12 flex flex-col min-h-[300px]">
@@ -184,7 +192,8 @@ onMounted(() => {
                         <ChatPanel v-if="openChats.length > 0 && openChats[activeChatIndex]" ref="chatPanel"
                             :user="openChats[activeChatIndex]?.user" :messages="openChats[activeChatIndex]?.messages"
                             @send="handleSendMessage" />
-                        <div v-else class="text-gray-400 italic">No chats open. Select a user to start chatting.</div>
+                        <div v-else class="text-gray-400 italic">No chats open. Select a user to start chatting.
+                        </div>
                     </div>
                 </div>
             </div>
@@ -217,10 +226,14 @@ onMounted(() => {
 
                         <!-- Espaços disponíveis com botão "+" -->
                         <div v-for="i in game.maxPlayers - game.players.length" :key="i"
-                            class="w-24 h-36 bg-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:bg-green-500"
-                            @click="storeLobby.joinlobby(game.id)">
-                            <span class="text-gray-600 text-4xl hover:text-white">+</span>
+                            class="w-24 h-36 rounded-lg flex items-center justify-center" :class="{
+                                'bg-gray-300 cursor-pointer hover:bg-green-500': game.status !== 'started',
+                                'bg-gray-400': game.status === 'started'
+                            }" @click="game.status !== 'started' ? storeLobby.joinlobby(game.id) : null">
+                            <span v-if="game.status !== 'started'"
+                                class="text-gray-600 text-4xl hover:text-white">+</span>
                         </div>
+
 
                         <!-- Espaços extras para manter o layout alinhado como se fossem sempre 5 jogadores -->
                         <div v-for="i in 5 - game.maxPlayers" :key="'extra-' + i"
@@ -231,18 +244,20 @@ onMounted(() => {
                     <!-- Informações adicionais do lobby com botão Ready/UnReady alinhado à direita -->
                     <div class="mt-4 flex justify-between items-center">
                         <p class="text-gray-500 text-sm">
-                            <strong>Board:</strong> ({{ game.board.board_cols }}x{{ game.board.board_rows }}) |
+                            <strong>Board:</strong> ({{ game.cols }}x{{ game.rows }}) |
                             <strong>Players:</strong> {{ game.players.length }}/{{ game.maxPlayers }} |
-                            Lobby ID: {{ game.id }}
+                            <strong>Lobby ID:</strong> {{ game.id }}
+                            <span v-if="game.status === 'started'"
+                                class="text-blue-500 font-bold ml-4">Playing...</span>
                         </p>
                         <!-- Div que contém os botões Ready e Leave -->
-                        <div v-if="game.players.some(player => player.id === storeAuth.user.id)"
+                        <div v-if="game.players.some(player => player.id === storeAuth.user.id) && game.status !== 'started'"
                             class="flex space-x-4 h-10">
+                            <!-- Botão Ready/UnReady -->
                             <button @click="storeLobby.setReady(game.id, storeAuth.user.id)"
                                 class="w-24 px-4 py-1 rounded text-white text-center"
                                 :class="game.players.find(player => player.id === storeAuth.user.id)?.ready ? 'bg-red-500' : 'bg-green-500'">
-                                {{ game.players.find(player => player.id === storeAuth.user.id)?.ready ?
-                                    'UnReady' :
+                                {{ game.players.find(player => player.id === storeAuth.user.id)?.ready ? 'UnReady' :
                                     'Ready' }}
                             </button>
 
@@ -252,6 +267,7 @@ onMounted(() => {
                                 Leave
                             </button>
                         </div>
+
 
                         <!-- Placeholder para manter o espaço fixo caso os botões não estejam presentes -->
                         <div v-else class="h-10"></div>

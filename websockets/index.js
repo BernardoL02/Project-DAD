@@ -87,11 +87,14 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("createLobby", (board, callback) => {
+  socket.on("createLobby", (rows, cols, callback) => {
     if (!util.checkAuthenticatedUser(socket, callback)) {
       return;
     }
-    const game = lobby.createLobby(socket.data.user, socket.id, board);
+
+    const userWithSocketId = { ...socket.data.user, socketId: socket.id };
+    const game = lobby.createLobby(userWithSocketId, socket.id, rows, cols);
+
     io.to("lobby").emit("lobbyChanged", lobby.getGames());
     if (callback) {
       callback(game);
@@ -123,7 +126,11 @@ io.on("connection", (socket) => {
       });
     }
 
-    const playerCopy = { ...socket.data.user, ready: false };
+    const playerCopy = {
+      ...socket.data.user,
+      ready: false,
+      socketId: socket.id,
+    };
     game.players.push(playerCopy);
 
     io.to("lobby").emit("lobbyChanged", lobby.getGames());
@@ -153,55 +160,118 @@ io.on("connection", (socket) => {
     callback(games);
   });
 
-  socket.on("removeGame", (id, callback) => {
-    if (!util.checkAuthenticatedUser(socket, callback)) {
-      return;
-    }
-    const game = lobby.getGame(id);
-    if (socket.data.user.id != game.player1.id) {
-      if (callback) {
-        callback({
-          errorCode: 4,
-          errorMessage: "User cannot remove a game that he has not created!",
-        });
-      }
-      return;
-    }
-    lobby.removeGame(game.id);
-    io.to("lobby").emit("lobbyChanged", lobby.getGames());
-    if (callback) {
-      callback(game);
-    }
-  });
+  // ------------------------------------------------------
+  // Multiplayer Game
+  // ------------------------------------------------------
 
-  socket.on("startGame", (id, callback) => {
-    const game = lobby.getGame(id);
+  // Função auxiliar para gerar o tabuleiro com cartas aleatórias
+  function generateRandomBoard(rows, cols) {
+    let totalCards = rows * cols;
+    if (totalCards % 2 !== 0) totalCards -= 1;
+
+    const cardImages = [
+      "c1",
+      "c2",
+      "c3",
+      "c4",
+      "c5",
+      "c6",
+      "c7",
+      "c11",
+      "c12",
+      "c13",
+      "e1",
+      "e2",
+      "e3",
+      "e4",
+      "e5",
+      "e6",
+      "e7",
+      "e11",
+      "e12",
+      "e13",
+      "o1",
+      "o2",
+      "o3",
+      "o4",
+      "o5",
+      "o6",
+      "o7",
+      "o11",
+      "o12",
+      "o13",
+      "p1",
+      "p2",
+      "p3",
+      "p4",
+      "p5",
+      "p6",
+      "p7",
+      "p11",
+      "p12",
+      "p13",
+    ];
+
+    const selectedCards = cardImages
+      .sort(() => 0.5 - Math.random())
+      .slice(0, totalCards / 2);
+    const cardPairs = [...selectedCards, ...selectedCards].sort(
+      () => 0.5 - Math.random()
+    );
+
+    return cardPairs.map((id) => ({ id, flipped: false }));
+  }
+
+  // Evento de início do jogo
+  socket.on("startGame", (gameId, callback) => {
+    let game = lobby.getGame(gameId);
     if (!game) {
       return callback({ errorCode: 5, errorMessage: "Game not found!" });
     }
 
-    // Verifica se há pelo menos dois jogadores no lobby
-    if (game.players.length < 2) {
+    const generatedBoard = generateRandomBoard(game.rows, game.cols);
+    console.log("Generated Board:", generatedBoard);
+
+    game = lobby.setGameBoard(gameId, generatedBoard);
+    if (!game) {
       return callback({
         errorCode: 6,
-        errorMessage: "Need at least two players to start the game!",
+        errorMessage: "Failed to set game board!",
       });
     }
 
-    // Verifica se todos os jogadores, exceto o player1, estão prontos
-    const allReady = game.players.slice(1).every((player) => player.ready);
-
-    if (!allReady) {
-      return callback({
-        errorCode: 7,
-        errorMessage: "Not all players are ready!",
-      });
-    }
-
-    // Define o status do jogo como 'started'
+    game = gameEngine.initGame(game);
     game.status = "started";
 
+    console.log("Game initialized:", game);
+
+    game.players.forEach((player) => {
+      io.to(player.socketId).emit("gameStarted", game);
+    });
+
     io.to("lobby").emit("lobbyChanged", lobby.getGames());
+    callback(game);
+  });
+
+  // index.js
+
+  socket.on("flipCard", ({ gameId, index }, callback) => {
+    const game = lobby.getGame(gameId);
+    if (!game) {
+      return callback({ errorCode: 5, errorMessage: "Game not found!" });
+    }
+
+    const result = gameEngine.flipCard(game, index, socket.id, io);
+    if (result.errorCode) {
+      return callback(result);
+    }
+
+    if (game.status !== "ended") {
+      game.players.forEach((player) => {
+        io.to(player.socketId).emit("gameUpdated", game);
+      });
+    }
+
     callback(game);
   });
 });
