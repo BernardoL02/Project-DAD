@@ -45,7 +45,7 @@
 
       <div class="flex flex-wrap justify-around">
         <div v-if="selectedView === 'game'" class="chart-container p-4 w-full">
-          <div class="mb-6">
+          <div class="flex flex-col items-center mb-6">
             <div class="text-lg font-semibold mb-6 text-center">
               Total Games Played: <span class="text-blue-600">{{ totalGames }}</span>
             </div>
@@ -56,6 +56,7 @@
               <Bar :data="horizontalBarChartData" :options="horizontalBarChartOptions" />
             </div>
           </div>
+
           <div class="flex flex-wrap justify-between space-x-4">
             <div class="chart-container p-4 w-1/2 mt-10">
               <button
