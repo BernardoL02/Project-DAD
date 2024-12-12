@@ -425,15 +425,21 @@ export const useGameStore = defineStore('game', () => {
     const boardSize = boardFilter.value.split('x').map(Number)
     let boardMatrix = []
     let index = 0
+    const totalShuffledCards = shuffledCards.value.length
 
     for (let i = 0; i < boardSize[0]; i++) {
       let row = []
       for (let j = 0; j < boardSize[1]; j++) {
-        row.push(shuffledCards.value[index].image)
+        if (index < totalShuffledCards) {
+          row.push(shuffledCards.value[index].image)
+        } else {
+          row.push(null)
+        }
         index++
       }
       boardMatrix.push(row)
     }
+
     initialBoard.value = boardMatrix
     console.log(boardMatrix)
   }

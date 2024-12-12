@@ -142,7 +142,7 @@ onMounted(async () => {
           <div v-for="(row, rowIndex) in replayStore.selectedReplay.board" :key="rowIndex" class="grid"
             :style="{ gridTemplateColumns: `repeat(${row.length}, 1fr)` }">
             <div v-for="(cell, colIndex) in row" :key="colIndex" class="relative w-20 h-28 m-1">
-              <div class="card w-full h-full relative" :class="{
+              <div v-if="cell" class="card w-full h-full relative" :class="{
                 flipped:
                   replayStore.showFlipped[rowIndex][colIndex] === true ||
                   replayStore.showFlipped[rowIndex][colIndex] === 'matched'
