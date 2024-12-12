@@ -1,14 +1,17 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { useGameMultiplayerStore } from '@/stores/gameMultiplayer'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import ChatPanel from '@/components/Chat/ChatPanel.vue'
+import { useLobbyStore } from '@/stores/lobby'
 
 const route = useRoute()
 const router = useRouter()
 const storeGameMultiplayer = useGameMultiplayerStore()
 const storeAuth = useAuthStore()
+const storeLobby = useLobbyStore()
 
 // Obtém o gameId dos query params
 const gameId = route.query.gameId
@@ -128,7 +131,26 @@ onMounted(() => {
     });
     window.addEventListener('beforeunload', handleBeforeUnload);
     startGame();
+    nextTick(() => {
+        if (chatPanel.value) {
+            storeLobby.setChatPanel(chatPanel.value);
+            console.log('Chat panel ref set successfully.');
+        }
+    });
+    storeLobby.loadChatsFromSession();
+    storeLobby.isChatOpen = true
 });
+
+
+
+const handleSendMessage = ({ user, message }) => {
+    storeLobby.sendPrivateMessage(user, message);
+};
+
+const handleSwitchChat = (index) => {
+    storeLobby.switchChatPanel(index);
+};
+
 
 
 
@@ -151,6 +173,7 @@ watch(gameData, (newValue) => {
             <h2 class="text-lg font-bold mb-4">Players</h2>
             <ul>
                 <li v-for="(player, index) in gameData.players" :key="player.id"
+                    @click="storeLobby.openChatPanel(player)"
                     class="flex items-center gap-4 mb-4 p-2 rounded-lg transition-transform duration-300 relative"
                     :class="{
                         'border-2 border-blue-500': index === gameData.currentPlayerIndex && !player.inactive,
@@ -214,11 +237,21 @@ watch(gameData, (newValue) => {
             </div>
         </div>
 
-        <!-- Timer and Total Moves -->
-        <div class="timer-info p-4 bg-gray-50 w-64 rounded-lg bg-gray-100">
-            <h2 class="text-lg font-bold mb-4">Game Info</h2>
-            <p class="text-gray-700">Total Game Time: {{ timer }} sec</p>
-            <p class="text-gray-700">Total Moves: {{ gameData.totalMoves || 0 }}</p>
+        <!-- Timer, Game Info, and Chat Panel Section -->
+        <div class="info-chat-container w-full max-w-lg">
+            <!-- Timer and Total Moves -->
+            <div class="timer-info p-4 bg-gray-50 rounded-lg bg-gray-100 mb-4">
+                <h2 class="text-lg font-bold mb-4">Game Info</h2>
+                <p class="text-gray-700">Total Game Time: {{ timer }} sec</p>
+                <p class="text-gray-700">Total Moves: {{ gameData.totalMoves || 0 }}</p>
+            </div>
+
+            <!-- Chat Panel -->
+            <div>
+                <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Your Chats</h2>
+                <ChatPanel :openChats="storeLobby.openChats" :activeChatIndex="storeLobby.activeChatIndex"
+                    @send="handleSendMessage" @closeChat="handleCloseChat" @switchChat="handleSwitchChat" />
+            </div>
         </div>
 
 
@@ -290,5 +323,21 @@ watch(gameData, (newValue) => {
     100% {
         transform: scale(1);
     }
+}
+
+.info-chat-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 300px;
+    /* Ajuste conforme necessário */
+}
+
+.chat-panel-container {
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 </style>

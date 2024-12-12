@@ -9,10 +9,6 @@ const storeLobby = useLobbyStore()
 const storeAuth = useAuthStore()
 const storeError = useErrorStore()
 
-const chatPanel = ref(null)
-const openChats = storeLobby.openChats
-const activeChatIndex = storeLobby.activeChatIndex
-
 const myLobbies = computed(() =>
     storeLobby.games.filter(
         (game) =>
@@ -29,36 +25,25 @@ const otherLobbies = computed(() =>
     )
 )
 
+const chatPanel = ref(null);
 
 const handleSendMessage = ({ user, message }) => {
-    console.log('handleSendMessage called with:', user, message)
-    storeLobby.sendPrivateMessage(user, message)
-}
+    storeLobby.sendPrivateMessage(user, message);
+};
 
-watch(
-    () => openChats[activeChatIndex.value]?.messages,
-    (newMessages) => {
-        if (chatPanel.value && openChats[activeChatIndex.value]) {
-            chatPanel.value.openPanel(openChats[activeChatIndex.value].user, newMessages);
-        }
-    },
-    { deep: true }
-);
+const handleCloseChat = (index) => {
+    storeLobby.closeChat(index);
+};
 
+const handleSwitchChat = (index) => {
+    storeLobby.switchChatPanel(index);
+};
 
 onMounted(() => {
-    nextTick(() => {
-        watch(
-            () => chatPanel.value,
-            (newVal) => {
-                if (newVal) {
-                    storeLobby.setChatPanel(newVal);
-                    console.log('Chat panel ref set successfully.');
-                }
-            }
-        );
-    });
+    storeLobby.loadChatsFromSession();
+    storeLobby.isChatOpen = false
 });
+
 </script>
 
 
@@ -179,29 +164,10 @@ onMounted(() => {
 
             <!-- Coluna do Chat -->
             <div>
-                <h2 v-show="storeLobby.isChatOpen" class="text-2xl font-bold mb-6 text-center text-gray-800">Your
-                    Chats
-                </h2>
-                <div v-show="storeLobby.isChatOpen"
-                    class="max-w-4xl p-4 border rounded-lg bg-white shadow-md mb-12 flex flex-col min-h-[300px]">
-                    <!-- Abas de Chats -->
-                    <div class="flex border-b">
-                        <div v-for="(chat, index) in openChats" :key="chat.user.id"
-                            @click="storeLobby.switchChatPanel(index)" class="p-2 cursor-pointer"
-                            :class="['border-b-2', { 'border-blue-500 font-bold': index === storeLobby.activeChatIndex }]">
-                            {{ chat.user.nickname }}
-                            <button @click.stop="storeLobby.closeChat(index)" class="ml-2 text-red-500">x</button>
-                        </div>
-                    </div>
-
-                    <!-- Painel de Chat Ativo ou Mensagem de Placeholder -->
-                    <div class="flex-1 flex items-center justify-center">
-                        <ChatPanel v-if="openChats.length > 0 && openChats[activeChatIndex]" ref="chatPanel"
-                            :user="openChats[activeChatIndex]?.user" :messages="openChats[activeChatIndex]?.messages"
-                            @send="handleSendMessage" />
-                        <div v-else class="text-gray-400 italic">No chats open. Select a user to start chatting.
-                        </div>
-                    </div>
+                <div v-if="storeLobby.isChatOpen">
+                    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Your Chats</h2>
+                    <ChatPanel :openChats="storeLobby.openChats" :activeChatIndex="storeLobby.activeChatIndex"
+                        @send="handleSendMessage" @closeChat="handleCloseChat" @switchChat="handleSwitchChat" />
                 </div>
             </div>
         </div>

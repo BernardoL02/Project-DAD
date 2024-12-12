@@ -1,4 +1,4 @@
-import { ref, computed, inject, nextTick } from 'vue'
+import { ref, computed, inject, nextTick, watch } from 'vue'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useErrorStore } from '@/stores/error'
@@ -118,16 +118,6 @@ export const useLobbyStore = defineStore('lobby', () => {
   // Chat
   // ------------------------------------------------------
 
-  const chatPanel = ref(null)
-  const setChatPanel = (panel) => {
-    if (panel) {
-      console.log('Chat panel set:', panel)
-      chatPanel.value = panel
-    } else {
-      console.error('Chat panel is null or undefined')
-    }
-  }
-
   const openChats = ref([])
   const activeChatIndex = ref(0)
   const isChatOpen = ref(false)
@@ -136,17 +126,40 @@ export const useLobbyStore = defineStore('lobby', () => {
     isChatOpen.value = state
   }
 
+  const openChatPanel = (user) => {
+    // Verifica se o usuário está tentando abrir um chat consigo mesmo
+    if (user.id === storeAuth.user.id) {
+      storeError.setErrorMessages('You cannot open a chat with yourself.')
+      return
+    }
+
+    // Verifica se o usuário já está na lista de chats
+    const existingChatIndex = openChats.value.findIndex((chat) => chat.user.id === user.id)
+
+    if (existingChatIndex === -1) {
+      // Adiciona um novo chat se não existir
+      openChats.value.push({ user, messages: [], isOpen: true })
+      activeChatIndex.value = openChats.value.length - 1
+    } else {
+      // Reabre o chat existente e define o índice ativo
+      openChats.value[existingChatIndex].isOpen = true
+      activeChatIndex.value = existingChatIndex
+    }
+
+    // Abre o painel de chat
+    isChatOpen.value = true
+    saveChatsToSession()
+  }
+
   const sendPrivateMessage = (user, message) => {
-    console.log('sendPrivateMessage called with:', user, message)
     socket.emit('privateMessage', { destinationUser: user, message }, (response) => {
       if (response.success) {
-        console.log(`Message sent to ${user.name}: ${message}`)
         const existingChat = openChats.value.find((chat) => chat.user.id === user.id)
         if (existingChat) {
           existingChat.messages.push({ sender: 'You', text: message })
+        } else {
+          openChats.value.push({ user, messages: [{ sender: 'You', text: message }] })
         }
-      } else {
-        storeError.setErrorMessages(response.errorMessage)
       }
     })
   }
@@ -154,17 +167,18 @@ export const useLobbyStore = defineStore('lobby', () => {
   socket.on('privateMessage', (payload) => {
     console.log('Received payload:', payload)
 
+    // Verifica se o chat com o usuário já existe
     const existingChatIndex = openChats.value.findIndex((chat) => chat.user.id === payload.user.id)
 
     if (existingChatIndex !== -1) {
-      // Chat já existe: adiciona a mensagem e abre o chat com a pessoa correta
+      // Chat já existe: adiciona a mensagem recebida
       openChats.value[existingChatIndex].messages.push({
         sender: payload.user.nickname,
         text: payload.message
       })
       activeChatIndex.value = existingChatIndex
     } else {
-      // Chat não existe: cria um novo chat e adiciona a mensagem
+      // Chat não existe: cria um novo chat com a mensagem recebida
       openChats.value.push({
         user: payload.user,
         messages: [{ sender: payload.user.nickname, text: payload.message }]
@@ -172,57 +186,39 @@ export const useLobbyStore = defineStore('lobby', () => {
       activeChatIndex.value = openChats.value.length - 1
     }
 
-    // Abre o painel de chat e o chat com a pessoa correta
-    nextTick(() => {
-      chatPanel.value?.openPanel(
-        openChats.value[activeChatIndex.value].user,
-        openChats.value[activeChatIndex.value].messages
-      )
-    })
-
-    // Se o chat não estiver aberto, abre o painel de chat
+    // Abre o painel de chat se não estiver aberto
     if (!isChatOpen.value) {
-      toggleChat(true)
+      isChatOpen.value = true
     }
+
+    // Salva o estado dos chats na sessionStorage
+    saveChatsToSession()
   })
 
-  const openChatPanel = (user) => {
-    if (user.id === storeAuth.user.id) {
-      storeError.setErrorMessages('Cannot open chat with yourself.')
-      return
-    }
-
-    const existingChatIndex = openChats.value.findIndex((chat) => chat.user.id === user.id)
-    if (existingChatIndex === -1) {
-      openChats.value.push({ user, messages: [] })
-      activeChatIndex.value = openChats.value.length - 1
-    } else {
-      activeChatIndex.value = existingChatIndex
-    }
-
-    nextTick(() => {
-      chatPanel.value?.openPanel(
-        openChats.value[activeChatIndex.value].user,
-        openChats.value[activeChatIndex.value].messages
-      )
-    })
-    if (toggleChat) {
-      toggleChat(true)
-    }
-  }
-
   const closeChat = (index) => {
-    openChats.value.splice(index, 1)
-    if (activeChatIndex.value >= openChats.value.length) {
-      activeChatIndex.value = openChats.value.length - 1
-    }
+    openChats.value[index].isOpen = false
+    isChatOpen.value = false
   }
 
   const switchChatPanel = (index) => {
     activeChatIndex.value = index
-    nextTick(() => {
-      chatPanel.value?.openPanel(openChats.value[index].user, openChats.value[index].messages)
-    })
+  }
+
+  const saveChatsToSession = () => {
+    sessionStorage.setItem('openChats', JSON.stringify(openChats.value))
+  }
+
+  const loadChatsFromSession = () => {
+    const savedChats = sessionStorage.getItem('openChats')
+    if (savedChats) {
+      openChats.value = JSON.parse(savedChats)
+      if (openChats.value.length > 0) {
+        // Abre o primeiro chat que estava aberto
+        const firstOpenChatIndex = openChats.value.findIndex((chat) => chat.isOpen)
+        activeChatIndex.value = firstOpenChatIndex !== -1 ? firstOpenChatIndex : 0
+        isChatOpen.value = firstOpenChatIndex !== -1
+      }
+    }
   }
 
   // ------------------------------------------------------
@@ -251,14 +247,14 @@ export const useLobbyStore = defineStore('lobby', () => {
     leaveLobby,
     removePlayer,
     sendPrivateMessage,
-    setChatPanel,
     openChats,
     activeChatIndex,
-    openChatPanel,
     closeChat,
     switchChatPanel,
+    openChatPanel,
     isChatOpen,
     toggleChat,
-    startGame
+    startGame,
+    loadChatsFromSession
   }
 })
