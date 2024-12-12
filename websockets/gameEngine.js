@@ -67,22 +67,23 @@ exports.createGameEngine = (lobby) => {
 
       setTimeout(() => {
         if (game.board[firstIndex].id === game.board[secondIndex].id) {
+          // Jogador acertou o par
           game.matchedPairs.push(firstIndex, secondIndex);
           currentPlayer.pairsFound += 1;
         } else {
+          // Jogador errou o par, vira as cartas de volta
           game.board[firstIndex].flipped = false;
           game.board[secondIndex].flipped = false;
+
+          // Passa para o próximo jogador ativo apenas quando erra
+          do {
+            game.currentPlayerIndex =
+              (game.currentPlayerIndex + 1) % game.players.length;
+            currentPlayer = game.players[game.currentPlayerIndex];
+          } while (currentPlayer.inactive);
         }
 
         game.selectedCards = [];
-
-        // Atualiza o currentPlayerIndex pulando jogadores inativos
-        do {
-          game.currentPlayerIndex =
-            (game.currentPlayerIndex + 1) % game.players.length;
-          currentPlayer = game.players[game.currentPlayerIndex];
-        } while (currentPlayer.inactive);
-
         game.isLocked = false; // Desbloqueia após a verificação
 
         // Verifica se o jogo terminou
