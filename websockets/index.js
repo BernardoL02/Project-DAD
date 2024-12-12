@@ -144,7 +144,6 @@ io.on("connection", (socket) => {
       return callback({ errorCode: 5, errorMessage: "Game not found!" });
     }
 
-    console.log("Emitting updated game state to all clients:", game);
     io.to("lobby").emit("lobbyChanged", lobby.getGames());
     callback(game);
   });

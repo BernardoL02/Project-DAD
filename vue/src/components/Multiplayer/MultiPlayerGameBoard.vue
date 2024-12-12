@@ -39,7 +39,7 @@ let unregisterGuard = null
 const confirmExit = () => {
     console.log('Confirmar saída chamado');
     storeGameMultiplayer.stopTimer();
-    storeGameMultiplayer.leaveGameLobby(Number(gameId)); // Sai apenas do lobby do jogo atual
+    storeGameMultiplayer.leaveGameLobby(Number(gameId));
     showModal.value = false;
     allowNavigation = true;
 
@@ -103,7 +103,7 @@ watch(gameData, (newValue) => {
 
 <template>
     <div v-if="gameData" class="flex gap-10">
-        <!-- Lista de Jogadores -->
+        <!-- Players List -->
         <div class="players-info p-4 bg-gray-50 w-64 rounded-lg">
             <h2 class="text-lg font-bold mb-4">Players</h2>
             <ul>
@@ -116,13 +116,13 @@ watch(gameData, (newValue) => {
                         class="w-12 h-12 rounded-full object-cover">
                     <div>
                         <p class="text-gray-700 font-medium">{{ player.nickname }}</p>
-                        <p class="text-sm text-gray-500">Pares Encontrados: {{ player.pairsFound || 0 }}</p>
+                        <p class="text-sm text-gray-500">Pairs Found: {{ player.pairsFound || 0 }}</p>
                     </div>
                 </li>
             </ul>
         </div>
 
-        <!-- Tabuleiro -->
+        <!-- Game Board -->
         <div class="game-board grid gap-2 bg-gray-100 p-4 rounded-lg" :style="{
             gridTemplateRows: `repeat(${gameData.cols}, 1fr)`,
             gridTemplateColumns: `repeat(${gameData.rows}, 1fr)`
@@ -132,12 +132,12 @@ watch(gameData, (newValue) => {
                 <div class="flip-card-inner w-full h-full transition-transform duration-500" :class="{
                     'rotate-y-180': !(gameData.matchedPairs.includes(index) || gameData.selectedCards.includes(index))
                 }">
-                    <!-- Frente da Carta -->
+                    <!-- Card Front -->
                     <div class="flip-card-front absolute w-full h-full backface-hidden">
                         <img :src="`/Cards/${card.id}.png`" alt="Card" class="w-full h-full object-cover rounded-lg">
                     </div>
 
-                    <!-- Verso da Carta -->
+                    <!-- Card Back -->
                     <div class="flip-card-back absolute w-full h-full backface-hidden transform rotate-y-180">
                         <img src="/Cards/semFace.png" alt="Card Back" class="w-full h-full object-cover rounded-lg">
                     </div>
@@ -145,26 +145,27 @@ watch(gameData, (newValue) => {
             </div>
         </div>
 
-        <!-- Timer e Total de Jogadas -->
+        <!-- Timer and Total Moves -->
         <div class="timer-info p-4 bg-gray-50 w-64 rounded-lg">
             <h2 class="text-lg font-bold mb-4">Game Info</h2>
-            <p class="text-gray-700">Tempo: {{ timer }} seg</p>
-            <p class="text-gray-700">Total de Jogadas: {{ gameData.totalMoves || 0 }}</p>
+            <p class="text-gray-700">Time: {{ timer }} sec</p>
+            <p class="text-gray-700">Total Moves: {{ gameData.totalMoves || 0 }}</p>
         </div>
-        <!-- Modal de Confirmação -->
+
+        <!-- Confirmation Modal -->
         <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div class="bg-white p-6 rounded shadow-md w-96">
-                <h2 class="text-xl font-bold mb-4">Confirmação</h2>
+                <h2 class="text-xl font-bold mb-4">Confirmation</h2>
                 <p class="mb-4">
-                    Tem certeza de que deseja sair do jogo? <br />
-                    O progresso será perdido.
+                    Are you sure you want to leave the game? <br />
+                    Your progress will be lost.
                 </p>
                 <div class="flex justify-end space-x-4">
                     <button class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400" @click="cancelExit">
-                        Cancelar
+                        Cancel
                     </button>
                     <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" @click="confirmExit">
-                        Sair
+                        Leave
                     </button>
                 </div>
             </div>

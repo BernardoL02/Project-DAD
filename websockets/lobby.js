@@ -73,7 +73,7 @@ exports.createLobby = () => {
   const leaveAllLobbies = (userId) => {
     for (const [gameId, game] of games.entries()) {
       if (game.players.some((player) => player.id === userId)) {
-        leaveLobby(gameId, userId);
+        leave(gameId, userId);
       }
     }
   };

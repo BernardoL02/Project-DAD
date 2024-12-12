@@ -5,6 +5,7 @@ exports.createGameEngine = (lobby) => {
     gameFromDB.matchedPairs = [];
     gameFromDB.selectedCards = [];
     gameFromDB.isLocked = false;
+    gameFromDB.startTime = null;
 
     if (Array.isArray(gameFromDB.board)) {
       gameFromDB.board = gameFromDB.board.map((card) => ({
@@ -43,6 +44,10 @@ exports.createGameEngine = (lobby) => {
         errorCode: 13,
         errorMessage: "Invalid play: card already selected!",
       };
+    }
+
+    if (!game.startTime) {
+      game.startTime = Date.now();
     }
 
     game.selectedCards.push(index);

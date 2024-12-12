@@ -8,14 +8,16 @@ import { useErrorStore } from '@/stores/error'
 
 export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   const activeGames = ref([])
-  const timer = ref(0)
-  const timerInterval = ref(null)
   const currentPlayerId = ref(null)
   const socket = inject('socket')
   const storeAuth = useAuthStore()
   const router = useRouter()
   const notificationStore = useNotificationStore()
   const storeError = useErrorStore()
+
+  const timer = ref(0)
+  const startTime = ref(0)
+  const timerInterval = ref(null)
 
   // Adiciona um novo jogo ativo à lista
   const addActiveGame = (game) => {
@@ -73,8 +75,32 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     if (game) {
       Object.assign(game, updatedGame)
       currentPlayerId.value = updatedGame.players[updatedGame.currentPlayerIndex].id
+
+      // Sincroniza o timer com o startTime do servidor
+      if (updatedGame.startTime) {
+        startTimer(updatedGame.startTime)
+      }
     }
   })
+
+  // Inicia o timer baseado no startTime do servidor
+  const startTimer = (serverStartTime) => {
+    if (timerInterval.value) clearInterval(timerInterval.value)
+
+    startTime.value = serverStartTime
+    timerInterval.value = setInterval(() => {
+      timer.value = Math.floor((Date.now() - startTime.value) / 1000)
+    }, 1000)
+  }
+
+  const stopTimer = () => {
+    if (timerInterval.value) {
+      clearInterval(timerInterval.value)
+      timerInterval.value = null
+    }
+    timer.value = 0
+    startTime.value = null
+  }
 
   // Recebe evento de encerramento do jogo
   socket.on('gameEnded', ({ message, totalMoves, pairsFoundByPlayers }) => {
@@ -103,23 +129,6 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   const isCurrentPlayerTurn = computed(() => {
     return currentPlayerId.value === storeAuth.user.id
   })
-
-  // Inicia o timer
-  const startTimer = () => {
-    timer.value = 0
-    if (timerInterval.value) clearInterval(timerInterval.value)
-    timerInterval.value = setInterval(() => {
-      timer.value++
-    }, 1000)
-  }
-
-  // Para o timer
-  const stopTimer = () => {
-    if (timerInterval.value) {
-      clearInterval(timerInterval.value)
-      timerInterval.value = null
-    }
-  }
 
   // Vira a carta e envia para o servidor
   const flipCard = (gameId, index) => {
