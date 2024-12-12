@@ -20,7 +20,7 @@ exports.createGameEngine = (lobby) => {
   };
 
   const flipCard = (game, index, playerSocketId, io, lobby) => {
-    const currentPlayer = game.players[game.currentPlayerIndex];
+    let currentPlayer = game.players[game.currentPlayerIndex];
 
     if (playerSocketId !== currentPlayer.socketId) {
       return {
@@ -75,8 +75,13 @@ exports.createGameEngine = (lobby) => {
         }
 
         game.selectedCards = [];
-        game.currentPlayerIndex =
-          (game.currentPlayerIndex + 1) % game.players.length;
+
+        // Atualiza o currentPlayerIndex pulando jogadores inativos
+        do {
+          game.currentPlayerIndex =
+            (game.currentPlayerIndex + 1) % game.players.length;
+          currentPlayer = game.players[game.currentPlayerIndex];
+        } while (currentPlayer.inactive);
 
         game.isLocked = false; // Desbloqueia após a verificação
 

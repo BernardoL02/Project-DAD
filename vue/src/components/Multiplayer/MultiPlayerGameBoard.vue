@@ -17,7 +17,10 @@ const gameId = route.query.gameId
 const gameData = computed(() => storeGameMultiplayer.getActiveGameById(Number(gameId)))
 
 // Estados do jogo
-const timer = computed(() => storeGameMultiplayer.timer)
+const timer = computed(() => {
+    return isNaN(storeGameMultiplayer.timer) ? 0 : storeGameMultiplayer.timer
+})
+
 
 // Função para iniciar o jogo
 const startGame = () => {
@@ -26,10 +29,22 @@ const startGame = () => {
     })
 }
 
-// Função para virar a carta
+
+const invalidAttemptPlayerId = ref(null);
+
 const flipCard = (index) => {
-    storeGameMultiplayer.flipCard(gameId, index)
-}
+    if (!storeGameMultiplayer.isCurrentPlayerTurn) {
+        invalidAttemptPlayerId.value = gameData.value.players[gameData.value.currentPlayerIndex].id;
+        setTimeout(() => {
+            invalidAttemptPlayerId.value = null;
+        }, 500); // Duração do efeito (500ms)
+        return;
+    }
+
+    storeGameMultiplayer.flipCard(gameId, index);
+};
+
+
 
 const showModal = ref(false)
 let pendingRoute = null
@@ -108,15 +123,25 @@ watch(gameData, (newValue) => {
             <h2 class="text-lg font-bold mb-4">Players</h2>
             <ul>
                 <li v-for="(player, index) in gameData.players" :key="player.id"
-                    class="flex items-center gap-4 mb-4 p-2 rounded-lg transition-transform duration-300" :class="{
-                        'border-2 border-blue-500 scale-105': index === gameData.currentPlayerIndex,
-                        'border border-gray-300': index !== gameData.currentPlayerIndex
+                    class="flex items-center gap-4 mb-4 p-2 rounded-lg transition-transform duration-300 relative"
+                    :class="{
+                        'border-2 border-blue-500': index === gameData.currentPlayerIndex && !player.inactive,
+                        'border border-gray-300 opacity-50': player.inactive,
+                        'border border-gray-300': index !== gameData.currentPlayerIndex || player.inactive,
+                        'scale-110': invalidAttemptPlayerId === player.id
                     }">
+
                     <img :src="storeAuth.getPhotoUrl(player.photo_filename)" alt="Player Photo"
-                        class="w-12 h-12 rounded-full object-cover">
+                        class="w-12 h-12 rounded-full object-cover transition-transform duration-300">
+
                     <div>
                         <p class="text-gray-700 font-medium">{{ player.nickname }}</p>
                         <p class="text-sm text-gray-500">Pairs Found: {{ player.pairsFound || 0 }}</p>
+                    </div>
+
+                    <div v-if="player.inactive"
+                        class="absolute inset-0 flex items-center justify-center text-red-500 font-bold">
+                        Leave
                     </div>
                 </li>
             </ul>

@@ -51,20 +51,23 @@ exports.createLobby = () => {
     // Se o jogador não estiver na lista de jogadores, retorna os jogos
     if (!game.players.some((player) => player.id === userId)) return getGames();
 
-    // Remove o jogador que está saindo
+    // Remove o jogador do lobby
     game.players = game.players.filter((player) => player.id !== userId);
 
-    // Verifica quantos jogadores restam
-    if (game.players.length == 0) {
-      // Se restar apenas um jogador, deleta o jogo
-      deleteGame(gameId);
+    // Se não houver mais jogadores no lobby, deleta o lobby
+    if (game.players.length === 0) {
+      console.log(`Deleting lobby ${gameId} because it has no more players.`);
+      games.delete(gameId);
       return getGames();
     }
 
-    // Se o usuário é o dono do lobby e há mais jogadores, define um novo dono
-    if (game.player1.id === userId && game.players.length > 0) {
+    // Se o jogador que saiu era o líder (player1), transfere a liderança
+    if (game.player1.id === userId) {
       game.player1 = game.players[0];
       game.player1SocketId = game.players[0].socketId;
+      console.log(
+        `Transferred leadership of lobby ${gameId} to ${game.player1.nickname}`
+      );
     }
 
     return getGames();
@@ -108,6 +111,45 @@ exports.createLobby = () => {
     }
   };
 
+  const playerInativo = (gameId, userId) => {
+    const game = games.get(gameId);
+    if (!game) {
+      console.log(`Game ${gameId} not found.`);
+      return null;
+    }
+
+    console.log(`Marking player ${userId} as inactive in game ${gameId}`);
+
+    const player = game.players.find((p) => p.id === userId);
+    if (player) {
+      player.inactive = true;
+    }
+
+    console.log("Players status after marking inactive:", game.players);
+
+    // Se resta apenas um jogador ativo, delete o jogo
+    const activePlayers = game.players.filter((p) => !p.inactive);
+    if (activePlayers.length <= 1) {
+      console.log(
+        `Only one or no active players left. Deleting game ${gameId}`
+      );
+      games.delete(gameId);
+      return null;
+    }
+
+    // Se o jogador inativo era o jogador atual, avance para o próximo jogador ativo
+    let currentPlayer = game.players[game.currentPlayerIndex];
+    if (currentPlayer.id === userId) {
+      do {
+        game.currentPlayerIndex =
+          (game.currentPlayerIndex + 1) % game.players.length;
+        currentPlayer = game.players[game.currentPlayerIndex];
+      } while (currentPlayer.inactive);
+    }
+
+    return game;
+  };
+
   return {
     getGames,
     getGame,
@@ -118,5 +160,6 @@ exports.createLobby = () => {
     leaveAllLobbies,
     setGameBoard,
     deleteGame,
+    playerInativo,
   };
 };

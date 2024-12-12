@@ -309,52 +309,55 @@ io.on("connection", (socket) => {
       return;
     }
 
-    const game = lobby.getGame(gameId);
-    if (!game) {
+    console.log(
+      `User ${socket.data.user.nickname} (${socket.data.user.id}) is leaving game ${gameId}`
+    );
+
+    // Obtém o jogo atual para armazenar os socket IDs dos jogadores
+    const currentGame = lobby.getGame(gameId);
+
+    if (!currentGame) {
+      console.log(`Game ${gameId} not found.`);
       return callback({ errorCode: 5, errorMessage: "Game not found!" });
     }
 
-    // Guarda o nome do jogador que está saindo
-    const leavingPlayer = game.players.find(
-      (player) => String(player.id) === String(socket.data.user.id)
+    // Armazena os socket IDs dos jogadores antes de marcar o jogador como inativo
+    const playersSocketIds = currentGame.players.map((p) => p.socketId);
+    console.log(
+      "Players' socket IDs before marking as inactive:",
+      playersSocketIds
     );
 
-    const leavingPlayerName = leavingPlayer
-      ? leavingPlayer.nickname
-      : "Um jogador";
+    // Marca o jogador como inativo
+    const game = lobby.playerInativo(gameId, socket.data.user.id);
 
-    // Remove o jogador do lobby
-    lobby.leave(gameId, socket.data.user.id);
+    if (!game) {
+      console.log(
+        `Game ${gameId} has been deleted because all players are inactive.`
+      );
 
-    // Verifica o número de jogadores restantes
-    const updatedGame = lobby.getGame(gameId);
+      // Notifica todos os jogadores que o jogo foi cancelado
+      io.to(playersSocketIds).emit("gameCancelled", {
+        message: "The game was cancelled because all players are inactive.",
+      });
 
-    if (!updatedGame || updatedGame.players.length < 2) {
-      if (updatedGame) {
-        // Notifica os jogadores restantes que o jogo foi cancelado
-        updatedGame.players.forEach((player) => {
-          io.to(player.socketId).emit("gameCancelled", {
-            message:
-              "O jogo foi cancelado porque apenas um jogador restou no lobby.",
-            updatedGame,
-          });
-        });
-      }
+      io.to("lobby").emit("lobbyChanged", lobby.getGames());
 
-      // Deleta o jogo após notificar os jogadores
-      lobby.deleteGame(gameId);
-    } else {
-      // Notifica os jogadores restantes que alguém saiu
-      updatedGame.players.forEach((player) => {
-        io.to(player.socketId).emit("playerLeft", {
-          message: `${leavingPlayerName} saiu do lobby.`,
-          updatedGame,
-        });
+      return callback({
+        success: true,
+        message: "Game deleted as all players are inactive.",
       });
     }
 
-    // Atualiza o lobby para todos os jogadores
-    io.to("lobby").emit("lobbyChanged", lobby.getGames());
-    callback({ success: true, message: "Você saiu do lobby com sucesso!" });
+    // Notifica os jogadores restantes que o jogador ficou inativo
+    console.log(
+      `User ${socket.data.user.nickname} is now inactive in game ${gameId}`
+    );
+    io.to(game.players.map((p) => p.socketId)).emit("playerLeft", {
+      message: `${socket.data.user.nickname} is now inactive.`,
+      updatedGame: game,
+    });
+
+    callback({ success: true, message: "You left the game successfully!" });
   });
 });
