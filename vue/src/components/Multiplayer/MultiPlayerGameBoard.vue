@@ -167,7 +167,7 @@ watch(gameData, (newValue) => {
 </script>
 
 <template>
-    <div v-if="gameData" class="flex gap-10">
+    <div v-if="gameData" class="flex gap-10 items-start">
         <!-- Players List -->
         <div class="players-info p-4 bg-gray-50 w-64 rounded-lg">
             <h2 class="text-lg font-bold mb-4">Players</h2>
@@ -339,5 +339,12 @@ watch(gameData, (newValue) => {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+
+.info-chat-container {
+    width: 300px;
+    /* Largura fixa */
+    max-width: 300px;
+    /* Certifique-se de que não expanda */
 }
 </style>
