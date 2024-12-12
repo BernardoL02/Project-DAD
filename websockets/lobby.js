@@ -16,7 +16,7 @@ exports.createLobby = () => {
       created_at: Date.now(),
       player1: user,
       player1SocketId: socketId,
-      players: [user],
+      players: [{ ...user, pairsFound: 0 }],
       maxPlayers: maxPlayers,
       status: "waiting",
     };

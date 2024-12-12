@@ -18,6 +18,8 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   const timer = ref(0)
   const startTime = ref(0)
   const timerInterval = ref(null)
+  const turnTimer = ref(0)
+  const turnTimerInterval = ref(null)
 
   // Adiciona um novo jogo ativo à lista
   const addActiveGame = (game) => {
@@ -72,16 +74,48 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   // Recebe atualizações do jogo
   socket.on('gameUpdated', (updatedGame) => {
     const game = getActiveGameById(updatedGame.id)
+    console.log(game)
     if (game) {
       Object.assign(game, updatedGame)
       currentPlayerId.value = updatedGame.players[updatedGame.currentPlayerIndex].id
 
-      // Sincroniza o timer com o startTime do servidor
-      if (updatedGame.startTime) {
+      game.players = updatedGame.players
+
+      // Inicia o timer do turno com o tempo restante enviado pelo servidor
+      if (updatedGame.remainingTime) {
+        startTurnTimer(updatedGame.remainingTime)
+      }
+
+      // Inicia o timer total apenas quando startTime estiver definido
+      if (updatedGame.startTime && !startTime.value) {
         startTimer(updatedGame.startTime)
       }
     }
   })
+
+  // Inicia o timer do turno baseado no tempo restante recebido do servidor
+  const startTurnTimer = (remainingTime) => {
+    if (turnTimerInterval.value) clearInterval(turnTimerInterval.value)
+
+    turnTimer.value = remainingTime
+
+    turnTimerInterval.value = setInterval(() => {
+      if (turnTimer.value > 0) {
+        turnTimer.value -= 1
+      } else {
+        clearInterval(turnTimerInterval.value)
+      }
+    }, 1000)
+  }
+
+  // Para o timer do turno
+  const stopTurnTimer = () => {
+    if (turnTimerInterval.value) {
+      clearInterval(turnTimerInterval.value)
+      turnTimerInterval.value = null
+    }
+    turnTimer.value = 0
+  }
 
   // Inicia o timer baseado no startTime do servidor
   const startTimer = (serverStartTime) => {
@@ -190,6 +224,8 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     isCurrentPlayerTurn,
     gameOver,
     leaveAllLobbies,
-    leaveGameLobby
+    leaveGameLobby,
+    turnTimer,
+    stopTurnTimer
   }
 })

@@ -21,6 +21,34 @@ const timer = computed(() => {
     return isNaN(storeGameMultiplayer.timer) ? 0 : storeGameMultiplayer.timer
 })
 
+const circleStyle = computed(() => {
+    const radius = 18
+    const circumference = 2 * Math.PI * radius
+    const progress = storeGameMultiplayer.turnTimer / 20
+    const offset = circumference * (1 - progress)
+
+    return {
+        strokeDasharray: `${circumference}`,
+        strokeDashoffset: `${offset}`
+    }
+})
+
+const lastTurnTimer = ref(storeGameMultiplayer.turnTimer);
+const animateCountdown = ref(false);
+
+// Observa mudanças no turnTimer para ativar a animação
+watch(() => storeGameMultiplayer.turnTimer, (newVal) => {
+    if (newVal <= 5 && newVal !== lastTurnTimer.value) {
+        animateCountdown.value = true;
+        lastTurnTimer.value = newVal;
+
+        // Remove a classe de animação após 300ms (duração da animação)
+        setTimeout(() => {
+            animateCountdown.value = false;
+        }, 300);
+    }
+});
+
 
 // Função para iniciar o jogo
 const startGame = () => {
@@ -44,27 +72,26 @@ const flipCard = (index) => {
     storeGameMultiplayer.flipCard(gameId, index);
 };
 
-
-
 const showModal = ref(false)
 let pendingRoute = null
 let allowNavigation = false;
 let unregisterGuard = null
 
 const confirmExit = () => {
-    console.log('Confirmar saída chamado');
-    storeGameMultiplayer.stopTimer();
-    storeGameMultiplayer.leaveGameLobby(Number(gameId));
-    showModal.value = false;
-    allowNavigation = true;
+    console.log('Confirmar saída chamado')
+    storeGameMultiplayer.stopTimer()
+    storeGameMultiplayer.stopTurnTimer()
+    storeGameMultiplayer.leaveGameLobby(Number(gameId))
+    showModal.value = false
+    allowNavigation = true
 
     if (pendingRoute) {
-        router.push(pendingRoute).catch(err => console.error('Erro ao redirecionar:', err));
-        pendingRoute = null;
+        router.push(pendingRoute).catch(err => console.error('Erro ao redirecionar:', err))
+        pendingRoute = null
     } else {
-        router.push('/multiplayer/lobbys');
+        router.push('/multiplayer/lobbys')
     }
-};
+}
 
 const cancelExit = () => {
     console.log('Cancelar saída chamado');
@@ -109,6 +136,7 @@ onUnmounted(() => {
     if (unregisterGuard) unregisterGuard();
     window.removeEventListener('beforeunload', handleBeforeUnload)
     storeGameMultiplayer.stopTimer()
+    storeGameMultiplayer.stopTurnTimer()
 })
 
 watch(gameData, (newValue) => {
@@ -131,8 +159,24 @@ watch(gameData, (newValue) => {
                         'scale-110': invalidAttemptPlayerId === player.id
                     }">
 
-                    <img :src="storeAuth.getPhotoUrl(player.photo_filename)" alt="Player Photo"
-                        class="w-12 h-12 rounded-full object-cover transition-transform duration-300">
+                    <div class="relative">
+                        <img :src="storeAuth.getPhotoUrl(player.photo_filename)" alt="Player Photo"
+                            class="w-12 h-12 rounded-full object-cover transition-transform duration-300">
+
+                        <!-- Timer Circle -->
+                        <svg v-if="index === gameData.currentPlayerIndex" class="absolute inset-0 w-12 h-12"
+                            viewBox="0 0 40 40">
+                            <circle cx="20" cy="20" r="18" fill="none" stroke="#e0e0e0" stroke-width="4" />
+                            <circle cx="20" cy="20" r="18" fill="none" stroke="#4caf50" stroke-width="4"
+                                :style="circleStyle" stroke-linecap="round" />
+                        </svg>
+                        <!-- Contador dos últimos 5 segundos -->
+                        <div v-if="index === gameData.currentPlayerIndex && storeGameMultiplayer.turnTimer <= 5"
+                            class="absolute inset-0 flex items-center justify-center text-white-500 font-bold text-xl"
+                            :class="{ 'zoom-animation': animateCountdown }">
+                            {{ storeGameMultiplayer.turnTimer }}
+                        </div>
+                    </div>
 
                     <div>
                         <p class="text-gray-700 font-medium">{{ player.nickname }}</p>
@@ -171,11 +215,12 @@ watch(gameData, (newValue) => {
         </div>
 
         <!-- Timer and Total Moves -->
-        <div class="timer-info p-4 bg-gray-50 w-64 rounded-lg">
+        <div class="timer-info p-4 bg-gray-50 w-64 rounded-lg bg-gray-100">
             <h2 class="text-lg font-bold mb-4">Game Info</h2>
-            <p class="text-gray-700">Time: {{ timer }} sec</p>
+            <p class="text-gray-700">Total Game Time: {{ timer }} sec</p>
             <p class="text-gray-700">Total Moves: {{ gameData.totalMoves || 0 }}</p>
         </div>
+
 
         <!-- Confirmation Modal -->
         <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -227,5 +272,23 @@ watch(gameData, (newValue) => {
 
 .card:hover .flip-card-inner {
     cursor: pointer;
+}
+
+.zoom-animation {
+    animation: zoomEffect 0.3s ease;
+}
+
+@keyframes zoomEffect {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 </style>

@@ -264,6 +264,7 @@ io.on("connection", (socket) => {
     }
 
     game = gameEngine.initGame(game);
+    gameEngine.startTurnTimer(game, io, lobby);
     game.status = "started";
 
     game.players.forEach((player) => {
