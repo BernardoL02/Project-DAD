@@ -11,20 +11,20 @@ export const useAdminStore = defineStore('admin', () => {
   const loading = ref(false)
   const error = ref(null)
   const transactions = ref([])
-  const dateRange = ref([null, null])
   const filterType = ref('')
   const typeFilter = ref('All')
   const paymentMethodFilter = ref('All')
-  const gameStatusFilter = ref('All')
-  const gameTypeFilter = ref('All')
+  const dateRange = ref([null, null])
   const searchTerm = ref('')
   const selectedType = ref('All')
   const selectedStatus = ref('All')
-  const boardSizeFilter = ref('All')
 
-  //Dados tabelas
+  //Dados tabelas e filtros
   const last_page = ref(0)
   const total_rows = ref(0)
+  const gameStatusFilter = ref('All')
+  const gameTypeFilter = ref('All')
+  const boardSizeFilter = ref('All')
 
   const totalPages = computed(() => last_page.value)
   const totalRows = computed(() => total_rows.value)
@@ -44,8 +44,11 @@ export const useAdminStore = defineStore('admin', () => {
   })
 
   const handleDateChange = (newRange) => {
-    dateRange.value = newRange.map((date) => (date ? new Date(date).setHours(0, 0, 0, 0) : null))
+    dateRange.value = newRange.map((date) =>
+      date ? new Date(date).toISOString().split('T')[0] : null
+    )
   }
+
   const filterByPaymentMethod = (method) => {
     paymentMethodFilter.value = method
   }

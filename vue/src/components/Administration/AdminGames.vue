@@ -14,16 +14,13 @@ const statusOptions = ['All', 'Pending', 'In Progress', 'Ended', 'Interrupted']
 const gameTypeOptions = ['All', 'Single-Player', 'Multi-Player']
 const boardSizeOptions = ['All', '3x4', '4x4', '6x6']
 
-const gameStatusFilter = ref('All')
-const gameTypeFilter = ref('All')
-const boardSizeFilter = ref('All')
 const dateRange = ref([null, null])
 const currentPage = ref(1)
 
 const handleResetFilters = () => {
-  gameStatusFilter.value = 'All'
-  gameTypeFilter.value = 'All'
-  boardSizeFilter.value = 'All'
+  adminStore.gameStatusFilter = 'All'
+  adminStore.gameTypeFilter = 'All'
+  adminStore.boardSizeFilter = 'All'
   dateRange.value = [null, null]
 }
 
@@ -45,9 +42,12 @@ const handleDateChange = (newRange) => {
   dateRange.value = newRange.map((date) => (date ? new Date(date).toISOString().split('T')[0] : null))
 }
 
-watch([gameStatusFilter, gameTypeFilter, boardSizeFilter, dateRange], async () => {
-  changePage(1)
-})
+watch(
+  [computed(() => adminStore.gameStatusFilter), computed(() => adminStore.gameTypeFilter), computed(() => adminStore.boardSizeFilter), dateRange],
+  async () => {
+    changePage(1)
+  }
+)
 
 onMounted(async () => {
   await adminStore.getAllGames(currentPage.value)
@@ -57,9 +57,9 @@ const changePage = async (newPage) => {
   if (newPage >= 1 && newPage <= adminStore.totalPages) {
     currentPage.value = newPage
     await adminStore.getAllGames(newPage, {
-      gameStatus: gameStatusFilter.value,
-      gameType: gameTypeFilter.value,
-      boardSize: boardSizeFilter.value,
+      gameStatus: adminStore.gameStatusFilter,
+      gameType: adminStore.gameTypeFilter,
+      boardSize: adminStore.boardSizeFilter,
       dateRange: dateRange.value
     })
   }
@@ -82,19 +82,19 @@ const changePage = async (newPage) => {
           <label for="gameStatus" class="block text-sm font-medium text-gray-700 pb-2">
             Game Status
           </label>
-          <DropdownButton :options="statusOptions" v-model="gameStatusFilter" />
+          <DropdownButton :options="statusOptions" v-model="adminStore.gameStatusFilter" />
         </div>
         <div class="w-full sm:w-auto">
           <label for="gameType" class="block text-sm font-medium text-gray-700 pb-2">
             Game Type
           </label>
-          <DropdownButton :options="gameTypeOptions" v-model="gameTypeFilter" />
+          <DropdownButton :options="gameTypeOptions" v-model="adminStore.gameTypeFilter" />
         </div>
         <div class="w-full sm:w-auto">
           <label for="gameStatus" class="block text-sm font-medium text-gray-700 pb-2">
             Board Size
           </label>
-          <DropdownButton :options="boardSizeOptions" v-model="boardSizeFilter" />
+          <DropdownButton :options="boardSizeOptions" v-model="adminStore.boardSizeFilter" />
         </div>
       </div>
 
