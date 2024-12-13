@@ -17,7 +17,7 @@ REMOVAL
 
 G4. MULTIPLAYER GAMES
 
-[] - Tudo
+[+-] - Tudo
 [x] - Se jogador ficar inativo por 20 segundos é expulso
 [] - Transacões por ganhos no multiplayer e notificacoes
 [] - Verificar se os estados dos jogos estão corretos (Ex: pending = jogos que ainda nao comecaram e estão à espera de jogadores)
@@ -59,7 +59,7 @@ Lobbys:
         Nota: Para nao ser possivel criar lobbys e ficarem muito tempo sem uso
     [x] - Necessidade de dar Ready para que o dono do lobby possa começar o jogo so quando todos tiverem ready se nao nao possivel
         Nota: Obtamos por esta opçao e nao quando tiver full para ser uma forma mais estavel e nao começar jogos sem jogadores prontos
-    [x] - Quando um player da logout ou disconnect ele e removido de todos os lobbys a que pertence ou esta atribuido
+    [+-] - Quando um player da logout ou disconnect ele e removido de todos os lobbys a que pertence ou esta atribuido
     [x] - Quando um player é o dono do lobby e opta por sair com mais pessoas no lobby o Dono e atribuido a outro player  
     [x] - E possivel remover players indesejados do lobby
 
@@ -76,6 +76,6 @@ Game:
     [x] - Cada jogador dentro do jogo tem 20s para virar 2 cartas
         Nota: Tempo e mostrado na foto com o circulo a diminuir e com contagem regressiva de 5s
         Optamos por fazer assim porque achamos em questao de implementaçao e jogabilidade seria melhor porque se fosse como o enunciado diz um jogador inicial 
-        podia ficar sem clicar na carta
+        podia ficar sem clicar na carta e o jogo bloqueava
 Nota: Na parte dos jogos para os jogadores estarem todos sincronizados com o mesmos segundos posemos uma hora de incio onde depois no frontend caculos os segundos
 com base nisso

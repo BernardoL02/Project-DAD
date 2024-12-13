@@ -41,7 +41,9 @@ exports.createGameEngine = (lobby) => {
         io.to(game.players.map((p) => p.socketId)).emit("gameCancelled", {
           message:
             "The game was cancelled because all players became inactive.",
+          updatedGame: game,
         });
+
         return;
       }
 
@@ -142,6 +144,7 @@ exports.createGameEngine = (lobby) => {
           io.to(game.players.map((p) => p.socketId)).emit("gameEnded", {
             message: "Game Over! You completed the game!",
             totalMoves: game.totalMoves,
+            updatedGame: game,
             pairsFoundByPlayers: game.players.map((player) => ({
               nickname: player.nickname,
               pairsFound: player.pairsFound || 0,

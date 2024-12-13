@@ -5,6 +5,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 import { useNotificationStore } from '@/stores/notification'
 import { useErrorStore } from '@/stores/error'
+import { useLobbyStore } from '@/stores/lobby'
 
 export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   const activeGames = ref([])
@@ -14,6 +15,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   const router = useRouter()
   const notificationStore = useNotificationStore()
   const storeError = useErrorStore()
+  const storeLobby = useLobbyStore()
 
   const timer = ref(0)
   const startTime = ref(0)
@@ -57,8 +59,10 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   }
 
   // Recebe evento de início do jogo e redireciona todos os jogadores
-  socket.on('gameStarted', (game) => {
+  socket.on('gameStarted', async (game) => {
     console.log('Received gameStarted event:', game) // Debugging
+
+    await storeLobby.leaveOtherLobbies(game.id)
 
     addActiveGame(game)
     if (game.players && Array.isArray(game.players) && game.players[game.currentPlayerIndex]) {

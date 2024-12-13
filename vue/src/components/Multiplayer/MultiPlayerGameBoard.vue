@@ -110,6 +110,12 @@ const handleBeforeUnload = (event) => {
 
 
 onMounted(() => {
+    nextTick(() => {
+        if (chatPanel.value) {
+            storeLobby.setChatPanel(chatPanel.value);
+            console.log('Chat panel ref set successfully.');
+        }
+    });
     unregisterGuard = router.beforeEach((to, from, next) => {
         console.log('beforeEach chamado:', from.path, to.fullPath);
 
@@ -130,12 +136,6 @@ onMounted(() => {
     });
     window.addEventListener('beforeunload', handleBeforeUnload);
     startGame();
-    nextTick(() => {
-        if (chatPanel.value) {
-            storeLobby.setChatPanel(chatPanel.value);
-            console.log('Chat panel ref set successfully.');
-        }
-    });
     storeLobby.loadChatsFromSession();
     storeLobby.isChatOpen = true
 });
