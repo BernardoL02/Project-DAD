@@ -29,7 +29,6 @@ G4. MULTIPLAYER GAMES
 G5. GAME HISTORY AND SCORING BOARDS
 
 [] - Ver os jogadores involvidos no game multiplayer
-[] - Validar se todos os dados pedidos estao a ser apresentados
 
 G7. STATISTICS
 
