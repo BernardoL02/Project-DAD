@@ -74,7 +74,7 @@ const handleResetFilters = () => {
         <div class="w-full sm:w-auto">
           <label for="began_at" class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
           <DatePicker v-model="dateRange" range format="YYYY-MM-DD" value-format="YYYY-MM-DD"
-            class="w-full border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500 disabled"
+            class="w-full border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500"
             :placeholder="formattedDateRange" @change="handleDateChange" />
         </div>
 
