@@ -175,7 +175,7 @@
               <div class="text-center font-semibold text-xl mb-2">
                 Number of Games for Each Board Size
               </div>
-              <Pie :data="pieChartData" />
+              <Pie :data="pieChartDataUser" />
             </div>
           </div>
         </div>
@@ -268,6 +268,31 @@ const chartDataUser = computed(() => {
 
 const pieChartData = computed(() => {
   const games = statisticsStore.filteredGames
+
+  const boardSizeCounts = games.reduce((acc, game) => {
+    if (!acc[game.board_id]) {
+      acc[game.board_id] = 0
+    }
+    acc[game.board_id]++
+    return acc
+  }, {})
+
+  return {
+    labels: Object.keys(boardSizeCounts),
+    datasets: [
+      {
+        data: Object.values(boardSizeCounts),
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722'],
+        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722']
+      }
+    ]
+  }
+})
+
+const pieChartDataUser = computed(() => {
+  const games = Array.isArray(statisticsStore.filteredGamesUser)
+    ? statisticsStore.filteredGamesUser
+    : []
 
   const boardSizeCounts = games.reduce((acc, game) => {
     if (!acc[game.board_id]) {

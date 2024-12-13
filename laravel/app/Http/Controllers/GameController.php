@@ -20,6 +20,22 @@ class GameController extends Controller
     /**
      * Display a listing of the resource.
      */
+
+    public function viewAll(Request $request){
+
+        $games = Game::with([
+        'createdUser' => function ($query) {
+            $query->withTrashed();
+        },
+        'winnerUser' => function ($query) {
+            $query->withTrashed();
+        },
+        ])->orderBy('began_at', 'desc')->get();
+
+        return GameResource::collection($games);
+    }
+
+
     public function index(Request $request)
     {
         $boardSize = $request->input('board_size');
