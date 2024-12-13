@@ -137,7 +137,7 @@
               :to="{ name: 'ManageUsers' }"
               :class="[
                 'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                route.path === '/singleplayer'
+                route.path === '/ManageUsers'
                   ? 'text-indigo-500 font-semibold'
                   : 'text-gray-900 hover:text-sky-600'
               ]"
@@ -151,7 +151,7 @@
               :to="{ name: 'adminTransactions' }"
               :class="[
                 'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                route.path === '/singleplayer'
+                route.path === '/adminTransactions'
                   ? 'text-indigo-500 font-semibold'
                   : 'text-gray-900 hover:text-sky-600'
               ]"
@@ -165,7 +165,7 @@
               :to="{ name: 'adminGames' }"
               :class="[
                 'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                route.path === '/singleplayer'
+                route.path === '/adminGames'
                   ? 'text-indigo-500 font-semibold'
                   : 'text-gray-900 hover:text-sky-600'
               ]"
