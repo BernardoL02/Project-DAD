@@ -5,7 +5,7 @@ G0. Geral
 [] - Remover ids das tabelas
 [] - Limpar todas as stores e ver se os dados ja existem antes de os ir buscar no 
 [] - Sons nos jogos
-[] - Rotas no botao hamburger
+[x] - Rotas no botao hamburger
 
 G1. USER REGISTRATION, AUTHENTICATION, PROFILE, END SESSION, 
 ACCOUNT
@@ -13,7 +13,7 @@ REMOVAL
 
 [] - Remover email/password pré defenida no login
 [x] - Apos selecionar uma foto ser possivel selecionar outra a partir da imagem no register admin
-[] - Puxar o botão de register admin para cima da tabela
+[x] - Puxar o botão de register admin para cima da tabela
 
 G4. MULTIPLAYER GAMES
 
@@ -29,7 +29,6 @@ G4. MULTIPLAYER GAMES
 G5. GAME HISTORY AND SCORING BOARDS
 
 [] - Ver os jogadores involvidos no game multiplayer
-[] - Validar se todos os dados pedidos estao a ser apresentados
 
 G7. STATISTICS
 
