@@ -160,6 +160,10 @@
           <div class="chart-container p-4 w-full mx-auto">
             <Bar :data="userRegistrationData" />
           </div>
+          <div class="font-semibold text-center text-xl mb-2">Top 10 Players by Time Played</div>
+          <div class="chart-container p-4 w-full mx-auto">
+            <Bar :data="topPlayersChartData" :options="horizontalBarOptions" />
+          </div>
         </div>
         <!--ESTATISTICA DOS GAMES PARA O USER LOGADO-->
         <div v-if="selectedView === 'myStatistics'" class="chart-container p-4 w-full">
@@ -688,6 +692,52 @@ const changeYear = (year) => {
 
 const setSelectedView = (view) => {
   selectedView.value = view
+}
+
+const topPlayersChartData = computed(() => {
+  const players = statisticsStore.topPlayersByTimePlayed
+
+  return {
+    labels: players.map((player) => player.name),
+    datasets: [
+      {
+        label: 'Total Time Played (hrs)',
+        data: players.map((player) => player.timePlayed),
+        backgroundColor: '#36A2EB',
+        hoverBackgroundColor: '#2A85C5'
+      }
+    ]
+  }
+})
+
+const horizontalBarOptions = {
+  indexAxis: 'y', // Makes the bar chart horizontal
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      display: false
+    },
+    tooltip: {
+      callbacks: {
+        label: (context) => `${context.raw} hrs`
+      }
+    }
+  },
+  scales: {
+    x: {
+      title: {
+        display: true,
+        text: 'Time Played (hrs)'
+      }
+    },
+    y: {
+      title: {
+        display: true,
+        text: 'Players'
+      }
+    }
+  }
 }
 
 onMounted(() => {
