@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Game;
 use App\Models\Board;
 use App\Models\Transaction;
@@ -20,9 +21,10 @@ class GameController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
-    {
-       $games = Game::with([
+
+    public function viewAll(Request $request){
+
+        $games = Game::with([
         'createdUser' => function ($query) {
             $query->withTrashed();
         },
@@ -33,6 +35,58 @@ class GameController extends Controller
 
         return GameResource::collection($games);
     }
+
+
+    public function index(Request $request)
+    {
+        $boardSize = $request->input('board_size');
+        $gameType = $request->input('game_type');
+        $gameStatus = $request->input('game_status');
+
+        $startDate = $request->input('date_range')[0] ?? null;
+        $endDate = $request->input('date_range')[1] ?? null;
+
+        $gamesQuery = Game::with([
+            'createdUser' => function ($query) {
+                $query->withTrashed();
+            },
+            'winnerUser' => function ($query) {
+                $query->withTrashed();
+            },
+        ]);
+
+        if ($boardSize !== 'All') {
+            $gamesQuery->where('board_id', $boardSize);
+        }
+
+        if ($gameType !== 'All') {
+            $gamesQuery->where('type', $gameType);
+        }
+
+        if ($gameStatus !== 'All') {
+            $gamesQuery->where('status', $gameStatus);
+        }
+
+        if ($startDate && $endDate) {
+            $gamesQuery->whereBetween('began_at', [
+                Carbon::parse($startDate)->startOfDay(),
+                Carbon::parse($endDate)->endOfDay(),
+            ]);
+        }
+
+        $gamesQuery->orderBy('began_at', 'desc');
+
+        $games = $gamesQuery->paginate(10);
+
+        return [
+            'data' => GameResource::collection($games)->response()->getData(true)['data'],
+            'meta' => [
+                'last_page' => $games->lastPage(),
+                'total' => $games->total(),
+            ],
+        ];
+    }
+
 
     /**
      * Store a newly created resource in storage.

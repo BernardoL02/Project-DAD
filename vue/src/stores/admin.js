@@ -11,16 +11,21 @@ export const useAdminStore = defineStore('admin', () => {
   const loading = ref(false)
   const error = ref(null)
   const transactions = ref([])
-  const dateRange = ref([null, null])
   const filterType = ref('')
   const typeFilter = ref('All')
   const paymentMethodFilter = ref('All')
-  const gameStatusFilter = ref('All')
-  const gameTypeFilter = ref('All')
+  const dateRange = ref([null, null])
   const searchTerm = ref('')
   const selectedType = ref('All')
   const selectedStatus = ref('All')
+
+  //Dados tabelas e filtros
+  const last_page = ref(0)
+  const gameStatusFilter = ref('All')
+  const gameTypeFilter = ref('All')
   const boardSizeFilter = ref('All')
+
+  const totalPages = computed(() => last_page.value)
 
   const formatDate = (date) => {
     if (!date) return ''
@@ -37,8 +42,11 @@ export const useAdminStore = defineStore('admin', () => {
   })
 
   const handleDateChange = (newRange) => {
-    dateRange.value = newRange.map((date) => (date ? new Date(date).setHours(0, 0, 0, 0) : null))
+    dateRange.value = newRange.map((date) =>
+      date ? new Date(date).toISOString().split('T')[0] : null
+    )
   }
+
   const filterByPaymentMethod = (method) => {
     paymentMethodFilter.value = method
   }
@@ -100,6 +108,7 @@ export const useAdminStore = defineStore('admin', () => {
     )
   })
 
+  /*
   const filteredGames = computed(() => {
     let filtered = games.value
 
@@ -128,7 +137,7 @@ export const useAdminStore = defineStore('admin', () => {
     }
 
     return filtered
-  })
+  })*/
 
   const filterByBoardSize = (size) => {
     boardSizeFilter.value = size
@@ -238,11 +247,41 @@ export const useAdminStore = defineStore('admin', () => {
       )
     }
   }
-  const getAllGames = async () => {
-    loading.value = true
+
+  const getAllGames = async (currentPage = 1, filters = {}) => {
     storeError.resetMessages()
+
     try {
-      const response = await axios.get('games')
+      last_page.value = 0
+
+      const boardSizeMapping = {
+        '3x4': 1,
+        '4x4': 2,
+        '6x6': 3
+      }
+
+      const gameTypeMapping = {
+        'Single-Player': 'S',
+        'Multi-Player': 'M'
+      }
+
+      const gameStatusMapping = {
+        Pending: 'PE',
+        'In Progress': 'PL',
+        Ended: 'E',
+        Interrupted: 'I'
+      }
+
+      const requestData = {
+        page: currentPage,
+        board_size: boardSizeMapping[filters.boardSize] || 'All',
+        game_type: gameTypeMapping[filters.gameType] || 'All',
+        game_status: gameStatusMapping[filters.gameStatus] || 'All',
+        date_range: filters.dateRange
+      }
+
+      const response = await axios.post('games/all', requestData)
+
       const updatedGames = response.data.data.map((game) => ({
         id: game.id,
         board_id:
@@ -254,7 +293,6 @@ export const useAdminStore = defineStore('admin', () => {
                 ? '6x6'
                 : '-',
         created_user: game.created_user.nickname || '-',
-
         winner_user:
           game.status === 'E' && game.type === 'S'
             ? game.created_user.nickname
@@ -273,7 +311,10 @@ export const useAdminStore = defineStore('admin', () => {
         began_at: game.began_at || '-',
         total_time: game.total_time ? game.total_time + 's' : '-'
       }))
+
       games.value = updatedGames
+      last_page.value = response.data.meta.last_page
+      console.log(last_page.value)
     } catch (err) {
       storeError.setErrorMessages(
         err.response?.data?.message,
@@ -281,10 +322,9 @@ export const useAdminStore = defineStore('admin', () => {
         err.response?.data?.status,
         'Error Getting Games'
       )
-    } finally {
-      loading.value = false
     }
   }
+
   const register = async (userData) => {
     storeError.resetMessages()
 
@@ -343,13 +383,20 @@ export const useAdminStore = defineStore('admin', () => {
     return (firstName + ' ' + lastName).trim()
   }
 
-  const getTransactions = async () => {
+  const getTransactions = async (currentPage = 1) => {
     loading.value = true
     error.value = null
 
     try {
-      const response = await axios.get(`admin/transactions`)
-      transactions.value = response.data.map((transaction) => ({
+      last_page.value
+
+      const requestData = {
+        page: currentPage
+      }
+
+      const response = await axios.post(`admin/transactions`, requestData)
+
+      transactions.value = response.data.data.map((transaction) => ({
         id: transaction.id,
         Name: userFirstLastName(transaction.user?.name),
         date: transaction.transaction_datetime,
@@ -368,6 +415,8 @@ export const useAdminStore = defineStore('admin', () => {
       }))
 
       dateRange.value = [null, null]
+      last_page.value = response.data.meta.last_page
+      console.log(last_page.value)
     } catch (err) {
       storeError.setErrorMessages(
         err.response?.data?.message,
@@ -399,7 +448,7 @@ export const useAdminStore = defineStore('admin', () => {
     filterByType,
     filterByPaymentMethod,
     getAllGames,
-    filteredGames,
+    totalPages,
     gameStatusFilter,
     filterByGameStatus,
     filterByGameType,

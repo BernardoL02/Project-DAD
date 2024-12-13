@@ -3,10 +3,11 @@
     <h1 class="text-3xl font-bold mb-10 text-center">Statistics</h1>
     <div v-if="loading" class="text-center text-gray-400">Loading...</div>
     <div v-else>
+      <!-- BUTTONS PARA CADA PÁGINA DE ESTATISTICA -->
       <div class="flex pb-10 space-x-4">
-        <!-- Buttons -->
         <div class="mb-6">
           <button
+            v-if="authStore.isAdmin"
             @click="setSelectedView('game')"
             :class="{
               'bg-green-500 text-white': selectedView === 'game',
@@ -19,6 +20,7 @@
         </div>
         <div class="mb-6">
           <button
+            v-if="authStore.isAdmin"
             @click="setSelectedView('purchase')"
             :class="{
               'bg-green-500 text-white': selectedView === 'purchase',
@@ -31,6 +33,7 @@
         </div>
         <div class="mb-6">
           <button
+            v-if="authStore.isAdmin"
             @click="setSelectedView('players')"
             :class="{
               'bg-green-500 text-white': selectedView === 'players',
@@ -43,6 +46,7 @@
         </div>
         <div class="mb-6">
           <button
+            v-if="!authStore.isAdmin"
             @click="setSelectedView('myStatistics')"
             :class="{
               'bg-green-500 text-white': selectedView === 'myStatistics',
@@ -53,9 +57,23 @@
             My Statistics
           </button>
         </div>
+        <div class="mb-6">
+          <button
+            v-if="!authStore.isAdmin"
+            @click="setSelectedView('myPurchases')"
+            :class="{
+              'bg-green-500 text-white': selectedView === 'myPurchases',
+              'bg-gray-200': selectedView !== 'myPurchases'
+            }"
+            class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300"
+          >
+            My Purchase
+          </button>
+        </div>
       </div>
 
       <div class="flex flex-wrap justify-around">
+        <!--ESTATISTICA DOS GAMES PARA O ADMIN-->
         <div v-if="selectedView === 'game'" class="chart-container p-4 w-full">
           <div class="flex flex-col items-center mb-6">
             <div class="text-lg font-semibold mb-6 text-center">
@@ -93,6 +111,7 @@
             </div>
           </div>
         </div>
+        <!--ESTATISTICA DAS COMPRAS PARA O ADMIN-->
         <div v-if="selectedView === 'purchase'" class="chart-container p-4">
           <div v-if="playerStats">
             <div class="mb-6">
@@ -130,7 +149,7 @@
             </div>
           </div>
         </div>
-
+        <!--ESTATISTICA DOS PLAYERS PARA O ADMIN-->
         <div v-if="selectedView === 'players'" class="chart-container p-4 w-1/2">
           <div class="font-semibold text-center text-xl mb-2">
             Total Registered Player Each Month
@@ -142,6 +161,7 @@
             <Bar :data="userRegistrationData" />
           </div>
         </div>
+        <!--ESTATISTICA DOS GAMES PARA O USER LOGADO-->
         <div v-if="selectedView === 'myStatistics'" class="chart-container p-4 w-full">
           <div class="flex flex-col items-center mb-6">
             <div class="text-lg font-semibold mb-6 text-center">
@@ -175,7 +195,35 @@
               <div class="text-center font-semibold text-xl mb-2">
                 Number of Games for Each Board Size
               </div>
-              <Pie :data="pieChartData" />
+              <Pie :data="pieChartDataUser" />
+            </div>
+          </div>
+        </div>
+        <!--ESTATISTICA DAS COMPRAS PARA O USER LOGADO-->
+        <div v-if="selectedView === 'myPurchases'" class="chart-container p-4 w-full">
+          <div class="mb-6">
+            <p class="font-semibold text-xl">
+              Total Purchases:
+              <span class="text-blue-600">{{ playerStatsUser.totalPurchasesUser }}</span>
+            </p>
+            <p class="font-semibold text-xl">
+              Total Value of Purchases:
+              <span class="text-blue-600">{{ playerStatsUser.totalPurchaseUserValue }} €</span>
+            </p>
+          </div>
+          <div class="flex justify-between space-x-2">
+            <div class="w-6/12 text-center">
+              <div class="font-semibold text-xl mb-2">Number of Purchases per Pack</div>
+              <div class="chart-container p-4 w-96">
+                <Bar :data="packSalesDataUser" />
+              </div>
+            </div>
+
+            <div class="w-full text-center">
+              <div class="font-semibold text-xl mb-2">Total Purchases by Month</div>
+              <div class="chart-container p-4 w-96 h-96 mx-auto">
+                <Pie :data="monthlyPurchaseDataUser" />
+              </div>
             </div>
           </div>
         </div>
@@ -222,11 +270,17 @@ const totalGames = computed(() => statisticsStore.totalGames || 0)
 const totalGamesUser = computed(() => statisticsStore.totalGamesUser || 0)
 const selectedYear = computed(() => statisticsStore.selectedYear)
 const transactions = computed(() => statisticsStore.transactions)
+const transactionsUser = computed(() => statisticsStore.transactionsUser)
 const games = computed(() => statisticsStore.games)
 const totalMultiPlayerGames = computed(() => statisticsStore.totalMultiPlayerGames)
 const totalSinglePlayerGames = computed(() => statisticsStore.totalSinglePlayerGames)
+const selectedView = ref('')
 
-const selectedView = ref('game')
+if (authStore.isAdmin) {
+  selectedView.value = 'game'
+} else {
+  selectedView.value = 'myStatistics'
+}
 
 const monthlyGameCounts = computed(() => statisticsStore.monthlyGameCounts)
 const monthlyGameCountsUser = computed(() => statisticsStore.monthlyGameCountsUser)
@@ -268,6 +322,31 @@ const chartDataUser = computed(() => {
 
 const pieChartData = computed(() => {
   const games = statisticsStore.filteredGames
+
+  const boardSizeCounts = games.reduce((acc, game) => {
+    if (!acc[game.board_id]) {
+      acc[game.board_id] = 0
+    }
+    acc[game.board_id]++
+    return acc
+  }, {})
+
+  return {
+    labels: Object.keys(boardSizeCounts),
+    datasets: [
+      {
+        data: Object.values(boardSizeCounts),
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722'],
+        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722']
+      }
+    ]
+  }
+})
+
+const pieChartDataUser = computed(() => {
+  const games = Array.isArray(statisticsStore.filteredGamesUser)
+    ? statisticsStore.filteredGamesUser
+    : []
 
   const boardSizeCounts = games.reduce((acc, game) => {
     if (!acc[game.board_id]) {
@@ -412,6 +491,54 @@ const playerStats = computed(() => {
   }
 })
 
+const playerStatsUser = computed(() => {
+  if (!transactionsUser.value) return null
+
+  const purchaseTransactions = transactionsUser.value.filter(
+    (transaction) => transaction.type === 'Purchase'
+  )
+
+  const totalPurchasesUser = purchaseTransactions.length
+  const totalPurchaseUserValue = purchaseTransactions.reduce(
+    (sum, transaction) => sum + (parseFloat(transaction.value) || 0),
+    0
+  )
+  return {
+    totalPurchasesUser,
+    totalPurchaseUserValue
+  }
+})
+
+const packSalesDataUser = computed(() => {
+  const packCounts = transactionsUser.value.reduce((acc, transaction) => {
+    const pack = transaction.pack
+    if (!acc[pack]) {
+      acc[pack] = 0
+    }
+    acc[pack]++
+    return acc
+  }, {})
+
+  const allPacks = [1, 2, 3, 4, 5, 6]
+  allPacks.forEach((pack) => {
+    if (!packCounts[pack]) {
+      packCounts[pack] = 0
+    }
+  })
+
+  return {
+    labels: allPacks.map((pack) => `${pack * 10} Coins`),
+    datasets: [
+      {
+        label: 'Purchases per Pack',
+        data: allPacks.map((pack) => packCounts[pack]),
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722', '#7F8C8D'],
+        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722', '#7F8C8D']
+      }
+    ]
+  }
+})
+
 const paymentTypesData = computed(() => {
   const validPaymentTypes = ['PAYPAL', 'MBWAY', 'VISA', 'IBAN', 'MB']
 
@@ -513,6 +640,48 @@ const monthlyPurchaseData = computed(() => {
   }
 })
 
+const monthlyPurchaseDataUser = computed(() => {
+  const purchaseCounts = statisticsStore.monthlyPurchaseCountsUser
+
+  return {
+    labels: Object.keys(purchaseCounts),
+    datasets: [
+      {
+        label: 'Purchases by Month',
+        data: Object.values(purchaseCounts),
+        backgroundColor: [
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#8BC34A',
+          '#FF5722',
+          '#7F8C8D',
+          '#E91E63',
+          '#9C27B0',
+          '#2196F3',
+          '#00BCD4',
+          '#4CAF50',
+          '#FFC107'
+        ],
+        hoverBackgroundColor: [
+          '#FF6384',
+          '#36A2EB',
+          '#FFCE56',
+          '#8BC34A',
+          '#FF5722',
+          '#7F8C8D',
+          '#E91E63',
+          '#9C27B0',
+          '#2196F3',
+          '#00BCD4',
+          '#4CAF50',
+          '#FFC107'
+        ]
+      }
+    ]
+  }
+})
+
 const changeYear = (year) => {
   statisticsStore.selectedYear = year
 }
@@ -531,6 +700,8 @@ onMounted(() => {
     statisticsStore.fetchProfile()
     statisticsStore.getMultiPlayerGames()
     statisticsStore.getSinglePlayerGames()
+    statisticsStore.getTransactionsGroupedByMonth()
+    statisticsStore.getTransactionsUser()
   }
 })
 </script>
