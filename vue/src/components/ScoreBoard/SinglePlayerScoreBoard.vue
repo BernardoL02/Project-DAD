@@ -59,7 +59,6 @@ const onBoardClick = (size) => {
     <div>
       <div v-if="loading" class="text-center text-gray-400">Loading...</div>
       <div v-else>
-        <!-- Paginated Table com os dados filtrados -->
         <PaginatedTable :columns="columns" :data="filteredScoreboards" :pagination="false" :showActions="false" />
 
         <div class="bg-white p-6 rounded-lg shadow-md mt-6">
@@ -72,7 +71,6 @@ const onBoardClick = (size) => {
 
         </div>
 
-        <!-- Exibe mensagem caso não haja pontuações -->
         <div v-if="!loading && filteredScoreboards.length === 0" class="text-center text-gray-400 mt-4">
           No scores available
         </div>
