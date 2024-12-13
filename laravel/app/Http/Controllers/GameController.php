@@ -81,7 +81,6 @@ class GameController extends Controller
             'data' => GameResource::collection($games)->response()->getData(true)['data'],
             'meta' => [
                 'last_page' => $games->lastPage(),
-                'total' => $games->total(),
             ],
         ];
     }
