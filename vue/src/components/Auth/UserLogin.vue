@@ -19,7 +19,11 @@ const submitLogin = async () => {
 
   if (authStore.user) {
     await authStore.fetchProfile()
-    await authStore.getNotifications();
+
+    if (authStore.isPlayer) {
+      await authStore.getNotifications();
+    }
+
     router.push('/playerProfile')
   }
 }

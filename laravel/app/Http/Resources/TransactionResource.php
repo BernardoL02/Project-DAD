@@ -25,11 +25,13 @@ class TransactionResource extends JsonResource
             'payment_type' => $this->payment_type,
             'payment_reference' => $this->payment_reference,
             'brain_coins' => $this->brain_coins,
-            'user' => [
-                'id' => $this->user->id,
-                'name' => $this->user->name,
-                'email' => $this->user->email,
-            ],
+            'user' => $this->whenLoaded('user', function () {
+                return [
+                    'id' => optional($this->user)->id,
+                    'name' => optional($this->user)->name,
+                    'email' => optional($this->user)->email,
+                ];
+            }),
             'notification_read' => isset($custom['notificationRead']) && $custom['notificationRead'] == 1 ? 1 : 0,
             'msg' => isset($custom['msg']) ? $custom['msg'] : null,
         ];

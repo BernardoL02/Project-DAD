@@ -25,24 +25,6 @@ const handleResetFilters = () => {
   dateRange.value = [null, null]
 }
 
-const formatDate = (date) => {
-  if (!date) return ''
-  const options = { year: 'numeric', month: 'short', day: 'numeric' }
-  return new Date(date).toLocaleDateString('en-US', options)
-}
-
-const formattedDateRange = computed(() => {
-  const [start, end] = dateRange.value
-  if (start && end) {
-    return `${formatDate(start)} - ${formatDate(end)}`
-  }
-  return 'Select Date Range'
-})
-
-const handleDateChange = (newRange) => {
-  dateRange.value = newRange.map((date) => (date ? new Date(date).toISOString().split('T')[0] : null))
-}
-
 watch(
   [computed(() => adminStore.gameStatusFilter), computed(() => adminStore.gameTypeFilter), computed(() => adminStore.boardSizeFilter), dateRange],
   async () => {
@@ -66,6 +48,23 @@ const changePage = async (newPage) => {
   }
 }
 
+const formatDate = (date) => {
+  if (!date) return ''
+  const options = { year: 'numeric', month: 'short', day: 'numeric' }
+  return new Date(date).toLocaleDateString('en-US', options)
+}
+
+const formattedDateRange = computed(() => {
+  const [start, end] = dateRange.value
+  if (start && end) {
+    return `${formatDate(start)} - ${formatDate(end)}`
+  }
+  return 'Select Date Range'
+})
+
+const handleDateChange = (newRange) => {
+  dateRange.value = newRange.map((date) => (date ? new Date(date).toISOString().split('T')[0] : null))
+}
 </script>
 
 <template>

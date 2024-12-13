@@ -16,7 +16,6 @@ export const useAdminStore = defineStore('admin', () => {
   const paymentMethodFilter = ref('All')
   const dateRange = ref([null, null])
   const searchTerm = ref('')
-  const selectedType = ref('All')
   const selectedStatus = ref('All')
 
   //Dados tabelas e filtros
@@ -24,6 +23,8 @@ export const useAdminStore = defineStore('admin', () => {
   const gameStatusFilter = ref('All')
   const gameTypeFilter = ref('All')
   const boardSizeFilter = ref('All')
+  const selectedType = ref('All')
+  const selectedPaymentMethod = ref('All')
 
   const totalPages = computed(() => last_page.value)
 
@@ -252,8 +253,6 @@ export const useAdminStore = defineStore('admin', () => {
     storeError.resetMessages()
 
     try {
-      last_page.value = 0
-
       const boardSizeMapping = {
         '3x4': 1,
         '4x4': 2,
@@ -383,20 +382,27 @@ export const useAdminStore = defineStore('admin', () => {
     return (firstName + ' ' + lastName).trim()
   }
 
-  const getTransactions = async (currentPage = 1) => {
+  const getTransactions = async (currentPage = 1, filters = {}) => {
     loading.value = true
     error.value = null
 
     try {
-      last_page.value
+      const TransactionTypeMapping = {
+        Game: 'I',
+        Purchase: 'P',
+        Bonus: 'B'
+      }
 
       const requestData = {
-        page: currentPage
+        page: currentPage,
+        selected_type: TransactionTypeMapping[filters.selectedType] || 'All',
+        selected_payment_method: filters.selectedPaymentMethod || 'All',
+        date_range: filters.dateRange
       }
 
       const response = await axios.post(`admin/transactions`, requestData)
 
-      transactions.value = response.data.data.map((transaction) => ({
+      const updatedTransactions = response.data.data.map((transaction) => ({
         id: transaction.id,
         Name: userFirstLastName(transaction.user?.name),
         date: transaction.transaction_datetime,
@@ -414,9 +420,8 @@ export const useAdminStore = defineStore('admin', () => {
         coins: transaction.brain_coins
       }))
 
-      dateRange.value = [null, null]
+      transactions.value = updatedTransactions
       last_page.value = response.data.meta.last_page
-      console.log(last_page.value)
     } catch (err) {
       storeError.setErrorMessages(
         err.response?.data?.message,
@@ -424,8 +429,6 @@ export const useAdminStore = defineStore('admin', () => {
         err.response?.data?.status,
         'Error Get Transactions'
       )
-    } finally {
-      loading.value = false
     }
   }
 
@@ -458,6 +461,7 @@ export const useAdminStore = defineStore('admin', () => {
     setSearchTerm,
     setSelectedType,
     selectedType,
+    selectedPaymentMethod,
     setSelectedStatus,
     selectedStatus,
     boardSizeFilter,
