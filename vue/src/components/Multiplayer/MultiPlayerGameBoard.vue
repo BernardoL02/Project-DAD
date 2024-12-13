@@ -97,7 +97,6 @@ const confirmExit = () => {
 }
 
 const cancelExit = () => {
-    console.log('Cancelar saída chamado');
     showModal.value = false;
     pendingRoute = null;
 };
@@ -151,7 +150,9 @@ const handleSwitchChat = (index) => {
     storeLobby.switchChatPanel(index);
 };
 
-
+const handleCloseChat = (index) => {
+    storeLobby.closeChat(index);
+};
 
 
 onUnmounted(() => {

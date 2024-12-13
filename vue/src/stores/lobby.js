@@ -127,26 +127,24 @@ export const useLobbyStore = defineStore('lobby', () => {
   }
 
   const openChatPanel = (user) => {
-    // Verifica se o usuário está tentando abrir um chat consigo mesmo
     if (user.id === storeAuth.user.id) {
       storeError.setErrorMessages('You cannot open a chat with yourself.')
       return
     }
 
-    // Verifica se o usuário já está na lista de chats
     const existingChatIndex = openChats.value.findIndex((chat) => chat.user.id === user.id)
 
     if (existingChatIndex === -1) {
-      // Adiciona um novo chat se não existir
-      openChats.value.push({ user, messages: [], isOpen: true })
+      const savedMessages = sessionStorage.getItem(`chat_${user.id}`)
+      const messages = savedMessages ? JSON.parse(savedMessages) : []
+
+      openChats.value.push({ user, messages, isOpen: true })
       activeChatIndex.value = openChats.value.length - 1
     } else {
-      // Reabre o chat existente e define o índice ativo
       openChats.value[existingChatIndex].isOpen = true
       activeChatIndex.value = existingChatIndex
     }
 
-    // Abre o painel de chat
     isChatOpen.value = true
     saveChatsToSession()
   }
@@ -196,8 +194,19 @@ export const useLobbyStore = defineStore('lobby', () => {
   })
 
   const closeChat = (index) => {
-    openChats.value[index].isOpen = false
-    isChatOpen.value = false
+    const chat = openChats.value[index]
+    if (chat) {
+      sessionStorage.setItem(`chat_${chat.user.id}`, JSON.stringify(chat.messages))
+    }
+    openChats.value.splice(index, 1)
+
+    if (openChats.value.length === 0) {
+      isChatOpen.value = false
+    } else {
+      activeChatIndex.value = Math.max(0, index - 1)
+    }
+
+    saveChatsToSession()
   }
 
   const switchChatPanel = (index) => {

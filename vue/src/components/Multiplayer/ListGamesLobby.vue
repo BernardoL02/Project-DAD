@@ -64,22 +64,61 @@ onMounted(() => {
                             <div class="flex items-center space-x-4">
                                 <div @click="storeLobby.openChatPanel(game.player1)"
                                     class="w-24 h-36 bg-gray-200 rounded-lg flex flex-col items-center justify-center p-2 shadow-md relative">
-                                    <img :src="storeAuth.getPhotoUrl(game.player1.photo_filename)" alt="Player Avatar"
-                                        class="w-16 h-16 rounded-full mb-2" />
+
+                                    <div class="relative mt-4"> <!-- Adiciona uma margem superior -->
+                                        <img :src="storeAuth.getPhotoUrl(game.player1.photo_filename)"
+                                            alt="Player Avatar" class="w-16 h-16 rounded-full mb-2" />
+
+                                        <!-- Botão de Chat Posicionado no Avatar -->
+                                        <button v-if="game.player1.id !== storeAuth.user.id"
+                                            @click="storeLobby.openChatPanel(player)"
+                                            class="absolute bottom-0 left-0 bg-blue-500 text-white rounded-full p-0.5 hover:bg-blue-600 shadow-md">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.314 0-2.55-.263-3.662-.732C7.114 20.55 4 21 4 21l1.441-3.602A8.96 8.96 0 0 1 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <!-- Ícone de Coroa -->
                                     <img src="/king.png" alt="Crown"
                                         class="absolute top-0 right-0 w-6 h-6 transform translate-x-2 -translate-y-2" />
-                                    <p class="text-gray-900 font-bold text-center text-sm">{{
-                                        storeAuth.getFirstLastName(game.player1.name) }}</p>
+
+                                    <!-- Nome do Jogador -->
+                                    <p class="text-gray-900 font-bold text-center text-sm">
+                                        {{ storeAuth.getFirstLastName(game.player1.name) }}
+                                    </p>
                                 </div>
 
+
                                 <div v-for="player in game.players.slice(1)" :key="player.id"
-                                    class="w-24 h-36 bg-gray-200 rounded-lg flex flex-col items-center justify-center p-2 shadow relative"
-                                    @click="storeLobby.openChatPanel(player)">
-                                    <img :src="storeAuth.getPhotoUrl(player.photo_filename)" alt="Player Avatar"
-                                        class="w-16 h-16 rounded-full mb-2" />
-                                    <p class="text-gray-900 font-bold text-center text-sm">{{
-                                        storeAuth.getFirstLastName(player.name) }}</p>
-                                    <span class="text-sm font-bold"
+                                    class="w-24 h-36 bg-gray-200 rounded-lg flex flex-col items-center justify-center p-2 shadow relative group">
+
+                                    <!-- Avatar do Jogador com Margem -->
+                                    <div class="relative mt-4"> <!-- Adiciona uma margem superior -->
+                                        <img :src="storeAuth.getPhotoUrl(player.photo_filename)" alt="Player Avatar"
+                                            class="w-16 h-16 rounded-full mb-2" />
+
+                                        <!-- Botão de Chat Posicionado no Avatar -->
+                                        <button v-if="player.id !== storeAuth.user.id"
+                                            @click.stop="storeLobby.openChatPanel(player)"
+                                            class="absolute bottom-0 left-0 bg-blue-500 text-white rounded-full p-0.5 hover:bg-blue-600 shadow-md">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
+                                                viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.314 0-2.55-.263-3.662-.732C7.114 20.55 4 21 4 21l1.441-3.602A8.96 8.96 0 0 1 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <!-- Nome do Jogador -->
+                                    <p class="text-gray-900 font-bold text-center text-sm mb-1">
+                                        {{ storeAuth.getFirstLastName(player.name) }}
+                                    </p>
+
+                                    <!-- Status Ready/UnReady -->
+                                    <span class="text-sm font-bold mb-2"
                                         :class="player.ready ? 'text-green-500' : 'text-red-500'">
                                         {{ player.ready ? 'Ready' : 'UnReady' }}
                                     </span>
@@ -87,12 +126,10 @@ onMounted(() => {
                                     <!-- Botão de Remoção (X) -->
                                     <button v-if="game.player1.id === storeAuth.user.id"
                                         @click.stop="storeLobby.removePlayer(game.id, player.id)"
-                                        class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center hover:bg-red-600">
+                                        class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-600 shadow-md">
                                         &times;
                                     </button>
-
                                 </div>
-
 
 
                                 <!-- Espaços disponíveis com botão "+" ou área escura sem "+" -->
@@ -182,10 +219,26 @@ onMounted(() => {
                         <!-- Retângulos dos jogadores existentes -->
                         <div class="w-24 h-36 bg-gray-200 rounded-lg flex flex-col items-center justify-center p-2 relative"
                             @click="storeLobby.openChatPanel(player)" v-for="player in game.players" :key="player.id">
-                            <img :src="storeAuth.getPhotoUrl(player.photo_filename)" alt="Player Avatar"
-                                class="w-16 h-16 rounded-full mb-2" />
+                            <!-- Foto do Jogador -->
+                            <div class="relative mt-4"> <!-- Adiciona uma margem superior -->
+                                <img :src="storeAuth.getPhotoUrl(player.photo_filename)" alt="Player Avatar"
+                                    class="w-16 h-16 rounded-full mb-2" />
+
+                                <!-- Botão de Chat Posicionado no Avatar -->
+                                <button v-if="player.id !== storeAuth.user.id"
+                                    @click.stop="storeLobby.openChatPanel(player)"
+                                    class="absolute bottom-0 left-0 bg-blue-500 text-white rounded-full p-0.5 hover:bg-blue-600 shadow-md">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.314 0-2.55-.263-3.662-.732C7.114 20.55 4 21 4 21l1.441-3.602A8.96 8.96 0 0 1 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <!-- Ícone de Coroa para o Dono do Lobby -->
                             <img v-if="player.id === game.player1.id" src="/king.png" alt="Crown"
                                 class="absolute top-0 right-0 w-6 h-6 transform translate-x-2 -translate-y-2" />
+                            <!-- Nome do Jogador -->
                             <p class="text-gray-900 font-bold text-center text-sm">
                                 {{ storeAuth.getFirstLastName(player.name) }}
                             </p>
@@ -196,6 +249,7 @@ onMounted(() => {
                                 {{ player.ready ? 'Ready' : 'UnReady' }}
                             </span>
                         </div>
+
 
                         <!-- Espaços disponíveis com botão "+" -->
                         <div v-for="i in game.maxPlayers - game.players.length" :key="i"
