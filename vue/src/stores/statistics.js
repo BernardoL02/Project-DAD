@@ -563,7 +563,7 @@ export const useStatisticsStore = defineStore('statistics', () => {
           timePlayed: totalTime
         }
       })
-      .filter((player) => player.name) // Filter out players with no valid name
+      .filter((player) => player.name)
 
     return userStats.sort((a, b) => b.timePlayed - a.timePlayed).slice(0, 10)
   })
