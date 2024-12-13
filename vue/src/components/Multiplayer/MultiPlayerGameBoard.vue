@@ -110,6 +110,12 @@ const handleBeforeUnload = (event) => {
 
 
 onMounted(() => {
+    nextTick(() => {
+        if (chatPanel.value) {
+            storeLobby.setChatPanel(chatPanel.value);
+            console.log('Chat panel ref set successfully.');
+        }
+    });
     unregisterGuard = router.beforeEach((to, from, next) => {
         console.log('beforeEach chamado:', from.path, to.fullPath);
 
@@ -130,12 +136,6 @@ onMounted(() => {
     });
     window.addEventListener('beforeunload', handleBeforeUnload);
     startGame();
-    nextTick(() => {
-        if (chatPanel.value) {
-            storeLobby.setChatPanel(chatPanel.value);
-            console.log('Chat panel ref set successfully.');
-        }
-    });
     storeLobby.loadChatsFromSession();
     storeLobby.isChatOpen = true
 });
@@ -168,6 +168,22 @@ watch(gameData, (newValue) => {
 </script>
 
 <template>
+    <div>
+        <div class="tabs">
+            <button v-for="game in storeGameMultiplayer.activeGames" :key="game.id" @click="switchGame(game.id)"
+                :class="{ active: currentGameId === game.id }">
+                Game {{ game.id }}
+            </button>
+        </div>
+
+        <div v-if="currentGame">
+            <!-- Componentes do jogo atual -->
+            <h2>Game ID: {{ currentGame.id }}</h2>
+            <div class="game-board">
+                <!-- Conteúdo do jogo atual -->
+            </div>
+        </div>
+    </div>
     <div v-if="gameData" class="flex gap-10 items-start">
         <!-- Players List -->
         <div class="players-info p-4 bg-gray-50 w-64 rounded-lg">

@@ -1,15 +1,13 @@
 exports.createLobby = () => {
   const games = new Map();
-  let id = 1;
 
-  const createLobby = (user, socketId, rows, cols) => {
-    if (!user || !rows || !cols) return null;
+  const createLobby = (user, socketId, idGame, rows, cols) => {
+    if (!user || !rows || !cols || !idGame) return null;
 
-    id++;
     const maxPlayers = determineMaxPlayers(rows, cols);
 
     const game = {
-      id: id,
+      id: idGame,
       rows: rows,
       cols: cols,
       board: [],
@@ -22,7 +20,7 @@ exports.createLobby = () => {
       status: "waiting",
     };
 
-    games.set(id, game);
+    games.set(idGame, game);
     return game;
   };
 
@@ -49,8 +47,7 @@ exports.createLobby = () => {
     const game = games.get(gameId);
     if (!game) return getGames();
 
-    // Se o jogador não estiver na lista de jogadores, retorna os jogos
-    if (!game.players.some((player) => player.id === userId)) return getGames();
+    const previousOwnerId = game.player1.id;
 
     // Remove o jogador do lobby
     game.players = game.players.filter((player) => player.id !== userId);
@@ -59,7 +56,7 @@ exports.createLobby = () => {
     if (game.players.length === 0) {
       console.log(`Deleting lobby ${gameId} because it has no more players.`);
       games.delete(gameId);
-      return getGames();
+      return { games: getGames(), previousOwnerId };
     }
 
     // Se o jogador que saiu era o líder (player1), transfere a liderança
@@ -71,7 +68,7 @@ exports.createLobby = () => {
       );
     }
 
-    return getGames();
+    return { games: getGames(), previousOwnerId, game };
   };
 
   const leaveAllLobbies = (userId) => {

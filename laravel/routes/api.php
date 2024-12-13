@@ -42,6 +42,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/games/{game}', [GameController::class, 'show'])->can("show", "game");
     Route::post('/games', [GameController::class, 'store'])->can("create", Game::class);
     Route::patch('/games/{game}', [GameController::class, 'updateGameStatus'])->can("update", "game");
+    Route::patch('/games/{game}/owner', [GameController::class, 'updateOwner'])->can("update", "game");
 
     // ----- Transactions -----
     Route::get('/transactions', [TransactionController::class, 'index'])->can("viewAny", Transaction::class);

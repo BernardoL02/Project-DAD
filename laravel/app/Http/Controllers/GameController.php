@@ -38,6 +38,8 @@ class GameController extends Controller
      */
     public function store(StoreGameRequest $request)
     {
+        Log::info('Received data:', $request->all());
+
         $gameData = $request->validated();
         $gameData['created_user_id'] = $request->user()->id;
 
@@ -127,7 +129,7 @@ class GameController extends Controller
                 $query->where('user_id', $user->id);
             })
             ->where('type', 'M')
-            ->orderBy('began_at', 'asc')
+            ->orderBy('began_at', 'desc')
             ->get();
 
         $multiPlayerGames->each(function ($game) use ($user) {
@@ -140,6 +142,9 @@ class GameController extends Controller
 
 public function updateGameStatus(UpdateGameRequest $request, Game $game)
 {
+    Log::info('User ID:', ['id' => auth()->id()]);
+    Log::info('Game ID:', ['id' => $game->id]);
+    
     // Validate the request data
     $gameData = $request->validate([
         'status' => 'required|string|in:E,I',
@@ -211,6 +216,23 @@ public function updateGameStatus(UpdateGameRequest $request, Game $game)
     // Return the updated game as a resource
     return new GameResource($game);
 }
+
+public function updateOwner(Request $request, Game $game)
+{
+    $validated = $request->validate([
+        'new_owner_id' => 'required|exists:users,id',
+    ]);
+
+    // Atualizar o `created_user_id` com o novo dono
+    $game->created_user_id = $validated['new_owner_id'];
+    $game->save();
+
+    return response()->json([
+        'message' => 'Game owner updated successfully.',
+        'game' => new GameResource($game),
+    ]);
+}
+
 
 
 }

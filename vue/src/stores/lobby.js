@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useErrorStore } from '@/stores/error'
 import { useAuthStore } from '@/stores/auth'
+import { useGameStore } from '@/stores/game'
 import { useRouter } from 'vue-router'
 import { useGameMultiplayerStore } from '@/stores/gameMultiplayer'
 import { useNotificationStore } from '@/stores/notification'
@@ -15,6 +16,7 @@ export const useLobbyStore = defineStore('lobby', () => {
   const router = useRouter()
   const games = ref([])
   const notificationStore = useNotificationStore()
+  const storeGame = useGameStore()
 
   const totalGames = computed(() => games.value.length)
 
@@ -59,14 +61,22 @@ export const useLobbyStore = defineStore('lobby', () => {
   })
 
   // add a game to the lobby
-  const CreateLobby = (rows, cols) => {
+  const CreateLobby = async (rows, cols, board_id) => {
     storeError.resetMessages()
-    socket.emit('createLobby', rows, cols, (response) => {
-      if (webSocketServerResponseHasError(response)) {
-        return
-      }
-      console.log('Game created:', response)
-    })
+
+    try {
+      const idGame = await storeGame.createMultiPlayer(board_id)
+
+      socket.emit('createLobby', idGame, rows, cols, (response) => {
+        if (webSocketServerResponseHasError(response)) {
+          return
+        }
+        console.log('Lobby created successfully:', response)
+      })
+    } catch (error) {
+      storeError.setErrorMessages('Failed to create multiplayer game.')
+      console.error('Error creating lobby:', error)
+    }
   }
 
   // join a game of the lobby
@@ -98,7 +108,19 @@ export const useLobbyStore = defineStore('lobby', () => {
       if (webSocketServerResponseHasError(response)) {
         return
       }
+
       console.log('Left lobby:', response)
+
+      // Verifica se o usuário atual era o dono do lobby (player1) antes de sair
+      const currentUser = storeAuth.user
+      const wasLobbyOwner = response.previousOwnerId === currentUser.id
+
+      // Se a liderança mudou, atualiza o dono do jogo na base de dados
+      if (wasLobbyOwner && response.player1.id !== currentUser.id) {
+        console.log(`Lobby owner changed from ${currentUser.id} to ${response.player1.id}`)
+        storeGame.sendPostUpdateOwner(response.id, response.player1.id)
+      }
+
       fetchGames()
     })
   }
@@ -247,6 +269,12 @@ export const useLobbyStore = defineStore('lobby', () => {
   // Função para atualizar lobbies expirados
   const refreshExpiredLobbies = () => {
     if (expiredLobbies.value.length > 0) {
+      expiredLobbies.value.forEach(async (game) => {
+        if (game.status === 'waiting') {
+          console.log(`Atualizando status do lobby expirado com ID: ${game.id}`)
+          await storeGame.sendPostOnExit(game.id)
+        }
+      })
       fetchGames()
     }
   }

@@ -18,8 +18,8 @@ const createGameWithBoard = async () => {
         alert('Please select a board before creating a game.')
         return
     }
-    const { board_cols, board_rows } = selectedBoard.value
-    await storeLobby.CreateLobby(board_rows, board_cols)
+    const { board_cols, board_rows, id } = selectedBoard.value
+    await storeLobby.CreateLobby(board_rows, board_cols, id)
 }
 
 
