@@ -13,6 +13,7 @@ use App\Http\Requests\UpdateGameRequest;
 use App\Http\Resources\MultiPlayerGameResource;
 use App\Http\Resources\MyMultiPlayerGameResource;
 use App\Http\Resources\ShowMultiplayerGameResource;
+use App\Models\MultiplayerGame;
 
 class GameController extends Controller
 {
@@ -138,96 +139,151 @@ class GameController extends Controller
         return MyMultiPlayerGameResource::collection($multiPlayerGames);
     }
 
-public function updateGameStatus(UpdateGameRequest $request, Game $game)
-{
-    // Validate the request data
-    $gameData = $request->validate([
-        'status' => 'required|string|in:E,I',
-        'ended_at' => 'nullable|date|after_or_equal:began_at',
-        'total_time' => 'nullable|numeric|min:0',
-        'total_turns_winner' => 'nullable|integer|min:0',
-    ]);
+    public function updateGameStatus(UpdateGameRequest $request, Game $game)
+    {
+        // Validate the request data
+        $gameData = $request->validate([
+            'status' => 'required|string|in:PL,E,I',
+            'began_at' => 'nullable|date',
+            'ended_at' => 'nullable|date|after_or_equal:began_at',
+            'winner_user_id' => 'nullable|numeric',
+            'total_time' => 'nullable|numeric|min:0',
+            'total_turns_winner' => 'nullable|integer|min:0',
+        ]);
 
-    // Retrieve and merge any custom data
-    $customData = json_decode($game->custom, true) ?? [];
+        // Retrieve and merge any custom data
+        $customData = json_decode($game->custom, true) ?? [];
 
-    if ($request->has('custom')) {
-        $newCustomData = json_decode($request->input('custom'), true);
-        $customData = array_merge($customData, $newCustomData);
-    }
-
-    // Prepare the validated data with merged custom data
-    $validated = $request->validated();
-    $validated['custom'] = json_encode($customData);
-
-    // Check if the game type is 'S' and if status is 'E' (Ended)
-    if ($game->type === 'S' && $gameData['status'] === 'E') {
-        $user = $request->user();
-
-        // Find the best completed game of the user on the same board
-        $bestGame = Game::where('created_user_id', $user->id)
-            ->where('status', 'E')
-            ->where('type', 'S')
-            ->where('board_id', $game->board_id)
-            ->orderBy('total_time')
-            ->first();
-
-        // If a previous best game exists and this game has a better time
-        if ($bestGame && isset($gameData['total_time']) && $gameData['total_time'] < $bestGame->total_time) {
-            $board = Board::find($game->board_id);
-            $boardSize = $board ? "{$board->board_cols}x{$board->board_rows}" : "unknown size";
-
-            $difficulty = $request->has('custom') ? "Hard" : "Normal";
-
-            // Create a transaction for awarding brain coins
-            $transactionData = [
-                'type' => 'B',
-                'user_id' => $user->id,
-                'brain_coins' => 5,
-                'game_id' => null,
-                'transaction_datetime' => now(),
-                'custom' => json_encode([
-                    'notificationRead' => 1,
-                    'msg' => "You received 5 brain coins for beating your previous record on a $boardSize board in $difficulty mode.",
-                ]),
-            ];
-
-            // Create the transaction and update the user's brain coin balance
-            $transaction = Transaction::create($transactionData);
-
-            $user->brain_coins_balance += 5;
-            $user->save();
+        if ($request->has('custom')) {
+            $newCustomData = json_decode($request->input('custom'), true);
+            $customData = array_merge($customData, $newCustomData);
         }
+
+        // Prepare the validated data with merged custom data
+        $validated = $request->validated();
+        $validated['custom'] = json_encode($customData);
+
+        // Check if the game type is 'S' and if status is 'E' (Ended)
+        if ($game->type === 'S' && $gameData['status'] === 'E') {
+            $user = $request->user();
+
+            // Find the best completed game of the user on the same board
+            $bestGame = Game::where('created_user_id', $user->id)
+                ->where('status', 'E')
+                ->where('type', 'S')
+                ->where('board_id', $game->board_id)
+                ->orderBy('total_time')
+                ->first();
+
+            // If a previous best game exists and this game has a better time
+            if ($bestGame && isset($gameData['total_time']) && $gameData['total_time'] < $bestGame->total_time) {
+                $board = Board::find($game->board_id);
+                $boardSize = $board ? "{$board->board_cols}x{$board->board_rows}" : "unknown size";
+
+                $difficulty = $request->has('custom') ? "Hard" : "Normal";
+
+                // Create a transaction for awarding brain coins
+                $transactionData = [
+                    'type' => 'B',
+                    'user_id' => $user->id,
+                    'brain_coins' => 5,
+                    'game_id' => null,
+                    'transaction_datetime' => now(),
+                    'custom' => json_encode([
+                        'notificationRead' => 1,
+                        'msg' => "You received 5 brain coins for beating your previous record on a $boardSize board in $difficulty mode.",
+                    ]),
+                ];
+
+                // Create the transaction and update the user's brain coin balance
+                $transaction = Transaction::create($transactionData);
+
+                $user->brain_coins_balance += 5;
+                $user->save();
+            }
+        }
+
+        // Update the game with the validated data
+        $game->update($validated);
+
+        // If a transaction was created, associate it with the current game
+        if (isset($transaction)) {
+            $transaction->update(['game_id' => $game->id]);
+        }
+
+        // Return the updated game as a resource
+        return new GameResource($game);
     }
 
-    // Update the game with the validated data
-    $game->update($validated);
+    public function updateOwner(Request $request, Game $game)
+    {
+        $validated = $request->validate([
+            'new_owner_id' => 'required|exists:users,id',
+        ]);
 
-    // If a transaction was created, associate it with the current game
-    if (isset($transaction)) {
-        $transaction->update(['game_id' => $game->id]);
+        // Atualizar o `created_user_id` com o novo dono
+        $game->created_user_id = $validated['new_owner_id'];
+        $game->save();
+
+        return response()->json([
+            'message' => 'Game owner updated successfully.',
+            'game' => new GameResource($game),
+        ]);
     }
 
-    // Return the updated game as a resource
-    return new GameResource($game);
-}
 
-public function updateOwner(Request $request, Game $game)
-{
-    $validated = $request->validate([
-        'new_owner_id' => 'required|exists:users,id',
-    ]);
+    public function storePlayers($gameId, Request $request)
+    {
+        $request->validate([
+            'user_ids' => 'required|array',
+            'user_ids.*' => 'required|integer|exists:users,id',
+        ]);
 
-    // Atualizar o `created_user_id` com o novo dono
-    $game->created_user_id = $validated['new_owner_id'];
-    $game->save();
+        $userIds = $request->input('user_ids');
 
-    return response()->json([
-        'message' => 'Game owner updated successfully.',
-        'game' => new GameResource($game),
-    ]);
-}
+        $entries = [];
 
+        foreach ($userIds as $userId) {
+            $entries[] = [
+                'game_id' => $gameId,
+                'user_id' => $userId,
+            ];
+        }
 
+        MultiplayerGame::insert($entries);
+
+        return response()->json([
+            'message' => 'Players stored successfully.',
+            'game_id' => $gameId,
+            'user_ids' => $userIds,
+        ], 201);
+    }
+
+    public function updatePlayers($gameId, Request $request)
+    {
+        $request->validate([
+            'updates' => 'required|array',
+            'updates.*.id' => 'required|integer|exists:multiplayer_games_played,id',
+            'updates.*.player_won' => 'required|boolean',
+            'updates.*.pairs_discovered' => 'required|integer|min:0',
+        ]);
+
+        $updates = $request->input('updates');
+
+        foreach ($updates as $update) {
+            MultiplayerGame::where('user_id', $update['id'])
+                ->where('game_id', $gameId)
+                ->update([
+                    'player_won' => $update['player_won'] ? 1 : 0,
+                    'pairs_discovered' => $update['pairs_discovered'],
+                ]);
+        }
+
+        return response()->json([
+            'message' => 'Players updated successfully.',
+            'game_id' => $gameId,
+            'updates' => $updates,
+        ]);
+    }
 
 }

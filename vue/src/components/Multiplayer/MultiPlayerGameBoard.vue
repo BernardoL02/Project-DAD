@@ -275,15 +275,19 @@ watch(gameData, (newValue) => {
         <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div class="bg-white p-6 rounded shadow-md w-96">
                 <h2 class="text-xl font-bold mb-4">Confirmation</h2>
-                <p class="mb-4">
+                <p class="mb-6">
                     Are you sure you want to leave the game? <br />
                     Your progress will be lost.
                 </p>
-                <div class="flex justify-end space-x-4">
-                    <button class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400" @click="cancelExit">
+                <div class="flex justify-end gap-4">
+                    <button
+                        class="px-4 py-2 rounded bg-gray-200 text-gray-700 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
+                        @click="cancelExit">
                         Cancel
                     </button>
-                    <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" @click="confirmExit">
+                    <button
+                        class="px-4 py-2 rounded bg-red-500 text-white hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
+                        @click="confirmExit">
                         Leave
                     </button>
                 </div>
@@ -352,19 +356,6 @@ watch(gameData, (newValue) => {
 
 .relative {
     position: relative;
-}
-
-button {
-    width: 1.5rem;
-    height: 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s ease;
-}
-
-button:hover {
-    transform: scale(1.1);
 }
 
 .zoom-animation {

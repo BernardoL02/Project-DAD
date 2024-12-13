@@ -333,7 +333,6 @@ io.on("connection", (socket) => {
       `User ${socket.data.user.nickname} (${socket.data.user.id}) is leaving game ${gameId}`
     );
 
-    // Obtém o jogo atual para armazenar os socket IDs dos jogadores
     const currentGame = lobby.getGame(gameId);
 
     if (!currentGame) {
@@ -343,39 +342,60 @@ io.on("connection", (socket) => {
 
     // Armazena os socket IDs dos jogadores antes de marcar o jogador como inativo
     const playersSocketIds = currentGame.players.map((p) => p.socketId);
-    console.log(
-      "Players' socket IDs before marking as inactive:",
-      playersSocketIds
-    );
 
     // Marca o jogador como inativo
-    const game = lobby.playerInativo(gameId, socket.data.user.id);
+    const updatedGame = lobby.playerInativo(gameId, socket.data.user.id);
 
-    if (!game) {
+    if (!updatedGame) {
       console.log(
         `Game ${gameId} has been deleted because all players are inactive.`
       );
 
-      // Notifica todos os jogadores que o jogo foi cancelado
+      // Notifica os jogadores que o jogo foi cancelado
       io.to(playersSocketIds).emit("gameCancelled", {
         message: "The game was cancelled because all players are inactive.",
+        gameId: gameId,
       });
 
       io.to("lobby").emit("lobbyChanged", lobby.getGames());
-
       return callback({
         success: true,
         message: "Game deleted as all players are inactive.",
       });
     }
 
-    // Notifica os jogadores restantes que o jogador ficou inativo
-    console.log(
-      `User ${socket.data.user.nickname} is now inactive in game ${gameId}`
-    );
-    io.to(game.players.map((p) => p.socketId)).emit("playerLeft", {
+    // Verifica se restou apenas um jogador ativo
+    const activePlayers = updatedGame.players.filter((p) => !p.inactive);
+    if (activePlayers.length === 1) {
+      console.log(`Only one player left in game ${gameId}. Ending the game.`);
+
+      // Define o status do jogo como encerrado
+      updatedGame.status = "ended";
+
+      // Notifica o último jogador que ele venceu por desistência do adversário
+      io.to(activePlayers[0].socketId).emit("gameEnded", {
+        message: "Your opponent left the game. You win by default!",
+        totalMoves: updatedGame.totalMoves,
+        updatedGame: updatedGame,
+        pairsFoundByPlayers: updatedGame.players.map((player) => ({
+          nickname: player.nickname,
+          pairsFound: player.pairsFound || 0,
+        })),
+        gameId: gameId,
+      });
+
+      lobby.deleteGame(gameId);
+      io.to("lobby").emit("lobbyChanged", lobby.getGames());
+      return callback({
+        success: true,
+        message: "Game ended as the opponent left.",
+      });
+    }
+
+    // Notifica os jogadores restantes que um jogador saiu
+    io.to(updatedGame.players.map((p) => p.socketId)).emit("playerLeft", {
       message: `${socket.data.user.nickname} is now inactive.`,
-      updatedGame: game,
+      updatedGame,
     });
 
     callback({ success: true, message: "You left the game successfully!" });

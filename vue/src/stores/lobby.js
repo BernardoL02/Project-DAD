@@ -301,6 +301,8 @@ export const useLobbyStore = defineStore('lobby', () => {
     socket.emit('startGame', gameId, (game) => {
       if (game) {
         storeGameMultiplayer.addActiveGame(game) // Adiciona o jogo à lista de jogos ativos
+        storeGame.sendPostOnInPorgress(game.id)
+        storeGame.storePlayers(game)
         router.push({ path: '/multiplayer/game', query: { gameId: game.id } }) // Redireciona para a rota com o gameId
       } else {
         storeError.setErrorMessages('Failed to start the game.')
@@ -312,12 +314,22 @@ export const useLobbyStore = defineStore('lobby', () => {
     // Filtra os lobbies ativos, exceto o lobby atual
     const lobbiesToLeave = games.value.filter((game) => game.id !== currentLobbyId)
 
-    // Sai de cada lobby que não é o lobby atual
     for (const lobby of lobbiesToLeave) {
       await new Promise((resolve) => {
-        socket.emit('leaveLobby', lobby.id, (response) => {
+        socket.emit('leaveLobby', lobby.id, async (response) => {
           if (!response.errorCode) {
             console.log(`Left lobby with ID: ${lobby.id}`)
+
+            // Verifica se o usuário era o dono do lobby
+            const currentUser = storeAuth.user
+            if (response.previousOwnerId === currentUser.id) {
+              try {
+                await storeGame.sendPostOnExit(lobby.id)
+                console.log(`Lobby ${lobby.id} status updated to 'I' via API`)
+              } catch (error) {
+                console.error(`Error updating lobby ${lobby.id} status via API:`, error)
+              }
+            }
           } else {
             console.error(`Error leaving lobby ${lobby.id}:`, response.errorMessage)
           }

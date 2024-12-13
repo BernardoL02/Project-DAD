@@ -1,76 +1,16 @@
-[2024-12-13 14:03:32] local.INFO: Received data: {"type":"S","status":"PL","began_at":"2024-12-13 14:03:31","board_id":1} 
-[2024-12-13 14:09:55] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:14:25] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:16:38] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:17:35] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:19:47] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:23:40] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:25:42] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:25:53] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:25:53] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:25:53] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:25:54] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:25:54] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:25:54] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:25:54] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:29:38] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:29:38] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:46:11] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:52:23] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:52:23] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:53:43] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:53:44] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:57:17] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:58:27] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 14:58:52] local.INFO: Received data: {"type":"M","status":"PE","board_id":2} 
-[2024-12-13 15:01:03] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:01:05] local.INFO: Received data: {"type":"M","status":"PE","board_id":2} 
-[2024-12-13 15:13:55] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:13:56] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:14:12] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:17:10] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:17:12] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:20:21] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:20:23] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:24:25] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:24:26] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:29:08] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:29:09] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:32:08] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:32:09] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:34:47] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:34:51] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:34:54] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:39:50] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:39:52] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:46:36] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:46:36] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:50:17] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:50:46] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:51:56] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 15:59:33] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:00:04] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:00:11] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:03:35] local.INFO: User ID: {"id":8} 
-[2024-12-13 16:03:35] local.INFO: Game ID: {"id":24507} 
-[2024-12-13 16:07:21] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:07:21] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:08:21] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:08:21] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:08:56] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:10:09] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:10:11] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:12:34] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:12:34] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:13:53] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:13:53] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:15:53] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:15:53] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:16:28] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:16:28] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:20:36] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:20:36] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:25:13] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:25:13] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:26:08] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
-[2024-12-13 16:28:52] local.INFO: Received data: {"type":"M","status":"PE","board_id":1} 
+[2024-12-13 19:51:41] local.INFO: Attempting to update with: {"id":8,"game_id":"24608","player_won":1,"pairs_discovered":5} 
+[2024-12-13 19:51:41] local.WARNING: No player found for update {"update":{"id":8,"player_won":true,"pairs_discovered":5}} 
+[2024-12-13 19:51:41] local.INFO: Attempting to update with: {"id":7,"game_id":"24608","player_won":0,"pairs_discovered":1} 
+[2024-12-13 19:51:41] local.WARNING: No player found for update {"update":{"id":7,"player_won":false,"pairs_discovered":1}} 
+[2024-12-13 19:51:41] local.INFO: Attempting to update with: {"id":8,"game_id":"24608","player_won":1,"pairs_discovered":5} 
+[2024-12-13 19:51:41] local.WARNING: No player found for update {"update":{"id":8,"player_won":true,"pairs_discovered":5}} 
+[2024-12-13 19:51:41] local.INFO: Attempting to update with: {"id":7,"game_id":"24608","player_won":0,"pairs_discovered":1} 
+[2024-12-13 19:51:41] local.WARNING: No player found for update {"update":{"id":7,"player_won":false,"pairs_discovered":1}} 
+[2024-12-13 19:54:17] local.INFO: Attempting to update with: {"id":8,"game_id":24609,"player_won":1,"pairs_discovered":4} 
+[2024-12-13 19:54:17] local.WARNING: No player found for update {"update":{"id":8,"player_won":true,"pairs_discovered":4}} 
+[2024-12-13 19:54:17] local.INFO: Attempting to update with: {"id":7,"game_id":24609,"player_won":0,"pairs_discovered":2} 
+[2024-12-13 19:54:17] local.WARNING: No player found for update {"update":{"id":7,"player_won":false,"pairs_discovered":2}} 
+[2024-12-13 19:54:17] local.INFO: Attempting to update with: {"id":8,"game_id":24609,"player_won":1,"pairs_discovered":4} 
+[2024-12-13 19:54:17] local.WARNING: No player found for update {"update":{"id":8,"player_won":true,"pairs_discovered":4}} 
+[2024-12-13 19:54:17] local.INFO: Attempting to update with: {"id":7,"game_id":24609,"player_won":0,"pairs_discovered":2} 
+[2024-12-13 19:54:17] local.WARNING: No player found for update {"update":{"id":7,"player_won":false,"pairs_discovered":2}} 

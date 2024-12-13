@@ -6,6 +6,7 @@ import { useRouter } from 'vue-router'
 import { useNotificationStore } from '@/stores/notification'
 import { useErrorStore } from '@/stores/error'
 import { useLobbyStore } from '@/stores/lobby'
+import { useGameStore } from '@/stores/game'
 
 export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   const activeGames = ref([])
@@ -16,6 +17,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   const notificationStore = useNotificationStore()
   const storeError = useErrorStore()
   const storeLobby = useLobbyStore()
+  const storeGame = useGameStore()
 
   const timer = ref(0)
   const startTime = ref(0)
@@ -60,8 +62,6 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
 
   // Recebe evento de início do jogo e redireciona todos os jogadores
   socket.on('gameStarted', async (game) => {
-    console.log('Received gameStarted event:', game) // Debugging
-
     await storeLobby.leaveOtherLobbies(game.id)
 
     addActiveGame(game)
@@ -141,7 +141,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   }
 
   // Recebe evento de encerramento do jogo
-  socket.on('gameEnded', ({ message, totalMoves, pairsFoundByPlayers }) => {
+  socket.on('gameEnded', ({ message, totalMoves, winner, updatedGame, pairsFoundByPlayers }) => {
     gameOver.value = true // Define que o jogo acabou
     const currentPlayer = pairsFoundByPlayers.find(
       (player) => player.nickname === storeAuth.user.nickname
@@ -159,6 +159,10 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
       )
     }
 
+    console.log('Testttttttttttttttttttttt: ', updatedGame)
+
+    storeGame.sendPostOnGameEndMuiltiplayer(updatedGame, winner)
+    storeGame.sendPostOnGameEndMuiltiplayerPlayers(updatedGame, winner)
     stopTimer()
     router.push('/multiplayer/lobbys')
   })
@@ -177,8 +181,18 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     })
   }
 
-  socket.on('gameCancelled', ({ message, updatedGame }) => {
+  socket.on('gameCancelled', ({ message, gameId }) => {
     gameOver.value = true
+    console.log(`Game ${gameId} has been cancelled.`)
+
+    // Obtém o jogo ativo pelo ID
+    const game = getActiveGameById(gameId)
+
+    // Verifica se o usuário atual é o dono do lobby
+    if (game && game.player1.id === storeAuth.user.id) {
+      storeGame.sendPostOnExit(gameId)
+    }
+
     storeError.setErrorMessages(message, 'Jogo Cancelado')
     router.push('/multiplayer/lobbys')
   })
