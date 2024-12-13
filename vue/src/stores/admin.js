@@ -382,6 +382,7 @@ export const useAdminStore = defineStore('admin', () => {
 
   return {
     users,
+    games,
     loading,
     error,
     register,

@@ -177,6 +177,8 @@ public function updateGameStatus(UpdateGameRequest $request, Game $game)
             $board = Board::find($game->board_id);
             $boardSize = $board ? "{$board->board_cols}x{$board->board_rows}" : "unknown size";
 
+            $difficulty = $request->has('custom') ? "Hard" : "Normal";
+
             // Create a transaction for awarding brain coins
             $transactionData = [
                 'type' => 'B',
@@ -186,7 +188,7 @@ public function updateGameStatus(UpdateGameRequest $request, Game $game)
                 'transaction_datetime' => now(),
                 'custom' => json_encode([
                     'notificationRead' => 1,
-                    'msg' => "You received 5 brain coins for beating your previous record on a $boardSize board.",
+                    'msg' => "You received 5 brain coins for beating your previous record on a $boardSize board in $difficulty mode.",
                 ]),
             ];
 

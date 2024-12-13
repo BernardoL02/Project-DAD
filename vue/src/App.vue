@@ -18,8 +18,8 @@
           <div class="flex items-center lg:hidden">
             <button @click="toggleMenu"
               class="text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
-              <span v-if="isMenuOpen">&#10005;</span>
-              <span v-else>&#9776;</span>
+              <span v-if="isMenuOpen" class="text-xl">&#10005;</span>
+              <span v-else class="text-xl">&#9776;</span>
             </button>
           </div>
 
@@ -248,35 +248,66 @@
     </header>
 
     <!-- (mostrado quando o hamburger é clicado) -->
-    <div v-if="isMenuOpen" class="lg:hidden bg-gray-100">
-      <div class="space-y-4 p-4">
-        <RouterLink to="/" class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
-          Home
-        </RouterLink>
+    <div>
+      <div v-if="isMenuOpen" class="lg:hidden bg-gray-100">
+        <div class="space-y-4 p-4">
+          <RouterLink to="/" class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
+            Home
+          </RouterLink>
 
-        <RouterLink to="/singlePlayer"
-          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
-          Single-Player
-        </RouterLink>
+          <RouterLink v-if="!authStore.user || authStore.isPlayer" to="/singleplayer"
+            class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
+            Single-Player
+          </RouterLink>
 
-        <RouterLink to="/multiplayer"
-          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
-          Multi-Player
-        </RouterLink>
+          <RouterLink v-if="authStore.isPlayer" to="/multiplayer"
+            class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
+            Multi-Player
+          </RouterLink>
 
-        <RouterLink class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
-          Score Board
-        </RouterLink>
+          <RouterLink v-if="authStore.isPlayer" :to="{ name: 'store' }"
+            class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
+            Store
+          </RouterLink>
 
-        <RouterLink to="/ManageUsers"
-          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
-          Manage Users
-        </RouterLink>
+          <RouterLink v-if="authStore.isAdmin" :to="{ name: 'ManageUsers' }"
+            class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
+            Manage Users
+          </RouterLink>
 
-        <RouterLink to="/playerProfile"
-          class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
-          Profile
-        </RouterLink>
+          <RouterLink v-if="authStore.isAdmin" :to="{ name: 'adminTransactions' }"
+            class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
+            All Transactions
+          </RouterLink>
+
+          <RouterLink v-if="authStore.isAdmin" :to="{ name: 'adminGames' }"
+            class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
+            All Games
+          </RouterLink>
+
+          <RouterLink v-if="authStore.isAdmin" :to="{ name: 'statistics' }"
+            class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
+            Statistics
+          </RouterLink>
+
+          <button @click="toggleScoreBoard"
+            class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
+            Score Board
+            <label v-if="isScoreBoardExpanded">↑</label>
+            <label v-else>↓</label>
+          </button>
+
+          <div v-if="isScoreBoardExpanded" class="pl-4 space-y-2">
+            <RouterLink to="/scoreBoard/singleplayer"
+              class="block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
+              Single Player
+            </RouterLink>
+            <RouterLink to="/scoreBoard/multiPlayer"
+              class=" block text-gray-900 hover:text-sky-600 px-3 py-2 rounded-md text-sm font-medium">
+              Multi Player
+            </RouterLink>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -296,12 +327,6 @@ const authStore = useAuthStore()
 const route = useRoute()
 const router = useRouter()
 
-const isMenuOpen = ref(false)
-
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value
-}
-
 const handleLogout = async () => {
   const success = await authStore.logout()
   if (success) {
@@ -315,4 +340,16 @@ const handleDeleteNotificaitonClick = async (notificationId) => {
     authStore.getNotifications()
   }
 }
+
+const isScoreBoardExpanded = ref(false);
+const isMenuOpen = ref(false)
+
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value
+}
+
+const toggleScoreBoard = () => {
+  isScoreBoardExpanded.value = !isScoreBoardExpanded.value;
+};
+
 </script>
