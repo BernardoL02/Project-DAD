@@ -207,27 +207,23 @@ export const useStatisticsStore = defineStore('statistics', () => {
       return userCounts
     }
 
-    // Get the current year
     const currentYear = new Date().getFullYear()
 
     users.value.forEach((user) => {
-      if (!user.RegisteredAt) return // Skip if registration date is missing
+      if (!user.RegisteredAt) return
 
       const registeredAt = new Date(user.RegisteredAt)
 
-      // Check if the registration year matches the current year
       if (registeredAt.getFullYear() !== currentYear) return
 
       const monthName = registeredAt.toLocaleString('default', { month: 'short' })
 
-      // Count users per month
       if (!userCounts[monthName]) {
         userCounts[monthName] = 0
       }
       userCounts[monthName]++
     })
 
-    // Fill in missing months with 0
     const allMonths = [
       'Jan',
       'Feb',
@@ -292,6 +288,10 @@ export const useStatisticsStore = defineStore('statistics', () => {
     return purchaseCounts
   })
 
+  const filteredGamesUser = computed(() => {
+    let filtered = [...(gamesUser.value || []), ...(gamesMulty.value || [])]
+    return filtered
+  })
   const filteredGames = computed(() => {
     let filtered = games.value
     return filtered
@@ -342,8 +342,9 @@ export const useStatisticsStore = defineStore('statistics', () => {
 
   const monthlyGameCountsUser = computed(() => {
     const gameCounts = {}
+    const filtered = [...(gamesUser.value || []), ...(gamesMulty.value || [])]
 
-    gamesUser.value.forEach((game) => {
+    filtered.forEach((game) => {
       const beganAt = new Date(game.began_at)
       const year = beganAt.getFullYear()
 
@@ -398,7 +399,7 @@ export const useStatisticsStore = defineStore('statistics', () => {
           paymentMethod: transaction.payment_type || '-',
           reference: transaction.payment_reference || '-',
           coins: transaction.brain_coins,
-          pack // Mapping the value to the pack (1-6)
+          pack
         }
       })
     } catch (err) {
@@ -419,7 +420,7 @@ export const useStatisticsStore = defineStore('statistics', () => {
 
     try {
       const responseUser = await axios.get('users/me')
-      user.value = responseUser.data.data // Set the user data from the response
+      user.value = responseUser.data.data
     } catch (err) {
       error.value = 'Failed to load user profile. Please try again.'
       console.error('Error fetching profile:', err)
@@ -461,6 +462,7 @@ export const useStatisticsStore = defineStore('statistics', () => {
     user,
     getMultiPlayerGames,
     getSinglePlayerGames,
-    totalGamesUser
+    totalGamesUser,
+    filteredGamesUser
   }
 })
