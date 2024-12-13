@@ -34,6 +34,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::patch('/admin/unblock/{user}', [AdministratorController::class, 'unblockUser'])->can('unblock', 'user');
     Route::delete('/admin/delete/{user}', [AdministratorController::class, 'destroy'])->can('delete', 'user');
     Route::post('/admin/transactions', [AdministratorController::class, 'viewTransactions'])->can("viewAll", Transaction::class);
+    Route::get('/admin/transactions', [AdministratorController::class, 'viewTransactionsStatistics'])->can("viewAll", Transaction::class);
 
     // ----- Games -----
     Route::get('/games', [GameController::class, 'viewAll'])->can('viewAny', Game::class);
@@ -43,7 +44,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/games/{game}', [GameController::class, 'show'])->can("show", "game");
     Route::post('/games', [GameController::class, 'store'])->can("create", Game::class);
     Route::patch('/games/{game}', [GameController::class, 'updateGameStatus'])->can("update", "game");
-    Route::patch('/games/{game}/owner', [GameController::class, 'updateOwner'])->can("update", "game");
+    Route::patch('/games/{game}/owner', [GameController::class, 'updateOwner']);
+    Route::post('/games/{game}', [GameController::class, 'storePlayers']);
+    Route::patch('/games/{game}/players', [GameController::class, 'updatePlayers']);
 
     // ----- Transactions -----
     Route::get('/transactions', [TransactionController::class, 'index'])->can("viewAny", Transaction::class);

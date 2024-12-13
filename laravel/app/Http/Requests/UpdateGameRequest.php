@@ -22,8 +22,10 @@ class UpdateGameRequest extends FormRequest
     public function rules()
     {
         return [
-            'status' => 'nullable|string|in:E,I',
+            'status' => 'nullable|string|in:PL,E,I',
+            'began_at' => 'nullable|date', 
             'ended_at' => 'nullable|date|after_or_equal:began_at',
+            'winner_user_id' => 'nullable|numeric',
             'total_time' => 'nullable|numeric|min:0',
             'total_turns_winner' => 'nullable|integer|min:0',
             'custom' => 'nullable|json',

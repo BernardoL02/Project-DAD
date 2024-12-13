@@ -109,4 +109,11 @@ class AdministratorController extends Controller
         ];
     }
 
+
+
+    public function viewTransactionsStatistics(){
+        $transactions = Transaction::with('user')->orderBy('transaction_datetime', 'desc')->get();
+        return response()->json($transactions);
+    }
+
 }

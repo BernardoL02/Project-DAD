@@ -115,6 +115,7 @@ exports.createGameEngine = (lobby) => {
       game.isLocked = true;
       stopTurnTimer(game.id); // Para o timer atual durante a jogada
       game.totalMoves += 1; // Incrementa o contador de jogadas
+      currentPlayer.totalTurns = (currentPlayer.totalTurns || 0) + 1; // Incrementa o totalTurns do jogador atual
 
       const [firstIndex, secondIndex] = game.selectedCards;
 
@@ -141,13 +142,18 @@ exports.createGameEngine = (lobby) => {
         if (game.matchedPairs.length === game.board.length) {
           game.status = "ended";
 
+          // Determina o vencedor
+          const winner = determineWinner(game.players);
+
           io.to(game.players.map((p) => p.socketId)).emit("gameEnded", {
-            message: "Game Over! You completed the game!",
+            message: `Game Over! ${winner.nickname} won the game!`,
             totalMoves: game.totalMoves,
+            winner,
             updatedGame: game,
             pairsFoundByPlayers: game.players.map((player) => ({
               nickname: player.nickname,
               pairsFound: player.pairsFound || 0,
+              totalTurns: player.totalTurns || 0,
             })),
           });
 
@@ -166,6 +172,30 @@ exports.createGameEngine = (lobby) => {
     }
 
     return game;
+  };
+
+  // Função para determinar o vencedor
+  const determineWinner = (players) => {
+    return players.reduce((best, player) => {
+      if (!best) return player;
+
+      // Se o jogador atual encontrou mais pares que o "best", ele se torna o novo vencedor
+      if (player.pairsFound > best.pairsFound) {
+        return player;
+      }
+
+      // Se ambos os jogadores têm o mesmo número de pares encontrados
+      if (player.pairsFound === best.pairsFound) {
+        // Ganha o jogador que tiver menos turnos
+        if (player.totalTurns < best.totalTurns) {
+          return player;
+        }
+
+        // Em caso de empate nos turnos, o "best" permanece vencedor por ter alcançado o empate primeiro
+      }
+
+      return best;
+    }, null);
   };
 
   return {

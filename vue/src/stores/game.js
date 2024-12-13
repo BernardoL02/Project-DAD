@@ -506,6 +506,138 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
+  const sendPostOnInPorgress = async (gameId) => {
+    try {
+      if (!gameId) {
+        console.error('Game ID não está definido.')
+        return
+      }
+      console.log('SendPost', gameId)
+
+      await axios.patch(`/games/${gameId}`, {
+        status: 'PL'
+      })
+    } catch (error) {
+      console.error('Erro ao atualizar status do jogo:', error.response?.data || error.message)
+    }
+  }
+
+  const storePlayers = async (game) => {
+    try {
+      console.log(game)
+
+      // Extrai o gameId
+      const gameId = game.id
+
+      // Extrai os IDs dos jogadores do array 'players'
+      const userIds = game.players.map((player) => player.id)
+
+      // Faz a requisição POST para armazenar os jogadores
+      const response = await axios.post(`/games/${gameId}`, {
+        user_ids: userIds
+      })
+
+      console.log('Players stored successfully:', response.data)
+      return response.data
+    } catch (error) {
+      console.error('Error storing players:', error)
+      storeError.setErrorMessages(error.response?.data?.message || 'Error storing players', 'Error')
+    }
+  }
+
+  // Função para atualizar os resultados dos jogadores
+  const updatePlayers = async (game) => {
+    try {
+      console.log(game)
+      const response = await axios.patch(`/games/${gameId}/players`, {
+        updates
+      })
+
+      return response.data
+    } catch (error) {
+      console.error('Error updating players:', error)
+      storeError.setErrorMessages(
+        error.response?.data?.message || 'Error updating players',
+        'Error'
+      )
+    }
+  }
+
+  const sendPostOnGameEndMuiltiplayer = async (game, winner) => {
+    try {
+      if (!game.id) {
+        console.error('Game ID is not defined.')
+        return
+      }
+
+      // Verifica se startTime está definido
+      if (!game.startTime) {
+        console.error('Game start time is not defined.')
+        return
+      }
+
+      // Calcula o tempo total em segundos
+      const ended = new Date().toISOString().slice(0, 19).replace('T', ' ')
+      const totalTime = Math.floor((Date.now() - game.startTime) / 1000)
+
+      // Prepara os dados para enviar
+      const requestData = {
+        status: 'E',
+        began_at: new Date(game.startTime).toISOString().slice(0, 19).replace('T', ' '),
+        ended_at: ended,
+        winner_user_id: winner.id,
+        total_time: totalTime,
+        total_turns_winner: winner.totalTurns
+      }
+
+      console.log('Request Data:', requestData)
+
+      // Envia os dados para o backend
+      await axios.patch(`/games/${game.id}`, requestData)
+
+      console.log('Game status updated successfully.')
+    } catch (error) {
+      console.error('Error updating game status:', error.response?.data || error.message)
+    }
+  }
+
+  const sendPostOnGameEndMuiltiplayerPlayers = async (game, winner) => {
+    try {
+      if (!game.id) {
+        console.error('Game ID is not defined.')
+        return
+      }
+
+      if (!game.players || !Array.isArray(game.players)) {
+        console.error('Players data is not defined or invalid.')
+        return
+      }
+
+      console.log('Game Data:', game)
+
+      // Monta o array de updates para cada jogador
+      const updates = game.players.map((player) => ({
+        id: player.id,
+        player_won: player.id === winner.id,
+        pairs_discovered: player.pairsFound || 0
+      }))
+
+      // Prepara os dados para enviar
+      const requestData = {
+        updates
+      }
+
+      console.log('Request Data:', requestData)
+
+      // Envia os dados para o backend
+      await axios.patch(`/games/${game.id}/players`, requestData)
+
+      console.log('Players data updated successfully.')
+    } catch (error) {
+      console.error('Error updating players data:', error.response?.data || error.message)
+    }
+  }
+
   const sendPostOnGameEnd = async (totalTime, totalTurns, gameId) => {
     try {
       if (!gameId) {
@@ -722,6 +854,11 @@ export const useGameStore = defineStore('game', () => {
     setIsLeaving,
     resetIsLeaving,
     createMultiPlayer,
-    sendPostUpdateOwner
+    sendPostUpdateOwner,
+    sendPostOnInPorgress,
+    storePlayers,
+    updatePlayers,
+    sendPostOnGameEndMuiltiplayer,
+    sendPostOnGameEndMuiltiplayerPlayers
   }
 })

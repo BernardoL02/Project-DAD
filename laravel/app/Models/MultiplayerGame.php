@@ -11,6 +11,8 @@ class MultiplayerGame extends Model
 
     protected $table = 'multiplayer_games_played';
 
+    public $timestamps = false;
+
     protected $fillable = [
         'user_id', 'game_id', 'player_won', 'pairs_discovered', 'custom',
     ];
