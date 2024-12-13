@@ -293,15 +293,38 @@ export const useLobbyStore = defineStore('lobby', () => {
   // Multiplayer Game
   // ------------------------------------------------------
 
-  const startGame = (gameId) => {
+  const startGame = async (gameId) => {
+    storeError.resetMessages()
+
+    await leaveOtherLobbies(gameId)
+
     socket.emit('startGame', gameId, (game) => {
       if (game) {
         storeGameMultiplayer.addActiveGame(game) // Adiciona o jogo à lista de jogos ativos
         router.push({ path: '/multiplayer/game', query: { gameId: game.id } }) // Redireciona para a rota com o gameId
       } else {
-        console.error('Failed to start the game.')
+        storeError.setErrorMessages('Failed to start the game.')
       }
     })
+  }
+
+  const leaveOtherLobbies = async (currentLobbyId) => {
+    // Filtra os lobbies ativos, exceto o lobby atual
+    const lobbiesToLeave = games.value.filter((game) => game.id !== currentLobbyId)
+
+    // Sai de cada lobby que não é o lobby atual
+    for (const lobby of lobbiesToLeave) {
+      await new Promise((resolve) => {
+        socket.emit('leaveLobby', lobby.id, (response) => {
+          if (!response.errorCode) {
+            console.log(`Left lobby with ID: ${lobby.id}`)
+          } else {
+            console.error(`Error leaving lobby ${lobby.id}:`, response.errorMessage)
+          }
+          resolve()
+        })
+      })
+    }
   }
 
   return {
@@ -326,6 +349,7 @@ export const useLobbyStore = defineStore('lobby', () => {
     loadChatsFromSession,
     refreshExpiredLobbies,
     timeRemaining,
-    now
+    now,
+    leaveOtherLobbies
   }
 })

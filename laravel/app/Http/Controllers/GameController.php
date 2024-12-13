@@ -38,8 +38,6 @@ class GameController extends Controller
      */
     public function store(StoreGameRequest $request)
     {
-        Log::info('Received data:', $request->all());
-
         $gameData = $request->validated();
         $gameData['created_user_id'] = $request->user()->id;
 
@@ -142,9 +140,6 @@ class GameController extends Controller
 
 public function updateGameStatus(UpdateGameRequest $request, Game $game)
 {
-    Log::info('User ID:', ['id' => auth()->id()]);
-    Log::info('Game ID:', ['id' => $game->id]);
-    
     // Validate the request data
     $gameData = $request->validate([
         'status' => 'required|string|in:E,I',
