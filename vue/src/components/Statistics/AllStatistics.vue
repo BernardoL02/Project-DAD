@@ -41,6 +41,18 @@
             Players Statistics
           </button>
         </div>
+        <div class="mb-6">
+          <button
+            @click="setSelectedView('myStatistics')"
+            :class="{
+              'bg-green-500 text-white': selectedView === 'myStatistics',
+              'bg-gray-200': selectedView !== 'myStatistics'
+            }"
+            class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300"
+          >
+            My Statistics
+          </button>
+        </div>
       </div>
 
       <div class="flex flex-wrap justify-around">
@@ -130,6 +142,43 @@
             <Bar :data="userRegistrationData" />
           </div>
         </div>
+        <div v-if="selectedView === 'myStatistics'" class="chart-container p-4 w-full">
+          <div class="flex flex-col items-center mb-6">
+            <div class="text-lg font-semibold mb-6 text-center">
+              Total Games Played: <span class="text-blue-600">{{ totalGamesUser }}</span>
+            </div>
+            <div class="flex flex-wrap justify-between space-x-4">
+              <div class="chart-container p-4 w-1/2 mt-10">
+                <button
+                  v-for="year in [2023, 2024]"
+                  :key="year"
+                  @click="changeYear(year)"
+                  :class="{
+                    'bg-yellow-400 text-white': selectedYear === year,
+                    'bg-gray-200': selectedYear !== year
+                  }"
+                  class="px-4 py-2 mx-2 rounded-md font-semibold"
+                >
+                  {{ year }}
+                </button>
+                <Bar :data="chartDataUser" />
+              </div>
+              <div class="chart-container p-4 w-1/3">
+                <div class="text-center font-semibold text-xl mb-2">
+                  Total games for Single-Player vs Multi-Player Games
+                </div>
+                <Doughnut :data="horizontalBarChartDataUser" />
+              </div>
+            </div>
+
+            <div class="chart-container p-1 w-96 h-96">
+              <div class="text-center font-semibold text-xl mb-2">
+                Number of Games for Each Board Size
+              </div>
+              <Pie :data="pieChartData" />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -137,6 +186,7 @@
 
 <script setup>
 import { useStatisticsStore } from '@/stores/statistics'
+import { useAuthStore } from '@/stores/auth'
 import { onMounted, computed, ref } from 'vue'
 import {
   Chart as ChartJS,
@@ -165,19 +215,41 @@ ChartJS.register(
 )
 
 const statisticsStore = useStatisticsStore()
+const authStore = useAuthStore()
 
 const loading = computed(() => statisticsStore.loading)
 const totalGames = computed(() => statisticsStore.totalGames || 0)
+const totalGamesUser = computed(() => statisticsStore.totalGamesUser || 0)
 const selectedYear = computed(() => statisticsStore.selectedYear)
 const transactions = computed(() => statisticsStore.transactions)
 const games = computed(() => statisticsStore.games)
-//const users = computed(() => statisticsStore.users)
+const totalMultiPlayerGames = computed(() => statisticsStore.totalMultiPlayerGames)
+const totalSinglePlayerGames = computed(() => statisticsStore.totalSinglePlayerGames)
+
 const selectedView = ref('game')
 
 const monthlyGameCounts = computed(() => statisticsStore.monthlyGameCounts)
+const monthlyGameCountsUser = computed(() => statisticsStore.monthlyGameCountsUser)
 
 const chartData = computed(() => {
   const gameCounts = monthlyGameCounts.value
+
+  const months = Object.keys(gameCounts)
+  const counts = Object.values(gameCounts)
+
+  return {
+    labels: months,
+    datasets: [
+      {
+        label: 'Games Played Each Month',
+        data: counts,
+        backgroundColor: '#fea112'
+      }
+    ]
+  }
+})
+const chartDataUser = computed(() => {
+  const gameCounts = monthlyGameCountsUser.value
 
   const months = Object.keys(gameCounts)
   const counts = Object.values(gameCounts)
@@ -238,6 +310,23 @@ const horizontalBarChartData = computed(() => {
         data: [singlePlayerGames, multiplayerGames],
         backgroundColor: ['#FF6384', '#36A2EB'],
         hoverBackgroundColor: ['#FF6384', '#36A2EB']
+      }
+    ]
+  }
+})
+
+const horizontalBarChartDataUser = computed(() => {
+  const singlePlayerCount = totalSinglePlayerGames.value
+  const multiPlayerCount = totalMultiPlayerGames.value // Extract plain number
+
+  return {
+    labels: ['Single-Player', 'Multi-Player'],
+    datasets: [
+      {
+        label: 'Number of Games',
+        data: [singlePlayerCount, multiPlayerCount], // Use plain numbers
+        backgroundColor: ['#07e87e', '#07b1e8'],
+        hoverBackgroundColor: ['#06c86c', '#008dbb']
       }
     ]
   }
@@ -433,9 +522,16 @@ const setSelectedView = (view) => {
 }
 
 onMounted(() => {
-  statisticsStore.getAllGames()
-  statisticsStore.getTransactions()
-  statisticsStore.getUsers()
+  if (authStore.isAdmin) {
+    statisticsStore.getAllGames()
+    statisticsStore.getTransactions()
+    statisticsStore.getUsers()
+    statisticsStore.fetchProfile()
+  } else {
+    statisticsStore.fetchProfile()
+    statisticsStore.getMultiPlayerGames()
+    statisticsStore.getSinglePlayerGames()
+  }
 })
 </script>
 
