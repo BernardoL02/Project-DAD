@@ -28,8 +28,8 @@ class StoreGameRequest extends FormRequest
         return [
             'winner_user_id' => 'nullable|exists:users,id', 
             'type' => 'required|string|in:S,M', 
-            'status' => 'required|string|in:PL,E,I', 
-            'began_at' => 'required|date', 
+            'status' => 'required|string|in:PE,PL,E,I', 
+            'began_at' => 'nullable|date', 
             'ended_at' => 'nullable|date|after_or_equal:began_at', 
             'total_time' => 'nullable|numeric|min:0', 
             'board_id' => 'required|exists:boards,id',

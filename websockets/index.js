@@ -86,13 +86,19 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("createLobby", (rows, cols, callback) => {
+  socket.on("createLobby", (idGame, rows, cols, callback) => {
     if (!util.checkAuthenticatedUser(socket, callback)) {
       return;
     }
 
     const userWithSocketId = { ...socket.data.user, socketId: socket.id };
-    const game = lobby.createLobby(userWithSocketId, socket.id, rows, cols);
+    const game = lobby.createLobby(
+      userWithSocketId,
+      socket.id,
+      idGame,
+      rows,
+      cols
+    );
 
     io.to("lobby").emit("lobbyChanged", lobby.getGames());
     if (callback) {
@@ -108,6 +114,13 @@ io.on("connection", (socket) => {
     const game = lobby.getGame(id);
     if (!game) {
       return callback({ errorCode: 5, errorMessage: "Game not found!" });
+    }
+
+    if (game.status !== "waiting") {
+      return callback({
+        errorCode: 7,
+        errorMessage: "Lobby is not open for joining.",
+      });
     }
 
     if (!game.players) {
@@ -153,9 +166,14 @@ io.on("connection", (socket) => {
       return;
     }
 
-    const games = lobby.leave(gameId, socket.data.user.id);
-    io.to("lobby").emit("lobbyChanged", games);
-    callback(games);
+    const {
+      games: updatedGames,
+      previousOwnerId,
+      game,
+    } = lobby.leave(gameId, socket.data.user.id);
+
+    io.to("lobby").emit("lobbyChanged", updatedGames);
+    callback({ ...game, previousOwnerId });
   });
 
   socket.on("removePlayer", ({ gameId, playerId }, callback) => {

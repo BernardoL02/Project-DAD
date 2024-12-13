@@ -421,6 +421,45 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
+  const createMultiPlayer = async (board_id) => {
+    try {
+      console.log('Iniciando createMultiPlayer com board_id:', board_id)
+      const payload = {
+        type: 'M',
+        status: 'PE',
+        board_id: board_id
+      }
+
+      const response = await axios.post('games', payload)
+      console.log('Resposta do servidor ao criar o jogo:', response.data)
+
+      const createdGame = response.data.data
+      return createdGame.id
+    } catch (e) {
+      console.error('Erro ao criar o jogo multiplayer:', e)
+      throw new Error('Falha ao criar o jogo multiplayer')
+    }
+  }
+
+  const sendPostUpdateOwner = async (gameId, IdUser) => {
+    try {
+      if (!gameId) {
+        console.error('Game ID não está definido.')
+        return
+      }
+      if (!IdUser) {
+        console.error('User ID não está definido.')
+        return
+      }
+
+      await axios.patch(`/games/${gameId}/owner`, {
+        new_owner_id: IdUser
+      })
+    } catch (error) {
+      console.error('Erro ao atualizar Owner do jogo:', error.response?.data || error.message)
+    }
+  }
+
   const saveInitialBoard = () => {
     const boardSize = boardFilter.value.split('x').map(Number)
     let boardMatrix = []
@@ -681,6 +720,8 @@ export const useGameStore = defineStore('game', () => {
     startGame,
     isLeaving,
     setIsLeaving,
-    resetIsLeaving
+    resetIsLeaving,
+    createMultiPlayer,
+    sendPostUpdateOwner
   }
 })

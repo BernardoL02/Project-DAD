@@ -165,7 +165,7 @@ class GameController extends Controller
                 $query->where('user_id', $user->id);
             })
             ->where('type', 'M')
-            ->orderBy('began_at', 'asc')
+            ->orderBy('began_at', 'desc')
             ->get();
 
         $multiPlayerGames->each(function ($game) use ($user) {
@@ -249,6 +249,23 @@ public function updateGameStatus(UpdateGameRequest $request, Game $game)
     // Return the updated game as a resource
     return new GameResource($game);
 }
+
+public function updateOwner(Request $request, Game $game)
+{
+    $validated = $request->validate([
+        'new_owner_id' => 'required|exists:users,id',
+    ]);
+
+    // Atualizar o `created_user_id` com o novo dono
+    $game->created_user_id = $validated['new_owner_id'];
+    $game->save();
+
+    return response()->json([
+        'message' => 'Game owner updated successfully.',
+        'game' => new GameResource($game),
+    ]);
+}
+
 
 
 }
