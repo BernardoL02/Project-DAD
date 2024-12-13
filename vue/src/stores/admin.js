@@ -22,6 +22,13 @@ export const useAdminStore = defineStore('admin', () => {
   const selectedStatus = ref('All')
   const boardSizeFilter = ref('All')
 
+  //Dados tabelas
+  const last_page = ref(0)
+  const total_rows = ref(0)
+
+  const totalPages = computed(() => last_page.value)
+  const totalRows = computed(() => total_rows.value)
+
   const formatDate = (date) => {
     if (!date) return ''
     const options = { year: 'numeric', month: 'short', day: 'numeric' }
@@ -100,6 +107,7 @@ export const useAdminStore = defineStore('admin', () => {
     )
   })
 
+  /*
   const filteredGames = computed(() => {
     let filtered = games.value
 
@@ -128,7 +136,7 @@ export const useAdminStore = defineStore('admin', () => {
     }
 
     return filtered
-  })
+  })*/
 
   const filterByBoardSize = (size) => {
     boardSizeFilter.value = size
@@ -238,11 +246,39 @@ export const useAdminStore = defineStore('admin', () => {
       )
     }
   }
-  const getAllGames = async () => {
-    loading.value = true
+
+  const getAllGames = async (currentPage = 1, filters = {}) => {
     storeError.resetMessages()
+
     try {
-      const response = await axios.get('games')
+      const boardSizeMapping = {
+        '3x4': 1,
+        '4x4': 2,
+        '6x6': 3
+      }
+
+      const gameTypeMapping = {
+        'Single-Player': 'S',
+        'Multi-Player': 'M'
+      }
+
+      const gameStatusMapping = {
+        Pending: 'PE',
+        'In Progress': 'PL',
+        Ended: 'E',
+        Interrupted: 'I'
+      }
+
+      const requestData = {
+        page: currentPage,
+        board_size: boardSizeMapping[filters.boardSize] || 'All',
+        game_type: gameTypeMapping[filters.gameType] || 'All',
+        game_status: gameStatusMapping[filters.gameStatus] || 'All',
+        date_range: filters.dateRange
+      }
+
+      const response = await axios.post('games/all', requestData)
+
       const updatedGames = response.data.data.map((game) => ({
         id: game.id,
         board_id:
@@ -254,7 +290,6 @@ export const useAdminStore = defineStore('admin', () => {
                 ? '6x6'
                 : '-',
         created_user: game.created_user.nickname || '-',
-
         winner_user:
           game.status === 'E' && game.type === 'S'
             ? game.created_user.nickname
@@ -273,7 +308,10 @@ export const useAdminStore = defineStore('admin', () => {
         began_at: game.began_at || '-',
         total_time: game.total_time ? game.total_time + 's' : '-'
       }))
+
       games.value = updatedGames
+      last_page.value = response.data.meta.last_page
+      total_rows.value = response.data.meta.total
     } catch (err) {
       storeError.setErrorMessages(
         err.response?.data?.message,
@@ -281,10 +319,9 @@ export const useAdminStore = defineStore('admin', () => {
         err.response?.data?.status,
         'Error Getting Games'
       )
-    } finally {
-      loading.value = false
     }
   }
+
   const register = async (userData) => {
     storeError.resetMessages()
 
@@ -399,7 +436,8 @@ export const useAdminStore = defineStore('admin', () => {
     filterByType,
     filterByPaymentMethod,
     getAllGames,
-    filteredGames,
+    totalRows,
+    totalPages,
     gameStatusFilter,
     filterByGameStatus,
     filterByGameType,
