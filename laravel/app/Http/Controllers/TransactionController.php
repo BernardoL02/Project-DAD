@@ -14,7 +14,6 @@ class TransactionController extends Controller
     {
         $user = $request->user();
 
-
         $transactions = $user->transactions()->with('user')->orderBy('transaction_datetime', 'desc')->get();
 
         return TransactionResource::collection($transactions);

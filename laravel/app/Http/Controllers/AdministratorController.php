@@ -7,6 +7,7 @@ use App\Http\Resources\AdminResource;
 use App\Models\Game;
 use App\Models\Transaction;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class AdministratorController extends Controller
 {
@@ -71,8 +72,18 @@ class AdministratorController extends Controller
         return response()->json(['message' => 'Account deleted successfully.']);
     }
 
-    public function viewTransactions(){
-        $transactions = Transaction::with('user')->orderBy('transaction_datetime', 'desc')->get();
-        return response()->json($transactions);
+    public function viewTransactions(Request $request) {
+
+        $transactions = Transaction::orderBy('transaction_datetime', 'desc')
+            ->paginate(10);
+
+        return [
+            'data' => $transactions->items(),
+            'meta' => [
+                'last_page' => $transactions->lastPage(),
+                'total' => $transactions->total(),
+            ],
+        ];
     }
+
 }

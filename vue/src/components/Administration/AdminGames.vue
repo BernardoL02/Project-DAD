@@ -15,6 +15,7 @@ const gameTypeOptions = ['All', 'Single-Player', 'Multi-Player']
 const boardSizeOptions = ['All', '3x4', '4x4', '6x6']
 
 const dateRange = ref([null, null])
+
 const currentPage = ref(1)
 
 const handleResetFilters = () => {
