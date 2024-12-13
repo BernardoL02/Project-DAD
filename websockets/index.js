@@ -263,6 +263,7 @@ io.on("connection", (socket) => {
       });
     }
 
+    game.expires_at = null;
     game = gameEngine.initGame(game);
     gameEngine.startTurnTimer(game, io, lobby);
     game.status = "started";

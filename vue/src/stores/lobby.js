@@ -34,11 +34,11 @@ export const useLobbyStore = defineStore('lobby', () => {
   const fetchGames = () => {
     storeError.resetMessages()
     socket.emit('fetchGames', (response) => {
-      console.log('Received games:', response)
-      if (webSocketServerResponseHasError(response)) {
-        return
+      if (!response.errorCode) {
+        games.value = response
+      } else {
+        storeError.setErrorMessages(response.errorMessage)
       }
-      games.value = response
     })
   }
 
@@ -230,6 +230,37 @@ export const useLobbyStore = defineStore('lobby', () => {
     }
   }
 
+  // Dentro do storeLobby
+  const now = ref(Date.now())
+
+  // Atualiza a hora atual a cada segundo
+  setInterval(() => {
+    now.value = Date.now()
+    refreshExpiredLobbies()
+  }, 1000)
+
+  // Computed para verificar lobbies expirados
+  const expiredLobbies = computed(() => {
+    return games.value.filter((game) => game.expires_at <= now.value)
+  })
+
+  // Função para atualizar lobbies expirados
+  const refreshExpiredLobbies = () => {
+    if (expiredLobbies.value.length > 0) {
+      fetchGames()
+    }
+  }
+
+  const timeRemaining = (expiresAt) => {
+    const diff = expiresAt - now.value
+    if (diff <= 0) return 'Expired'
+
+    const minutes = Math.floor(diff / 60000)
+    const seconds = Math.floor((diff % 60000) / 1000)
+
+    return `${minutes}m ${seconds}s`
+  }
+
   // ------------------------------------------------------
   // Multiplayer Game
   // ------------------------------------------------------
@@ -264,6 +295,9 @@ export const useLobbyStore = defineStore('lobby', () => {
     isChatOpen,
     toggleChat,
     startGame,
-    loadChatsFromSession
+    loadChatsFromSession,
+    refreshExpiredLobbies,
+    timeRemaining,
+    now
   }
 })

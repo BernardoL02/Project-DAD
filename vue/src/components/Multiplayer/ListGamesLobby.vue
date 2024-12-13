@@ -93,7 +93,8 @@ onMounted(() => {
 
 
                                 <div v-for="player in game.players.slice(1)" :key="player.id"
-                                    class="w-24 h-36 bg-gray-200 rounded-lg flex flex-col items-center justify-center p-2 shadow relative group">
+                                    class="w-24 h-36 bg-gray-200 rounded-lg flex flex-col items-center justify-center p-2 shadow relative group"
+                                    @click.stop="storeLobby.openChatPanel(player)">
 
                                     <!-- Avatar do Jogador com Margem -->
                                     <div class="relative mt-4"> <!-- Adiciona uma margem superior -->
@@ -151,13 +152,18 @@ onMounted(() => {
                             </div>
 
                             <div class="mt-4 flex justify-between items-center">
-                                <p class="text-gray-500 text-sm">
-                                    <strong>Board:</strong> ({{ game.cols }}x{{ game.rows }}) |
-                                    <strong>Players:</strong> {{ game.players.length }}/{{ game.maxPlayers }} |
-                                    <strong>Lobby ID:</strong> {{ game.id }}
-                                    <span v-if="game.status === 'started'"
-                                        class="text-blue-500 font-bold ml-4">Playing...</span>
-                                </p>
+                                <div class="mt-4 flex flex-col space-y-2">
+                                    <p class="text-gray-500 text-sm">
+                                        <strong>Board:</strong> ({{ game.cols }}x{{ game.rows }}) |
+                                        <strong>Players:</strong> {{ game.players.length }}/{{ game.maxPlayers }} |
+                                        <strong>Lobby ID:</strong> {{ game.id }}
+                                        <span v-if="game.status === 'started'"
+                                            class="text-blue-500 font-bold ml-4">Playing...</span>
+                                    </p>
+                                    <p class="text-gray-500 text-sm">
+                                        <strong>Expires in:</strong> {{ storeLobby.timeRemaining(game.expires_at) }}
+                                    </p>
+                                </div>
 
                                 <!-- Botões Ready e Leave para jogadores que não são donos -->
                                 <div v-if="game.players.some(player => player.id === storeAuth.user.id && player.id !== game.player1.id) && game.status !== 'started'"
@@ -270,13 +276,18 @@ onMounted(() => {
 
                     <!-- Informações adicionais do lobby com botão Ready/UnReady alinhado à direita -->
                     <div class="mt-4 flex justify-between items-center">
-                        <p class="text-gray-500 text-sm">
-                            <strong>Board:</strong> ({{ game.cols }}x{{ game.rows }}) |
-                            <strong>Players:</strong> {{ game.players.length }}/{{ game.maxPlayers }} |
-                            <strong>Lobby ID:</strong> {{ game.id }}
-                            <span v-if="game.status === 'started'"
-                                class="text-blue-500 font-bold ml-4">Playing...</span>
-                        </p>
+                        <div class="mt-4 flex flex-col space-y-2">
+                            <p class="text-gray-500 text-sm">
+                                <strong>Board:</strong> ({{ game.cols }}x{{ game.rows }}) |
+                                <strong>Players:</strong> {{ game.players.length }}/{{ game.maxPlayers }} |
+                                <strong>Lobby ID:</strong> {{ game.id }}
+                                <span v-if="game.status === 'started'"
+                                    class="text-blue-500 font-bold ml-4">Playing...</span>
+                            </p>
+                            <p class="text-gray-500 text-sm">
+                                <strong>Expires in:</strong> {{ storeLobby.timeRemaining(game.expires_at) }}
+                            </p>
+                        </div>
                         <!-- Div que contém os botões Ready e Leave -->
                         <div v-if="game.players.some(player => player.id === storeAuth.user.id) && game.status !== 'started'"
                             class="flex space-x-4 h-10">

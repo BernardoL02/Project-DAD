@@ -174,7 +174,6 @@ watch(gameData, (newValue) => {
             <h2 class="text-lg font-bold mb-4">Players</h2>
             <ul>
                 <li v-for="(player, index) in gameData.players" :key="player.id"
-                    @click="storeLobby.openChatPanel(player)"
                     class="flex items-center gap-4 mb-4 p-2 rounded-lg transition-transform duration-300 relative"
                     :class="{
                         'border-2 border-blue-500': index === gameData.currentPlayerIndex && !player.inactive,
@@ -183,30 +182,46 @@ watch(gameData, (newValue) => {
                         'scale-110': invalidAttemptPlayerId === player.id
                     }">
 
-                    <div class="relative">
+                    <!-- Foto e Timer -->
+                    <div class="relative w-12 h-12">
                         <img :src="storeAuth.getPhotoUrl(player.photo_filename)" alt="Player Photo"
                             class="w-12 h-12 rounded-full object-cover transition-transform duration-300">
 
                         <!-- Timer Circle -->
-                        <svg v-if="index === gameData.currentPlayerIndex" class="absolute inset-0 w-12 h-12"
+                        <svg v-if="index === gameData.currentPlayerIndex" class="absolute inset-0 w-12 h-12 z-10"
                             viewBox="0 0 40 40">
                             <circle cx="20" cy="20" r="18" fill="none" stroke="#e0e0e0" stroke-width="4" />
                             <circle cx="20" cy="20" r="18" fill="none" stroke="#4caf50" stroke-width="4"
                                 :style="circleStyle" stroke-linecap="round" />
                         </svg>
+
                         <!-- Contador dos últimos 5 segundos -->
                         <div v-if="index === gameData.currentPlayerIndex && storeGameMultiplayer.turnTimer <= 5"
-                            class="absolute inset-0 flex items-center justify-center text-white-500 font-bold text-xl"
+                            class="absolute inset-0 flex items-center justify-center text-black font-bold text-xl z-30"
                             :class="{ 'zoom-animation': animateCountdown }">
                             {{ storeGameMultiplayer.turnTimer }}
                         </div>
+
+                        <!-- Botão de Chat -->
+                        <button v-if="player.id !== storeAuth.user.id" @click.stop="storeLobby.openChatPanel(player)"
+                            class="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-1 hover:bg-blue-600 shadow-md z-20">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 20 20"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8-1.314 0-2.55-.263-3.662-.732C7.114 20.55 4 21 4 21l1.441-3.602A8.96 8.96 0 0 1 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                            </svg>
+                        </button>
                     </div>
 
+
+
+                    <!-- Informações do Jogador -->
                     <div>
                         <p class="text-gray-700 font-medium">{{ player.nickname }}</p>
                         <p class="text-sm text-gray-500">Pairs Found: {{ player.pairsFound || 0 }}</p>
                     </div>
 
+                    <!-- Indicador de Jogador Inativo -->
                     <div v-if="player.inactive"
                         class="absolute inset-0 flex items-center justify-center text-red-500 font-bold">
                         Leave
@@ -312,20 +327,6 @@ watch(gameData, (newValue) => {
     animation: zoomEffect 0.3s ease;
 }
 
-@keyframes zoomEffect {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(2);
-    }
-
-    100% {
-        transform: scale(1);
-    }
-}
-
 .info-chat-container {
     display: flex;
     flex-direction: column;
@@ -347,5 +348,40 @@ watch(gameData, (newValue) => {
     /* Largura fixa */
     max-width: 300px;
     /* Certifique-se de que não expanda */
+}
+
+.relative {
+    position: relative;
+}
+
+button {
+    width: 1.5rem;
+    height: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+button:hover {
+    transform: scale(1.1);
+}
+
+.zoom-animation {
+    animation: zoomEffect 0.3s ease;
+}
+
+@keyframes zoomEffect {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 </style>

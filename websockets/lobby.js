@@ -14,6 +14,7 @@ exports.createLobby = () => {
       cols: cols,
       board: [],
       created_at: Date.now(),
+      expires_at: Date.now() + 180000,
       player1: user,
       player1SocketId: socketId,
       players: [{ ...user, pairsFound: 0 }],
@@ -102,11 +103,16 @@ exports.createLobby = () => {
   };
 
   const getGames = () => {
+    deleteExpiredLobbies();
     return [...games.values()];
   };
 
   const deleteGame = (gameId) => {
     if (games.has(gameId)) {
+      const game = games.get(gameId);
+      if (game.timer) {
+        clearTimeout(game.timer);
+      }
       games.delete(gameId);
     }
   };
@@ -150,6 +156,16 @@ exports.createLobby = () => {
     return game;
   };
 
+  const deleteExpiredLobbies = () => {
+    const now = Date.now();
+    for (const [gameId, game] of games.entries()) {
+      if (game.expires_at && game.expires_at <= now) {
+        console.log(`Deleting expired lobby ${gameId}`);
+        games.delete(gameId);
+      }
+    }
+  };
+
   return {
     getGames,
     getGame,
@@ -161,5 +177,6 @@ exports.createLobby = () => {
     setGameBoard,
     deleteGame,
     playerInativo,
+    deleteExpiredLobbies,
   };
 };
