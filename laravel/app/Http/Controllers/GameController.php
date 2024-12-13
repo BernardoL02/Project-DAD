@@ -274,7 +274,6 @@ class GameController extends Controller
             'new_owner_id' => 'required|exists:users,id',
         ]);
 
-        // Atualizar o `created_user_id` com o novo dono
         $game->created_user_id = $validated['new_owner_id'];
         $game->save();
 

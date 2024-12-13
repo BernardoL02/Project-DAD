@@ -1,19 +1,15 @@
 G0. Geral
 
 [] - Proteger rotas front end e backend estatisticas e multiplayer
-[x] - Melhorar performance dos controladores
 [] - Remover ids das tabelas
 [] - Limpar todas as stores e ver se os dados ja existem antes de os ir buscar no 
 [] - Sons nos jogos
-[x] - Rotas no botao hamburger
 
 G1. USER REGISTRATION, AUTHENTICATION, PROFILE, END SESSION, 
 ACCOUNT
 REMOVAL
 
 [] - Remover email/password pré defenida no login
-[x] - Apos selecionar uma foto ser possivel selecionar outra a partir da imagem no register admin
-[x] - Puxar o botão de register admin para cima da tabela
 
 G4. MULTIPLAYER GAMES
 
