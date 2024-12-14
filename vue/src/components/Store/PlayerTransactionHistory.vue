@@ -74,6 +74,9 @@ onMounted(() => {
             :options="paymentMethodOptions"
             v-model="selectedPaymentMethod"
             @select="(value) => handleSelect(value, 'paymentMethod')"
+            :class="{
+              disabled: selectedType !== 'All' && selectedType !== 'Purchase'
+            }"
           />
         </div>
       </div>
@@ -91,9 +94,21 @@ onMounted(() => {
 
     <div v-else class="space-y-6">
       <PaginatedTable
-        :columns="['Id', 'Date', 'Type', 'Value', 'Payment Method', 'Reference', 'Coins']"
+        :columns="['Date', 'Type', 'Value', 'Payment Method', 'Reference', 'Coins']"
         :data="transactionStore.filteredTransactions"
       />
     </div>
   </div>
 </template>
+
+<style scoped>
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+</style>

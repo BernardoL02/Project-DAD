@@ -288,8 +288,9 @@ export const useStatisticsStore = defineStore('statistics', () => {
               : game.board_id === 3
                 ? '6x6'
                 : '-',
+        created_user_id: game.created_user_id,
+        winner_user_id: game.winner_user_id,
         created_user: game.created_user.nickname || '-',
-
         winner_user:
           game.status === 'E' && game.type === 'S'
             ? game.created_user.nickname
@@ -306,7 +307,7 @@ export const useStatisticsStore = defineStore('statistics', () => {
                   ? 'Interrupted'
                   : '-',
         began_at: game.began_at || '-',
-        total_time: game.total_time ? game.total_time + 's' : '-'
+        total_time: game.total_time || 0
       }))
 
       games.value = updatedGames
@@ -329,10 +330,10 @@ export const useStatisticsStore = defineStore('statistics', () => {
     try {
       const response = await axios.get('admin/users')
       users.value = response.data.map((user) => ({
-        Id: user.id,
-        Name: user.name,
+        id: user.id,
+        name: user.name,
         Email: user.email,
-        NickName: user.nickname,
+        nickname: user.nickname,
         Type: user.type === 'A' ? 'Administrator' : 'Player',
         Blocked: user.blocked,
         RegisteredAt: user.created_at
@@ -533,6 +534,40 @@ export const useStatisticsStore = defineStore('statistics', () => {
     }
   }
 
+  const topPlayersByTimePlayed = computed(() => {
+    if (!games.value || !users.value) {
+      console.warn('Games or Users data not available.')
+      return []
+    }
+
+    const timePlayedByUser = games.value.reduce((acc, game) => {
+      if (game.status !== 'Ended') return acc
+
+      const userId = game.type === 'Single-Player' ? game.created_user_id : game.winner_user_id
+      if (!userId) return acc
+
+      const totalTime = parseInt(game.total_time) || 0
+      if (!acc[userId]) {
+        acc[userId] = 0
+      }
+      acc[userId] += totalTime
+
+      return acc
+    }, {})
+
+    const userStats = Object.entries(timePlayedByUser)
+      .map(([userId, totalTime]) => {
+        const user = users.value.find((user) => user.id === parseInt(userId))
+        return {
+          name: user?.name,
+          timePlayed: totalTime
+        }
+      })
+      .filter((player) => player.name)
+
+    return userStats.sort((a, b) => b.timePlayed - a.timePlayed).slice(0, 10)
+  })
+
   return {
     getAllGames,
     totalSinglePlayerGames,
@@ -560,6 +595,7 @@ export const useStatisticsStore = defineStore('statistics', () => {
     getTransactionsGroupedByMonth,
     transactionsUser,
     getTransactionsUser,
-    monthlyPurchaseCountsUser
+    monthlyPurchaseCountsUser,
+    topPlayersByTimePlayed
   }
 })

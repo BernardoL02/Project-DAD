@@ -43,4 +43,9 @@ class UserPolicy
     {
         return $user->isPlayer();
     }
+
+    public function viewNotifications(User $user)
+    {
+        return $user->isPlayer();
+    }
 }

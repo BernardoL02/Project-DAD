@@ -23,7 +23,7 @@ onMounted(async () => {
 
 const onBoardClick = (size) => {
   scoreBoardStore.boardSize = size
-  boardSize.value = size;
+  boardSize.value = size
 }
 </script>
 
@@ -35,19 +35,25 @@ const onBoardClick = (size) => {
         <div class="text-center mb-6">
           <p class="text-lg text-gray-700 font-semibold">Global Top 10 Single-Player Games</p>
           <p class="text-sm text-gray-500 mt-2">
-            The table shows the top 10 global single-player performances across board sizes, with each user appearing
-            only once based on their highest score.
+            The table shows the top 10 global single-player performances across board sizes, with
+            each user appearing only once based on their highest score.
           </p>
         </div>
 
         <div class="flex justify-center pt-2">
           <div class="flex flex-row gap-8">
-            <button v-for="board in boardStore.boards" :key="board.id"
-              @click="onBoardClick(board.board_cols + 'x' + board.board_rows)" :class="{
-                'bg-sky-500 text-white': board.board_cols + 'x' + board.board_rows == scoreBoardStore.boardSize,
+            <button
+              v-for="board in boardStore.boards"
+              :key="board.id"
+              @click="onBoardClick(board.board_cols + 'x' + board.board_rows)"
+              :class="{
+                'bg-sky-500 text-white':
+                  board.board_cols + 'x' + board.board_rows == scoreBoardStore.boardSize,
                 'bg-gray-200 hover:bg-gray-300 text-gray-700':
                   board.board_cols + 'x' + board.board_rows != scoreBoardStore.boardSize
-              }" class="px-4 py-1 rounded-md border transition-all duration-100">
+              }"
+              class="px-4 py-1 rounded-md border transition-all duration-100"
+            >
               {{ board.board_cols + 'x' + board.board_rows }}
             </button>
           </div>
@@ -59,19 +65,27 @@ const onBoardClick = (size) => {
     <div>
       <div v-if="loading" class="text-center text-gray-400">Loading...</div>
       <div v-else>
-        <PaginatedTable :columns="columns" :data="filteredScoreboards" :pagination="false" :showActions="false" />
+        <PaginatedTable
+          :columns="columns"
+          :data="filteredScoreboards"
+          :pagination="false"
+          :showActions="false"
+        />
 
         <div class="bg-white p-6 rounded-lg shadow-md mt-6">
           <p class="text-sm text-gray-700 font-semibold mb-1">Sorting Criteria</p>
           <p class="text-xs text-gray-500">
-            1. <strong>Best Time</strong> - The fastest time achieved by players for completing games on each board
-            size. <br />
-            2. <strong>Turns</strong> - The total number of moves players made to complete a game on each board size.
+            1. <strong>Best Time</strong> - The fastest time achieved by players for completing
+            games on each board size. <br />
+            2. <strong>Turns</strong> - The total number of moves players made to complete a game on
+            each board size.
           </p>
-
         </div>
 
-        <div v-if="!loading && filteredScoreboards.length === 0" class="text-center text-gray-400 mt-4">
+        <div
+          v-if="!loading && filteredScoreboards.length === 0"
+          class="text-center text-gray-400 mt-4"
+        >
           No scores available
         </div>
       </div>

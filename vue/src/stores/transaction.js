@@ -118,7 +118,6 @@ export const useTransactionStore = defineStore('transaction', () => {
       })
 
       const formattedTransactions = response.data.data.map((transaction) => ({
-        id: transaction.id,
         date: transaction.transaction_datetime,
         type:
           transaction.type === 'P'

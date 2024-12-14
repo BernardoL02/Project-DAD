@@ -113,7 +113,6 @@ export const useGameStore = defineStore('game', () => {
         }
 
         return {
-          id: game.id,
           difficulty,
           board_id:
             game.board_id === 1
@@ -226,7 +225,6 @@ export const useGameStore = defineStore('game', () => {
       const response = await axios.get('games/multi')
 
       const updatedGames = response.data.data.map((game) => ({
-        id: game.id,
         board_id:
           game.board_id === 1
             ? '3x4'
@@ -494,7 +492,6 @@ export const useGameStore = defineStore('game', () => {
   const sendPostOnExit = async (gameId) => {
     try {
       if (!gameId) {
-        console.error('Game ID não está definido.')
         return
       }
 

@@ -8,7 +8,9 @@
           <div class="flex-shrink-0">
             <RouterLink to="/"
               class="text-2xl font-semibold text-gray-900 hover:text-sky-600 transition-all duration-300 ease-in-out transform hover:scale-105">
-              <span class="bg-gradient-to-r from-sky-500 to-indigo-500 text-transparent bg-clip-text">
+              <span class="bg-gradient-to-r from-sky-500 to-indigo-500 text-transparent bg-clip-text flex flex-row">
+                <img src="/spade.png" alt="Notification Icon"
+                  class="w-[28px] h-[28px] object-contain cursor-pointer mt-[2px] mr-4" />
                 Memory Game
               </span>
             </RouterLink>
@@ -24,7 +26,7 @@
           </div>
 
           <!-- Links à esquerda -->
-          <div :class="{ 'hidden lg:flex': true, 'flex flex-col lg:flex-row lg:space-x-8': true }">
+          <div :class="{ 'hidden lg:flex': true, 'flex flex-col lg:flex-row lg:space-x-8  pr-8': true }">
             <RouterLink to="/" :class="[
               'px-3 py-2 rounded-md text-sm font-medium transition-colors',
               route.path === '/'
@@ -121,8 +123,8 @@
               All Games
             </RouterLink>
 
-            <RouterLink :to="{ name: 'statistics' }" :class="[
-              'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+            <RouterLink v-if="authStore.isPlayer || authStore.isAdmin" :to="{ name: 'statistics' }" :class="[
+              'px-3 py-2 rounded-md text-sm font-medium transition-colors pt-[10px]',
               route.path === '/statistics'
                 ? 'text-indigo-500 font-semibold'
                 : 'text-gray-900 hover:text-sky-600'
@@ -163,7 +165,7 @@
                           <div class="flex flex-row space-x-1">
                             <span class="text-xs">{{
                               new Date(notification.date).toLocaleDateString()
-                            }}</span>
+                              }}</span>
 
                             <img src="/delete.png" alt="Delete Notification Icon"
                               @click="handleDeleteNotificaitonClick(notification.id)"
@@ -336,7 +338,7 @@ const handleLogout = async () => {
 
 const handleDeleteNotificaitonClick = async (notificationId) => {
   const success = await authStore.deleteNotification(notificationId)
-  if (success) {
+  if (success && authStore.isPlayer) {
     authStore.getNotifications()
   }
 }

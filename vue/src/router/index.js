@@ -159,7 +159,9 @@ router.beforeEach(async (to, from, next) => {
 
     if (authStore.user) {
       await authStore.fetchProfile()
-      await authStore.getNotifications()
+      if (authStore.isPlayer) {
+        await authStore.getNotifications()
+      }
     }
   }
 
@@ -178,8 +180,7 @@ router.beforeEach(async (to, from, next) => {
       to.name !== 'single-player' &&
       to.name !== 'singlePlayerScore' &&
       to.name !== 'multiPlayerScore' &&
-      to.name !== 'SinglePlayerGameBoard' &&
-      to.name !== 'statistics'
+      to.name !== 'SinglePlayerGameBoard'
     ) {
       next({ name: 'login' })
       return
