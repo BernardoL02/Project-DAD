@@ -87,16 +87,17 @@ onMounted(async () => {
     <div class="bg-sky-100 p-6 rounded-xl shadow-lg flex justify-between items-center">
       <div>
         <p class="text-lg font-semibold">Hello, {{ authStore.nickname }}</p>
-        <div class="flex items-center">
-          <img src="/coin.png" alt="Coin Icon" class="w-6 h-6 object-contain mr-2" />
-          <span class="text-lg font-bold">{{ authStore.coins }}</span>
+
+        <div class="flex items-center pt-2 space-x-2">
+          <img src="/coin.png" alt="Coin Icon" class="w-6 h-6 object-contain" />
+          <span class="text-semibold font-bold">{{ authStore.coins }}</span>
         </div>
       </div>
 
 
       <div class="relative">
         <RouterLink :to="{ name: 'PlayerTransactionHistory' }"
-          class="bg-sky-500 text-white px-6 py-2 rounded-lg hover:bg-sky-600 transition duration-300">
+          class="bg-sky-500 text-white px-6 py-3 rounded-lg hover:bg-sky-600 transition duration-300">
           My Transactions
         </RouterLink>
       </div>

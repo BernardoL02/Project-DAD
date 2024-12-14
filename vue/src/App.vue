@@ -124,7 +124,7 @@
             </RouterLink>
 
             <RouterLink v-if="authStore.isPlayer || authStore.isAdmin" :to="{ name: 'statistics' }" :class="[
-              'px-3 py-2 rounded-md text-sm font-medium transition-colors pt-[10px]',
+              'px-3 py-2 rounded-md text-sm font-medium transition-colors pt-[9px]',
               route.path === '/statistics'
                 ? 'text-indigo-500 font-semibold'
                 : 'text-gray-900 hover:text-sky-600'
@@ -156,6 +156,13 @@
                     v-if="authStore.notifications.length > 0">
                     <!-- Adicionar overflow-y-auto e max-h -->
                     <ul class="space-y-1 p-1 overflow-y-auto max-h-72">
+                      <div class="flex flex-row justify-end mr-4">
+                        <p class="text-[10px] text-gray-500 hover:text-red-500 cursor-pointer transition-colors duration-300"
+                          @click="handleDeleteAllNotificaiton()">
+                          Clear All
+                        </p>
+                      </div>
+
                       <div v-for="notification in authStore.notifications" :key="notification.id"
                         class="flex flex-col p-2 rounded-md hover:bg-sky-100 mr-1">
                         <!-- Alinhamento do Tipo e Data -->
@@ -164,7 +171,10 @@
 
                           <div class="flex flex-row space-x-1">
                             <span class="text-xs">{{
-                              new Date(notification.date).toLocaleDateString()
+                              new Date(notification.date).toLocaleString('pt-PT', {
+                                dateStyle: 'short',
+                                timeStyle: 'short'
+                              })
                             }}</span>
 
                             <img src="/delete.png" alt="Delete Notification Icon"
@@ -323,7 +333,7 @@
 import Toaster from './components/ui/toast/Toaster.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRoute, useRouter } from 'vue-router'
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 
 const authStore = useAuthStore()
 const route = useRoute()
@@ -338,6 +348,13 @@ const handleLogout = async () => {
 
 const handleDeleteNotificaitonClick = async (notificationId) => {
   const success = await authStore.deleteNotification(notificationId)
+  if (success && authStore.isPlayer) {
+    authStore.getNotifications()
+  }
+}
+
+const handleDeleteAllNotificaiton = async () => {
+  const success = await authStore.deleteAllNotifications()
   if (success && authStore.isPlayer) {
     authStore.getNotifications()
   }

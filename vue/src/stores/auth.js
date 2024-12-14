@@ -130,13 +130,13 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
-  const deleteNotification = async (notificationId) => {
+  const deleteNotification = async (notificationId, toastMessage = true) => {
     try {
       const response = await axios.patch('/transactions/' + notificationId, {
         notificationRead: '0'
       })
 
-      if (response.data?.message === 'Notification deleted successfully.') {
+      if (response.data?.message === 'Notification deleted successfully.' && toastMessage == true) {
         storeError.setSuccessMessages(response.data.message, {}, 200, null)
         return true
       }
@@ -149,6 +149,26 @@ export const useAuthStore = defineStore('auth', () => {
         error.response?.data?.status,
         'Notification Error'
       )
+    }
+  }
+
+  const deleteAllNotifications = async () => {
+    try {
+      for (const notification of notifications.value) {
+        await deleteNotification(notification.id, false)
+      }
+
+      storeError.setSuccessMessages('All notifications deleted successfully.', {}, 200, null)
+
+      return true
+    } catch (error) {
+      storeError.setErrorMessages(
+        error.response?.data?.message,
+        error.response?.data?.errors,
+        error.response?.data?.status,
+        'Notification Error'
+      )
+      return false
     }
   }
 
@@ -427,6 +447,7 @@ export const useAuthStore = defineStore('auth', () => {
     fetchProfile,
     getNotifications,
     deleteNotification,
+    deleteAllNotifications,
     notifications,
     updateUserInfo,
     updatePassword,
