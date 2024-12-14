@@ -67,7 +67,32 @@ watch(
         <tr v-for="(row, rowIndex) in paginatedData" :key="'row-' + rowIndex" class="odd:bg-white even:bg-gray-100">
           <td v-for="(value, colIndex) in row" :key="'cell-' + rowIndex + '-' + colIndex"
             class="border border-gray-300 px-4 py-2 ">
-            {{ value }}
+            <div v-if="value === 'Ended' || value === 'Interrupted' || value === 'In Progress' || value === 'Pending'"
+              class="relative flex items-center">
+              <span class="absolute w-2.5 h-2.5 rounded-full pr-2" :class="{
+                'bg-green-400': value === 'Ended', 'bg-red-400': value === 'Interrupted', 'bg-blue-400': value === 'In Progress', 'bg-yellow-400': value === 'Pending'
+              }"></span>
+
+              <span class="pl-4">{{ value }}</span>
+            </div>
+            <div class="flex flex-row space-x-2"
+              v-else-if="value === 'MBWAY' || value === 'PAYPAL' || value === 'VISA' || value === 'MB' || value === 'IBAN'">
+              <img :src="`/Store/${value}.png`" @click="hanglePayment(value)" alt="Payment Icon" :class="[
+                'cursor-pointer',
+                value === 'MBWAY' ? 'w-6 h-8' : '',
+                value === 'PAYPAL' ? 'w-6 h-6' : '',
+                value === 'VISA' ? 'w-6 h-6' : '',
+                value === 'IBAN' ? 'w-6 h-6' : '',
+                value === 'MB' ? 'w-6 h-6' : ''
+              ]" />
+
+              <div class="pt-1">
+                {{ value }}
+              </div>
+            </div>
+            <div v-else>
+              {{ value }}
+            </div>
           </td>
         </tr>
       </tbody>
