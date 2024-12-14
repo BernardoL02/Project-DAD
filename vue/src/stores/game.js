@@ -223,8 +223,8 @@ export const useGameStore = defineStore('game', () => {
     storeError.resetMessages()
     try {
       const response = await axios.get('games/multi')
-
       const updatedGames = response.data.data.map((game) => ({
+        Id: game.id,
         board_id:
           game.board_id === 1
             ? '3x4'

@@ -145,12 +145,12 @@ onMounted(async () => {
       <PaginatedTable
         :data="gameStore.filteredGames"
         :columns="tableColumns"
-        :hiddenColumns="[]"
+        :hiddenColumns="['Id']"
         :pagination="true"
       >
         <template #actions="{ row }">
           <div class="flex space-x-2 items-center justify-center">
-            <button @click="redirectToGame(row.id)">
+            <button @click="redirectToGame(row.Id)">
               <svg
                 class="w-6 h-6 stroke-gray-500 stroke-2 hover:stroke-blue-500 transition-colors"
                 xmlns="http://www.w3.org/2000/svg"

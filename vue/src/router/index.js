@@ -156,7 +156,6 @@ router.beforeEach(async (to, from, next) => {
     handlingFirstRoute = false
 
     await authStore.restoreToken()
-
     if (authStore.user) {
       await authStore.fetchProfile()
       if (authStore.isPlayer) {

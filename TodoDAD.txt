@@ -1,11 +1,3 @@
-G0. Geral
-
-[] - Proteger rotas front end e backend estatisticas e multiplayer
-[] - Limpar todas as stores e ver se os dados ja existem antes de os ir buscar no 
-[] - Sons nos jogos
-[] - Ver o restore token
-[] - colocar o token em local storage
-
 G1. USER REGISTRATION, AUTHENTICATION, PROFILE, END SESSION, 
 ACCOUNT
 REMOVAL
