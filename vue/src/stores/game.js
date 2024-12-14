@@ -521,13 +521,10 @@ export const useGameStore = defineStore('game', () => {
 
   const storePlayers = async (game) => {
     try {
-      // Extrai o gameId
       const gameId = game.id
 
-      // Extrai os IDs dos jogadores do array 'players'
       const userIds = game.players.map((player) => player.id)
 
-      // Faz a requisição POST para armazenar os jogadores
       const response = await axios.post(`/games/${gameId}`, {
         user_ids: userIds
       })

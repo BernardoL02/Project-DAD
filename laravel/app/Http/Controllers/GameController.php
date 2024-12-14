@@ -195,7 +195,6 @@ class GameController extends Controller
 
     public function updateGameStatus(UpdateGameRequest $request, Game $game)
     {
-        // Validate the request data
         $gameData = $request->validate([
             'status' => 'required|string|in:PL,E,I',
             'began_at' => 'nullable|date',
@@ -205,7 +204,6 @@ class GameController extends Controller
             'total_turns_winner' => 'nullable|integer|min:0',
         ]);
 
-        // Retrieve and merge any custom data
         $customData = json_decode($game->custom, true) ?? [];
 
         if ($request->has('custom')) {
@@ -213,15 +211,12 @@ class GameController extends Controller
             $customData = array_merge($customData, $newCustomData);
         }
 
-        // Prepare the validated data with merged custom data
         $validated = $request->validated();
         $validated['custom'] = json_encode($customData);
 
-        // Check if the game type is 'S' and if status is 'E' (Ended)
         if ($game->type === 'S' && $gameData['status'] === 'E') {
             $user = $request->user();
 
-            // Find the best completed game of the user on the same board
             $bestGame = Game::where('created_user_id', $user->id)
                 ->where('status', 'E')
                 ->where('type', 'S')
@@ -229,14 +224,12 @@ class GameController extends Controller
                 ->orderBy('total_time')
                 ->first();
 
-            // If a previous best game exists and this game has a better time
             if ($bestGame && isset($gameData['total_time']) && $gameData['total_time'] < $bestGame->total_time) {
                 $board = Board::find($game->board_id);
                 $boardSize = $board ? "{$board->board_cols}x{$board->board_rows}" : "unknown size";
 
                 $difficulty = $request->has('custom') ? "Hard" : "Normal";
 
-                // Create a transaction for awarding brain coins
                 $transactionData = [
                     'type' => 'B',
                     'user_id' => $user->id,
@@ -249,7 +242,6 @@ class GameController extends Controller
                     ]),
                 ];
 
-                // Create the transaction and update the user's brain coin balance
                 $transaction = Transaction::create($transactionData);
 
                 $user->brain_coins_balance += 5;
@@ -257,15 +249,12 @@ class GameController extends Controller
             }
         }
 
-        // Update the game with the validated data
         $game->update($validated);
 
-        // If a transaction was created, associate it with the current game
         if (isset($transaction)) {
             $transaction->update(['game_id' => $game->id]);
         }
 
-        // Return the updated game as a resource
         return new GameResource($game);
     }
 
@@ -285,7 +274,7 @@ class GameController extends Controller
     }
 
 
-    public function storePlayers($gameId, Request $request)
+    public function storePlayers(Request $request, Game $game)
     {
         $request->validate([
             'user_ids' => 'required|array',
@@ -294,25 +283,21 @@ class GameController extends Controller
 
         $userIds = $request->input('user_ids');
 
-        $entries = [];
-
-        foreach ($userIds as $userId) {
-            $entries[] = [
-                'game_id' => $gameId,
-                'user_id' => $userId,
-            ];
-        }
-
-        MultiplayerGame::insert($entries);
+        MultiplayerGame::insert(array_map(fn($id) => [
+            'game_id' => $game->id,
+            'user_id' => $id,
+        ], $userIds));
 
         return response()->json([
             'message' => 'Players stored successfully.',
-            'game_id' => $gameId,
+            'game_id' => $game->id,
             'user_ids' => $userIds,
         ], 201);
     }
 
-    public function updatePlayers($gameId, Request $request)
+
+
+    public function updatePlayers(Request $request, Game $game)
     {
         $request->validate([
             'updates' => 'required|array',
@@ -323,11 +308,11 @@ class GameController extends Controller
 
         $updates = $request->input('updates');
 
-        $game = Game::findOrFail($gameId);
+        $game = Game::findOrFail($game->id);
 
         foreach ($updates as $update) {
             MultiplayerGame::where('user_id', $update['id'])
-                ->where('game_id', $gameId)
+                ->where('game_id', $game->id)
                 ->update([
                     'player_won' => $update['player_won'] ? 1 : 0,
                     'pairs_discovered' => $update['pairs_discovered'],
@@ -348,11 +333,11 @@ class GameController extends Controller
                     'type' => 'I',
                     'user_id' => $winnerId,
                     'brain_coins' => $reward,
-                    'game_id' => $gameId,
+                    'game_id' => $game->id,
                     'transaction_datetime' => now(),
                     'custom' => json_encode([
                         'notificationRead' => 1,
-                        'msg' => "You received $reward brain coins for winning the multiplayer game ($gameId)!",
+                        'msg' => "You received $reward brain coins for winning the multiplayer game ($game->id)!",
                     ]),
                 ];
 
@@ -364,7 +349,7 @@ class GameController extends Controller
 
         return response()->json([
             'message' => 'Players updated successfully.',
-            'game_id' => $gameId,
+            'game_id' => $game->id,
             'updates' => $updates,
         ]);
     }

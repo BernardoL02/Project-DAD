@@ -257,16 +257,6 @@ exports.createGameEngine = (lobby) => {
         return player;
       }
 
-      // Se ambos os jogadores têm o mesmo número de pares encontrados
-      if (player.pairsFound === best.pairsFound) {
-        // Ganha o jogador que tiver menos turnos
-        if (player.totalTurns < best.totalTurns) {
-          return player;
-        }
-
-        // Em caso de empate nos turnos, o "best" permanece vencedor por ter alcançado o empate primeiro
-      }
-
       return best;
     }, null);
   };
