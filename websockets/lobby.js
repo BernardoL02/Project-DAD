@@ -49,22 +49,27 @@ exports.createLobby = () => {
 
     const previousOwnerId = game.player1.id;
 
-    // Remove o jogador do lobby
-    game.players = game.players.filter((player) => player.id !== userId);
+    if (game.status === "waiting") {
+      // Remove o jogador do lobby
+      game.players = game.players.filter((player) => player.id !== userId);
 
-    // Se não houver mais jogadores no lobby, deleta o lobby
-    if (game.players.length === 0) {
-      console.log(`Deleting lobby ${gameId} because it has no more players.`);
-      games.delete(gameId);
-      return { games: getGames(), previousOwnerId };
-    }
+      // Se não houver mais jogadores no lobby, deleta o lobby
+      if (game.players.length === 0) {
+        console.log(`Deleting lobby ${gameId} because it has no more players.`);
+        games.delete(gameId);
+        return { games: getGames(), previousOwnerId };
+      }
 
-    // Se o jogador que saiu era o líder (player1), transfere a liderança
-    if (game.player1.id === userId) {
-      game.player1 = game.players[0];
-      game.player1SocketId = game.players[0].socketId;
+      if (game.player1.id === userId) {
+        game.player1 = game.players[0];
+        game.player1SocketId = game.players[0].socketId;
+        console.log(
+          `Transferred leadership of lobby ${gameId} to ${game.player1.nickname}`
+        );
+      }
+    } else {
       console.log(
-        `Transferred leadership of lobby ${gameId} to ${game.player1.nickname}`
+        `Cannot leave game ${gameId} because it is not in "waiting" status.`
       );
     }
 

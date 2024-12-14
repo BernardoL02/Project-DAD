@@ -240,6 +240,25 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     storeGame.sendPostUpdateOwner(response.updatedGame.id, response.updatedGame.player1.id)
   })
 
+  const restoreGame = (game) => {
+    activeGames.value = game
+    console.log('Game restored:', game)
+  }
+
+  const fetchGameById = async (gameId) => {
+    return new Promise((resolve, reject) => {
+      socket.emit('fetchGame', gameId, (game) => {
+        if (game) {
+          addActiveGame(game) // Adiciona o jogo aos jogos ativos
+          resolve(game)
+        } else {
+          console.error(`Game with ID ${gameId} not found.`)
+          reject(new Error(`Game with ID ${gameId} not found.`))
+        }
+      })
+    })
+  }
+
   return {
     activeGames,
     gameOver,
@@ -253,6 +272,8 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     leaveAllLobbies,
     leaveGameLobby,
     turnTimer,
-    stopTurnTimer
+    stopTurnTimer,
+    restoreGame,
+    fetchGameById
   }
 })
