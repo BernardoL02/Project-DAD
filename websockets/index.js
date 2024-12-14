@@ -36,9 +36,17 @@ io.on("connection", (socket) => {
   socket.on("logout", (user) => {
     if (user && user.id) {
       socket.leave("user_" + user.id);
-      lobby.leaveAllLobbies(user.id);
+
+      // Deixa apenas os lobbies que estão em "waiting"
+      lobby.getGames().forEach((game) => {
+        if (game.status === "waiting") {
+          lobby.leave(game.id, user.id);
+        }
+      });
+
       io.to("lobby").emit("lobbyChanged", lobby.getGames());
       socket.leave("lobby");
+
       util.getRoomGamesPlaying(socket).forEach(([roomName, room]) => {
         socket.leave(roomName);
         if (!gameEngine.gameEnded(room.game)) {
@@ -48,7 +56,58 @@ io.on("connection", (socket) => {
         }
       });
     }
+
     socket.data.user = undefined;
+  });
+
+  socket.on("updateSocketId", (userId) => {
+    if (!userId) return;
+
+    // Atualiza o socketId em todos os jogos nos quais o usuário está presente
+    lobby.getGames().forEach((game) => {
+      game.players.forEach((player) => {
+        if (player.id === userId) {
+          player.socketId = socket.id;
+          console.log(
+            `Updated socketId for player ${player.nickname} in game ${game.id}`
+          );
+        }
+      });
+
+      if (game.player1.id === userId) {
+        game.player1SocketId = socket.id;
+      }
+    });
+
+    console.log(`Socket ID for user ${userId} updated to ${socket.id}`);
+  });
+
+  socket.on("updateSocketIdInGame", (userId, gameId) => {
+    const game = lobby.getGame(gameId);
+    if (game) {
+      game.players.forEach((player) => {
+        if (player.id === userId) {
+          player.socketId = socket.id;
+          console.log(
+            `Updated socketId for player ${player.nickname} in game ${gameId}`
+          );
+          gameEngine.startTurnTimer(game, io, lobby); // Reinicia o timer ao reconectar
+        }
+      });
+
+      io.to(socket.id).emit("gameRestored", game);
+    } else {
+      console.error(`Game with ID ${gameId} not found`);
+    }
+  });
+
+  socket.on("fetchGame", (gameId, callback) => {
+    const game = lobby.getGame(gameId);
+    if (game) {
+      callback(game);
+    } else {
+      callback({ error: "Game not found" });
+    }
   });
 
   socket.on("privateMessage", (clientMessageObj, callback) => {

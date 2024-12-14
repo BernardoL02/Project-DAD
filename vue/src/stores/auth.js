@@ -351,6 +351,7 @@ export const useAuthStore = defineStore('auth', () => {
         const responseUser = await axios.get('users/me')
         user.value = responseUser.data.data
         socket.emit('login', user.value)
+        socket.emit('updateSocketId', user.value.id)
         repeatRefreshToken()
         return true
       } catch {
@@ -425,6 +426,7 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     user,
     isAdmin,
+    socket,
     isPlayer,
     name,
     nickname,

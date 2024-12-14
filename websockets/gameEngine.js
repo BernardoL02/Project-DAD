@@ -28,62 +28,79 @@ exports.createGameEngine = (lobby) => {
 
     // Define o tempo inicial (20 segundos) e registra o início
     const TURN_DURATION = 20000; // 20 segundos em milissegundos
+    const RECONNECT_GRACE_PERIOD = 5000; // 5 segundos adicionais para reconexão
     game.turnStartTime = Date.now();
 
-    const timer = setTimeout(() => {
+    // Timer principal de 20 segundos para o turno
+    const turnTimer = setTimeout(() => {
       const currentPlayer = game.players[game.currentPlayerIndex];
 
-      console.log(`Player ${currentPlayer.nickname} did not play in time.`);
+      console.log(`Turno do jogador ${currentPlayer.nickname} terminou.`);
 
-      const updatedGame = lobby.playerInativo(game.id, currentPlayer.id);
+      // Verifica se o jogador está desconectado ou o socketId não está ativo
+      if (
+        !currentPlayer.socketId ||
+        !io.sockets.sockets.get(currentPlayer.socketId)
+      ) {
+        console.log(
+          `Jogador ${currentPlayer.nickname} está desconectado. Esperando reconexão...`
+        );
 
-      io.to(currentPlayer.socketId).emit("gameCancelled", {
-        message: "You were removed for inactivity.",
-        gameId: game.id,
-      });
+        // Timer adicional de 5 segundos para reconexão
+        const graceTimer = setTimeout(() => {
+          console.log(
+            `Jogador ${currentPlayer.nickname} não reconectou a tempo. Marcando como inativo.`
+          );
 
-      const activePlayers = updatedGame.players.filter((p) => !p.inactive);
+          const updatedGame = lobby.playerInativo(game.id, currentPlayer.id);
 
-      // Guarda o socketId do ex-dono antes de fazer a troca
-      const previousOwnerSocketId = updatedGame.player1SocketId;
-
-      // Verifica se o jogador removido era o dono (player1)
-      if (updatedGame.player1.id === currentPlayer.id) {
-        if (activePlayers.length > 0) {
-          updatedGame.player1 = activePlayers[0];
-          updatedGame.player1SocketId = activePlayers[0].socketId;
-
-          console.log(`Ownership transferred to ${activePlayers[0].nickname}`);
-
-          // Notifica apenas o ex-dono sobre a mudança de dono
-          io.to(previousOwnerSocketId).emit("ownerChanged", {
-            message: `You have been removed as the lobby owner. Ownership transferred to ${activePlayers[0].nickname}.`,
-            updatedGame,
+          io.to(currentPlayer.socketId).emit("gameCancelled", {
+            message: "You were removed for inactivity.",
+            gameId: game.id,
           });
 
-          // Adiciona um pequeno atraso para garantir que o dono seja atualizado antes de continuar
-          setTimeout(() => {
-            proceedAfterOwnerChange(
-              updatedGame,
-              activePlayers,
-              io,
-              lobby,
-              TURN_DURATION
-            );
-          }, 1000); // Atraso de 1 segundo
-        }
+          const activePlayers = updatedGame.players.filter((p) => !p.inactive);
+
+          // Guarda o socketId do ex-dono antes de fazer a troca
+          const previousOwnerSocketId = updatedGame.player1SocketId;
+
+          // Verifica se o jogador removido era o dono (player1)
+          if (updatedGame.player1.id === currentPlayer.id) {
+            if (activePlayers.length > 0) {
+              updatedGame.player1 = activePlayers[0];
+              updatedGame.player1SocketId = activePlayers[0].socketId;
+
+              console.log(
+                `Ownership transferred to ${activePlayers[0].nickname}`
+              );
+
+              // Notifica apenas o ex-dono sobre a mudança de dono
+              io.to(previousOwnerSocketId).emit("ownerChanged", {
+                message: `You have been removed as the lobby owner. Ownership transferred to ${activePlayers[0].nickname}.`,
+                updatedGame,
+              });
+            }
+          }
+
+          proceedAfterOwnerChange(
+            updatedGame,
+            activePlayers,
+            io,
+            lobby,
+            TURN_DURATION
+          );
+        }, RECONNECT_GRACE_PERIOD);
+
+        timers.set(game.id, graceTimer);
       } else {
-        proceedAfterOwnerChange(
-          updatedGame,
-          activePlayers,
-          io,
-          lobby,
-          TURN_DURATION
-        );
+        console.log(`Jogador ${currentPlayer.nickname} completou o turno.`);
+
+        // Se o jogador ainda estiver conectado após o turno, procede normalmente
+        proceedAfterOwnerChange(game, game.players, io, lobby, TURN_DURATION);
       }
     }, TURN_DURATION);
 
-    timers.set(game.id, timer);
+    timers.set(game.id, turnTimer);
 
     // Envia o tempo restante para os clientes
     io.to(game.players.map((p) => p.socketId)).emit("gameUpdated", {
