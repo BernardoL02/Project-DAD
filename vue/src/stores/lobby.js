@@ -32,7 +32,6 @@ export const useLobbyStore = defineStore('lobby', () => {
   // Lobby
   // ------------------------------------------------------
 
-  // fetch lobby games from the Websocket server
   const fetchGames = () => {
     storeError.resetMessages()
     socket.emit('fetchGames', (response) => {
@@ -55,12 +54,10 @@ export const useLobbyStore = defineStore('lobby', () => {
     })
   }
 
-  // when the lobby changes on the server, it is updated on the client
   socket.on('lobbyChanged', (lobbyGames) => {
     games.value = lobbyGames
   })
 
-  // add a game to the lobby
   const CreateLobby = async (rows, cols, board_id) => {
     storeError.resetMessages()
 
@@ -71,15 +68,12 @@ export const useLobbyStore = defineStore('lobby', () => {
         if (webSocketServerResponseHasError(response)) {
           return
         }
-        console.log('Lobby created successfully:', response)
       })
     } catch (error) {
       storeError.setErrorMessages('Failed to create multiplayer game.')
-      console.error('Error creating lobby:', error)
     }
   }
 
-  // join a game of the lobby
   const joinlobby = (id) => {
     storeError.resetMessages()
     socket.emit('joinlobby', id, (response) => {
@@ -90,18 +84,14 @@ export const useLobbyStore = defineStore('lobby', () => {
     })
   }
 
-  //Set Ready Player on lobby
   const setReady = (gameId, playerId) => {
     storeError.resetMessages()
-    console.log(gameId)
     socket.emit('setReady', { gameId, playerId }, (response) => {
       if (webSocketServerResponseHasError(response)) return
-      console.log('Player ready status toggled:', response)
-      fetchGames() // Atualiza os jogos após alterar o status de ready
+      fetchGames()
     })
   }
 
-  //Leave Lobby
   const leaveLobby = (gameId) => {
     storeError.resetMessages()
     socket.emit('leaveLobby', gameId, (response) => {
@@ -109,15 +99,10 @@ export const useLobbyStore = defineStore('lobby', () => {
         return
       }
 
-      console.log('Left lobby:', response)
-
-      // Verifica se o usuário atual era o dono do lobby (player1) antes de sair
       const currentUser = storeAuth.user
       const wasLobbyOwner = response.previousOwnerId === currentUser.id
 
-      // Se a liderança mudou, atualiza o dono do jogo na base de dados
       if (wasLobbyOwner && response.player1.id !== currentUser.id) {
-        console.log(`Lobby owner changed from ${currentUser.id} to ${response.player1.id}`)
         storeGame.sendPostUpdateOwner(response.id, response.player1.id)
       }
 
@@ -131,7 +116,7 @@ export const useLobbyStore = defineStore('lobby', () => {
         storeError.setErrorMessages(response.errorMessage)
       } else {
         notificationStore.setSuccessMessage('Player removed successfully!', 'Player Removed')
-        fetchGames() // Atualiza os jogos após a remoção
+        fetchGames()
       }
     })
   }
@@ -185,33 +170,25 @@ export const useLobbyStore = defineStore('lobby', () => {
   }
 
   socket.on('privateMessage', (payload) => {
-    console.log('Received payload:', payload)
-
-    // Verifica se o chat com o usuário já existe
     const existingChatIndex = openChats.value.findIndex((chat) => chat.user.id === payload.user.id)
 
     if (existingChatIndex !== -1) {
-      // Chat já existe: adiciona a mensagem recebida
       openChats.value[existingChatIndex].messages.push({
         sender: payload.user.nickname,
         text: payload.message
       })
       activeChatIndex.value = existingChatIndex
     } else {
-      // Chat não existe: cria um novo chat com a mensagem recebida
       openChats.value.push({
         user: payload.user,
         messages: [{ sender: payload.user.nickname, text: payload.message }]
       })
       activeChatIndex.value = openChats.value.length - 1
     }
-
-    // Abre o painel de chat se não estiver aberto
     if (!isChatOpen.value) {
       isChatOpen.value = true
     }
 
-    // Salva o estado dos chats na sessionStorage
     saveChatsToSession()
   })
 
@@ -244,7 +221,6 @@ export const useLobbyStore = defineStore('lobby', () => {
     if (savedChats) {
       openChats.value = JSON.parse(savedChats)
       if (openChats.value.length > 0) {
-        // Abre o primeiro chat que estava aberto
         const firstOpenChatIndex = openChats.value.findIndex((chat) => chat.isOpen)
         activeChatIndex.value = firstOpenChatIndex !== -1 ? firstOpenChatIndex : 0
         isChatOpen.value = firstOpenChatIndex !== -1
@@ -252,26 +228,21 @@ export const useLobbyStore = defineStore('lobby', () => {
     }
   }
 
-  // Dentro do storeLobby
   const now = ref(Date.now())
 
-  // Atualiza a hora atual a cada segundo
   setInterval(() => {
     now.value = Date.now()
     refreshExpiredLobbies()
   }, 1000)
 
-  // Computed para verificar lobbies expirados
   const expiredLobbies = computed(() => {
     return games.value.filter((game) => game.expires_at <= now.value)
   })
 
-  // Função para atualizar lobbies expirados
   const refreshExpiredLobbies = () => {
     if (expiredLobbies.value.length > 0) {
       expiredLobbies.value.forEach(async (game) => {
         if (game.status === 'waiting') {
-          console.log(`Atualizando status do lobby expirado com ID: ${game.id}`)
           await storeGame.sendPostOnExit(game.id)
         }
       })
@@ -309,27 +280,18 @@ export const useLobbyStore = defineStore('lobby', () => {
   }
 
   const leaveOtherLobbies = async (currentLobbyId) => {
-    // Filtra os lobbies ativos, exceto o lobby atual
     const lobbiesToLeave = games.value.filter((game) => game.id !== currentLobbyId)
 
     for (const lobby of lobbiesToLeave) {
       await new Promise((resolve) => {
         socket.emit('leaveLobby', lobby.id, async (response) => {
           if (!response.errorCode) {
-            console.log(`Left lobby with ID: ${lobby.id}`)
-
-            // Verifica se o usuário era o dono do lobby
             const currentUser = storeAuth.user
             if (response.previousOwnerId === currentUser.id) {
               try {
                 await storeGame.sendPostOnExit(lobby.id)
-                console.log(`Lobby ${lobby.id} status updated to 'I' via API`)
-              } catch (error) {
-                console.error(`Error updating lobby ${lobby.id} status via API:`, error)
-              }
+              } catch (error) {}
             }
-          } else {
-            console.error(`Error leaving lobby ${lobby.id}:`, response.errorMessage)
           }
           resolve()
         })
