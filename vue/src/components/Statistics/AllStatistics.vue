@@ -1,35 +1,37 @@
 <template>
   <div class="statistics-container max-w-5xl mx-auto py-8 space-y-6">
-    <h1 class="text-3xl font-bold mb-10 text-center justify-center mr-12">Statistics</h1>
-    <div v-if="loading" class="text-center text-gray-400 mr-12">Loading...</div>
+    <h1 class="text-3xl font-bold mb-10 text-center justify-center mr-8">Statistics</h1>
+    <div v-if="loading" class="text-center text-gray-400 mr-8">Loading...</div>
     <div v-else>
       <!-- BUTTONS PARA CADA PÁGINA DE ESTATISTICA -->
-      <div class="flex pb-10 space-x-4 justify-center">
-        <div class="mb-2">
-          <button v-if="authStore.isAdmin" @click="setSelectedView('game')" :class="{
-            'bg-green-500 text-white': selectedView === 'game',
-            'bg-gray-200': selectedView !== 'game'
-          }" class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300">
-            Game Statistics
-          </button>
+      <div class="flex pb-10 justify-center">
+        <div class="flex flex-row space-x-6">
+          <div class="mb-2">
+            <button v-if="authStore.isAdmin" @click="setSelectedView('game')" :class="{
+              'bg-green-500 text-white': selectedView === 'game',
+              'bg-gray-200': selectedView !== 'game'
+            }" class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300">
+              Game Statistics
+            </button>
+          </div>
+          <div class="mb-2">
+            <button v-if="authStore.isAdmin" @click="setSelectedView('purchase')" :class="{
+              'bg-green-500 text-white': selectedView === 'purchase',
+              'bg-gray-200': selectedView !== 'purchase'
+            }" class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300">
+              Purchase Statistics
+            </button>
+          </div>
+          <div class="mb-2">
+            <button v-if="authStore.isAdmin" @click="setSelectedView('players')" :class="{
+              'bg-green-500 text-white': selectedView === 'players',
+              'bg-gray-200': selectedView !== 'players'
+            }" class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300">
+              Players Statistics
+            </button>
+          </div>
         </div>
-        <div class="mb-2">
-          <button v-if="authStore.isAdmin" @click="setSelectedView('purchase')" :class="{
-            'bg-green-500 text-white': selectedView === 'purchase',
-            'bg-gray-200': selectedView !== 'purchase'
-          }" class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300">
-            Purchase Statistics
-          </button>
-        </div>
-        <div class="mb-2">
-          <button v-if="authStore.isAdmin" @click="setSelectedView('players')" :class="{
-            'bg-green-500 text-white': selectedView === 'players',
-            'bg-gray-200': selectedView !== 'players'
-          }" class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300">
-            Players Statistics
-          </button>
-        </div>
-        <div class="flex flex-row space-x-6 pr-20">
+        <div class="flex flex-row space-x-6 justify-center ">
           <div class="mb-1">
             <button v-if="!authStore.isAdmin" @click="setSelectedView('myStatistics')" :class="{
               'bg-green-500 text-white': selectedView === 'myStatistics',
