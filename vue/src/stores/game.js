@@ -521,8 +521,6 @@ export const useGameStore = defineStore('game', () => {
 
   const storePlayers = async (game) => {
     try {
-      console.log(game)
-
       // Extrai o gameId
       const gameId = game.id
 

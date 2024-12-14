@@ -23,17 +23,19 @@ const createGameWithBoard = async () => {
 }
 
 
-onMounted(() => {
+onMounted(async () => {
     storeLobby.fetchGames()
     storeBoard.getBoards()
+    authStore.getNotifications()
+    await authStore.fetchProfile()
 })
 
-// Define o primeiro board como padrão assim que os boards forem carregados
 watch(() => storeBoard.boards, (newBoards) => {
     if (newBoards.length > 0 && !selectedBoard.value) {
         selectedBoard.value = newBoards[0]
     }
 })
+
 </script>
 
 <template>

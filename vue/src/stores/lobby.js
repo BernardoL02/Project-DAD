@@ -300,10 +300,8 @@ export const useLobbyStore = defineStore('lobby', () => {
 
     socket.emit('startGame', gameId, (game) => {
       if (game) {
-        storeGameMultiplayer.addActiveGame(game) // Adiciona o jogo à lista de jogos ativos
         storeGame.sendPostOnInPorgress(game.id)
         storeGame.storePlayers(game)
-        router.push({ path: '/multiplayer/game', query: { gameId: game.id } }) // Redireciona para a rota com o gameId
       } else {
         storeError.setErrorMessages('Failed to start the game.')
       }

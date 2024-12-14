@@ -283,12 +283,20 @@ io.on("connection", (socket) => {
 
     game.expires_at = null;
     game = gameEngine.initGame(game);
-    gameEngine.startTurnTimer(game, io, lobby);
     game.status = "started";
 
     game.players.forEach((player) => {
-      io.to(player.socketId).emit("gameStarted", game);
+      if (player.socketId) {
+        console.log(
+          `Sending gameStarted to ${player.nickname} (${player.socketId})`
+        );
+        io.to(player.socketId).emit("gameStarted", game);
+      } else {
+        console.error(`Player ${player.nickname} has no socketId!`);
+      }
     });
+
+    gameEngine.startTurnTimer(game, io, lobby);
 
     io.to("lobby").emit("lobbyChanged", lobby.getGames());
     callback(game);

@@ -18,9 +18,9 @@ G4. MULTIPLAYER GAMES
 [X] - Se jogador ficar inativo por 20 segundos é expulso
 [X] - Transacões por ganhos no multiplayer e notificacoes
 [X] - Verificar se os estados dos jogos estão corretos (Ex: pending = jogos que ainda nao comecaram e estão à espera de jogadores)
-[] - Policy para multiplayer games 
+[] - Policy para multiplayer games JOSE TIVE DE COMENTAR A DOS storePLayer aquelas estao me a bloquear
 [X] - Cada jogo custa 5 moedas, vencedor recebe todas as coins em jogo - 3
-[] - Aumentar o numero de vitorias e de derrotas de cada jogador
+[X] - Aumentar o numero de vitorias e de derrotas de cada jogador
 [] - Remover console.log espalhados pelo código
 
 G8. CUSTOM FEATURES AND IMPLEMENTATION DETAILS

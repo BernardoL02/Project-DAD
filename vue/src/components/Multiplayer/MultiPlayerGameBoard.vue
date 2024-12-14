@@ -18,8 +18,9 @@ const gameId = route.query.gameId
 const gameData = computed(() => storeGameMultiplayer.getActiveGameById(Number(gameId)))
 
 const timer = computed(() => {
-    return isNaN(storeGameMultiplayer.timer) ? 0 : storeGameMultiplayer.timer
-})
+    return isNaN(storeGameMultiplayer.timer) || storeGameMultiplayer.timer < 0 ? 0 : storeGameMultiplayer.timer;
+});
+
 
 const circleStyle = computed(() => {
     const radius = 18
@@ -47,15 +48,6 @@ watch(() => storeGameMultiplayer.turnTimer, (newVal) => {
     }
 });
 
-
-// Função para iniciar o jogo
-const startGame = () => {
-    storeGameMultiplayer.startGame(gameId, (game) => {
-        console.log('Game started:', game)
-    })
-}
-
-
 const invalidAttemptPlayerId = ref(null);
 
 const flipCard = (index) => {
@@ -63,7 +55,7 @@ const flipCard = (index) => {
         invalidAttemptPlayerId.value = gameData.value.players[gameData.value.currentPlayerIndex].id;
         setTimeout(() => {
             invalidAttemptPlayerId.value = null;
-        }, 500); // Duração do efeito (500ms)
+        }, 500);
         return;
     }
 
@@ -98,19 +90,12 @@ const cancelExit = () => {
 
 const handleBeforeUnload = (event) => {
     event.preventDefault();
-    // Apenas sai dos lobbies ao fechar ou recarregar a página
     storeGameMultiplayer.leaveAllLobbies();
     event.returnValue = '';
 };
 
 
 onMounted(() => {
-    nextTick(() => {
-        if (chatPanel.value) {
-            storeLobby.setChatPanel(chatPanel.value);
-            console.log('Chat panel ref set successfully.');
-        }
-    });
     unregisterGuard = router.beforeEach((to, from, next) => {
         console.log('beforeEach chamado:', from.path, to.fullPath);
 
@@ -130,10 +115,22 @@ onMounted(() => {
         }
     });
     window.addEventListener('beforeunload', handleBeforeUnload);
-    startGame();
     storeLobby.loadChatsFromSession();
-    storeLobby.isChatOpen = true
+    storeLobby.isChatOpen = true;
+    storeAuth.getNotifications()
+
+    watch(() => storeGameMultiplayer.turnTimer, (newVal) => {
+        if (newVal <= 5 && newVal !== lastTurnTimer.value) {
+            animateCountdown.value = true;
+            lastTurnTimer.value = newVal;
+
+            setTimeout(() => {
+                animateCountdown.value = false;
+            }, 300);
+        }
+    });
 });
+
 
 
 
@@ -155,10 +152,6 @@ onUnmounted(() => {
     window.removeEventListener('beforeunload', handleBeforeUnload)
     storeGameMultiplayer.stopTimer()
     storeGameMultiplayer.stopTurnTimer()
-})
-
-watch(gameData, (newValue) => {
-    console.log("Game data received in client:", newValue)
 })
 </script>
 

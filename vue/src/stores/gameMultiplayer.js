@@ -31,7 +31,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   // Adiciona um novo jogo ativo à lista
   const addActiveGame = (game) => {
     if (!activeGames.value.find((g) => g.id === game.id)) {
-      if (!game.matchedPairs) game.matchedPairs = [] // Inicializa matchedPairs se não existir
+      if (!game.matchedPairs) game.matchedPairs = []
       activeGames.value.push(game)
     }
   }
@@ -42,32 +42,39 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   }
 
   const gameOver = ref(false)
-  // Inicia o jogo
-  const startGame = (gameId, callback) => {
-    gameOver.value = false // Reinicia o estado do jogo
-    socket.emit('startGame', Number(gameId), (game) => {
-      if (game) {
-        addActiveGame(game)
-
-        if (game.players && game.players.length > 0 && game.currentPlayerIndex !== undefined) {
-          currentPlayerId.value = game.players[game.currentPlayerIndex].id
-        } else {
-          console.error('Players or currentPlayerIndex is undefined:', game)
-        }
-
-        startTimer()
-        if (callback) callback(game)
-      } else {
-        console.error('Failed to start the game.')
-      }
-    })
-  }
 
   // Recebe evento de início do jogo e redireciona todos os jogadores
   socket.on('gameStarted', async (game) => {
+    gameOver.value = false
+    console.log(`Game started event received for gameId ${game.id}`)
+
+    console.log('Adiciona Game', game)
+    addActiveGame(game)
+
     await storeLobby.leaveOtherLobbies(game.id)
 
+    // Buscar os boards
+    await boardStore.getBoards()
+
+    // Encontrar o board correspondente com base em rows e cols
+    const matchingBoard = boardStore.boards.find(
+      (board) => board.board_rows === game.rows && board.board_cols === game.cols
+    )
+
+    if (matchingBoard) {
+      const boardId = matchingBoard.id
+      console.log(`Board ID encontrado: ${boardId}`)
+
+      // Criar transação usando o boardId
+      await transactionStore.createTransactionsGames(game.id, 5, boardId, 'Multi-Player')
+    } else {
+      console.error(
+        'Nenhum board correspondente encontrado para as linhas e colunas especificadas.'
+      )
+    }
+
     router.push({ path: '/multiplayer/game', query: { gameId: game.id } })
+
     startTimer()
   })
 
@@ -138,7 +145,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
 
   // Recebe evento de encerramento do jogo
   socket.on('gameEnded', ({ message, totalMoves, winner, updatedGame, pairsFoundByPlayers }) => {
-    gameOver.value = true // Define que o jogo acabou
+    gameOver.value = true
     const currentPlayer = pairsFoundByPlayers.find(
       (player) => player.nickname === storeAuth.user.nickname
     )
@@ -233,15 +240,14 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
 
   return {
     activeGames,
+    gameOver,
     addActiveGame,
     getActiveGameById,
-    startGame,
     flipCard,
     timer,
     startTimer,
     stopTimer,
     isCurrentPlayerTurn,
-    gameOver,
     leaveAllLobbies,
     leaveGameLobby,
     turnTimer,
