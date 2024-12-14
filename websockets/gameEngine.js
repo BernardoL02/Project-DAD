@@ -33,8 +33,6 @@ exports.createGameEngine = (lobby) => {
     const timer = setTimeout(() => {
       const currentPlayer = game.players[game.currentPlayerIndex];
 
-      console.log(`Player ${currentPlayer.nickname} did not play in time.`);
-
       const updatedGame = lobby.playerInativo(game.id, currentPlayer.id);
 
       io.to(currentPlayer.socketId).emit("gameCancelled", {
@@ -49,8 +47,6 @@ exports.createGameEngine = (lobby) => {
         if (activePlayers.length > 0) {
           updatedGame.player1 = activePlayers[0];
           updatedGame.player1SocketId = activePlayers[0].socketId;
-
-          console.log(`Ownership transferred to ${activePlayers[0].nickname}`);
 
           // Notifica os jogadores sobre a mudança de dono
           io.to(updatedGame.players.map((p) => p.socketId)).emit(
@@ -72,10 +68,6 @@ exports.createGameEngine = (lobby) => {
       // Verifica se restou apenas um jogador ativo
       const activePlayers = updatedGame.players.filter((p) => !p.inactive);
       if (activePlayers.length === 1) {
-        console.log(
-          `Only one player left in game ${game.id}. Ending the game.`
-        );
-
         updatedGame.status = "ended";
         const winner = activePlayers[0];
 
@@ -131,10 +123,7 @@ exports.createGameEngine = (lobby) => {
     }
 
     if (game.isLocked) {
-      return {
-        errorCode: 14,
-        errorMessage: "Please wait, the current turn is being processed.",
-      };
+      return;
     }
 
     if (

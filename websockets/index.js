@@ -287,9 +287,6 @@ io.on("connection", (socket) => {
 
     game.players.forEach((player) => {
       if (player.socketId) {
-        console.log(
-          `Sending gameStarted to ${player.nickname} (${player.socketId})`
-        );
         io.to(player.socketId).emit("gameStarted", game);
       } else {
         console.error(`Player ${player.nickname} has no socketId!`);
@@ -337,14 +334,9 @@ io.on("connection", (socket) => {
       return;
     }
 
-    console.log(
-      `User ${socket.data.user.nickname} (${socket.data.user.id}) is leaving game ${gameId}`
-    );
-
     const currentGame = lobby.getGame(gameId);
 
     if (!currentGame) {
-      console.log(`Game ${gameId} not found.`);
       return callback({ errorCode: 5, errorMessage: "Game not found!" });
     }
 
@@ -363,8 +355,6 @@ io.on("connection", (socket) => {
       updatedGame.player1 = newOwner;
       updatedGame.player1SocketId = newOwner.socketId;
 
-      console.log(`Ownership transferred to ${newOwner.nickname}`);
-
       // Emite um evento para os clientes informando sobre a mudança de dono
       io.to(updatedGame.players.map((p) => p.socketId)).emit("ownerChanged", {
         message: `Ownership transferred to ${newOwner.nickname}`,
@@ -375,8 +365,6 @@ io.on("connection", (socket) => {
     // Verifica se restou apenas um jogador ativo
     if (activePlayers.length === 1) {
       gameEngine.stopTurnTimer(updatedGame.id);
-      console.log(`Only one player left in game ${gameId}. Ending the game.`);
-
       updatedGame.status = "ended";
       const winner = activePlayers[0];
 

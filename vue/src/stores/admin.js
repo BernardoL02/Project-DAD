@@ -200,7 +200,6 @@ export const useAdminStore = defineStore('admin', () => {
       await getUsers()
       storeError.setSuccessMessages('User blocked successfully!', {}, 200, 'Blocked Success')
     } catch (err) {
-      console.log('entrou')
       error.value = 'Failed to block an user'
       storeError.setErrorMessages(
         err.response?.data?.message,
@@ -312,7 +311,6 @@ export const useAdminStore = defineStore('admin', () => {
 
       games.value = updatedGames
       last_page.value = response.data.meta.last_page
-      console.log(last_page.value)
     } catch (err) {
       storeError.setErrorMessages(
         err.response?.data?.message,

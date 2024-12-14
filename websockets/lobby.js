@@ -54,7 +54,6 @@ exports.createLobby = () => {
 
     // Se não houver mais jogadores no lobby, deleta o lobby
     if (game.players.length === 0) {
-      console.log(`Deleting lobby ${gameId} because it has no more players.`);
       games.delete(gameId);
       return { games: getGames(), previousOwnerId };
     }
@@ -63,9 +62,6 @@ exports.createLobby = () => {
     if (game.player1.id === userId) {
       game.player1 = game.players[0];
       game.player1SocketId = game.players[0].socketId;
-      console.log(
-        `Transferred leadership of lobby ${gameId} to ${game.player1.nickname}`
-      );
     }
 
     return { games: getGames(), previousOwnerId, game };
@@ -117,18 +113,13 @@ exports.createLobby = () => {
   const playerInativo = (gameId, userId) => {
     const game = games.get(gameId);
     if (!game) {
-      console.log(`Game ${gameId} not found.`);
       return null;
     }
-
-    console.log(`Marking player ${userId} as inactive in game ${gameId}`);
 
     const player = game.players.find((p) => p.id === userId);
     if (player) {
       player.inactive = true;
     }
-
-    console.log("Players status after marking inactive:", game.players);
 
     // Se o jogador inativo era o jogador atual, avance para o próximo jogador ativo
     let currentPlayer = game.players[game.currentPlayerIndex];
@@ -148,7 +139,6 @@ exports.createLobby = () => {
     const now = Date.now();
     for (const [gameId, game] of games.entries()) {
       if (game.expires_at && game.expires_at <= now) {
-        console.log(`Deleting expired lobby ${gameId}`);
         games.delete(gameId);
       }
     }
