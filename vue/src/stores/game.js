@@ -494,7 +494,6 @@ export const useGameStore = defineStore('game', () => {
   const sendPostOnExit = async (gameId) => {
     try {
       if (!gameId) {
-        console.error('Game ID não está definido.')
         return
       }
 

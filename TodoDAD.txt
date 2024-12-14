@@ -5,6 +5,8 @@ G0. Geral
 [] - Limpar todas as stores e ver se os dados ja existem antes de os ir buscar no 
 [] - Sons nos jogos
 [] - Ver o restore token
+[] - Mudar nome site na tab e meter icon
+[] - Apagar store profile
 
 G1. USER REGISTRATION, AUTHENTICATION, PROFILE, END SESSION, 
 ACCOUNT

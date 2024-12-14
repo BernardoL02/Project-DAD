@@ -120,17 +120,14 @@ const handleResetFilters = () => {
     </div>
   </div>
 </template>
-<style scoped>
-.opacity-50 {
-  opacity: 0.5;
-}
 
+<style scoped>
 .cursor-not-allowed {
   cursor: not-allowed;
 }
 
 .disabled {
-  opacity: 0.5;
+  opacity: 0.3;
   pointer-events: none;
   cursor: not-allowed;
 }

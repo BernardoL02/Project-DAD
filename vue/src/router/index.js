@@ -159,7 +159,9 @@ router.beforeEach(async (to, from, next) => {
 
     if (authStore.user) {
       await authStore.fetchProfile()
-      await authStore.getNotifications()
+      if (authStore.isPlayer) {
+        await authStore.getNotifications()
+      }
     }
   }
 
