@@ -160,7 +160,7 @@ onMounted(() => {
                                         <span v-if="game.status === 'started'"
                                             class="text-blue-500 font-bold ml-4">Playing...</span>
                                     </p>
-                                    <p class="text-gray-500 text-sm">
+                                    <p v-if="game.status !== 'started'" class=" text-gray-500 text-sm">
                                         <strong>Expires in:</strong> {{ storeLobby.timeRemaining(game.expires_at) }}
                                     </p>
                                 </div>
@@ -284,7 +284,7 @@ onMounted(() => {
                                 <span v-if="game.status === 'started'"
                                     class="text-blue-500 font-bold ml-4">Playing...</span>
                             </p>
-                            <p class="text-gray-500 text-sm">
+                            <p v-if="game.status !== 'started'" class="text-gray-500 text-sm">
                                 <strong>Expires in:</strong> {{ storeLobby.timeRemaining(game.expires_at) }}
                             </p>
                         </div>

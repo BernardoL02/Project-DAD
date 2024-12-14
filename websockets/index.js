@@ -348,6 +348,10 @@ io.on("connection", (socket) => {
       return callback({ errorCode: 5, errorMessage: "Game not found!" });
     }
 
+    // Guarda o dono atual antes de marcar o jogador como inativo
+    const previousOwner = currentGame.player1;
+    const previousOwnerSocketId = currentGame.player1SocketId;
+
     // Marca o jogador como inativo
     const updatedGame = lobby.playerInativo(gameId, socket.data.user.id);
 
@@ -355,19 +359,16 @@ io.on("connection", (socket) => {
     const activePlayers = updatedGame.players.filter((p) => !p.inactive);
 
     // Se o jogador que saiu era o dono (player1), transfere a liderança para outro jogador ativo
-    if (
-      updatedGame.player1.id === socket.data.user.id &&
-      activePlayers.length > 0
-    ) {
+    if (previousOwner.id === socket.data.user.id && activePlayers.length > 0) {
       const newOwner = activePlayers[0];
       updatedGame.player1 = newOwner;
       updatedGame.player1SocketId = newOwner.socketId;
 
       console.log(`Ownership transferred to ${newOwner.nickname}`);
 
-      // Emite um evento para os clientes informando sobre a mudança de dono
-      io.to(updatedGame.players.map((p) => p.socketId)).emit("ownerChanged", {
-        message: `Ownership transferred to ${newOwner.nickname}`,
+      // Notifica apenas o ex-dono sobre a mudança de liderança
+      io.to(previousOwnerSocketId).emit("ownerChanged", {
+        message: `You have been removed as the lobby owner. Ownership transferred to ${newOwner.nickname}.`,
         updatedGame,
       });
     }
@@ -380,7 +381,6 @@ io.on("connection", (socket) => {
       updatedGame.status = "ended";
       const winner = activePlayers[0];
 
-      // Notifica o último jogador que ele venceu por desistência do adversário
       io.to(winner.socketId).emit("gameCancelled", {
         message: "Your opponent left the game. You win by default!",
         gameId: gameId,
@@ -396,9 +396,9 @@ io.on("connection", (socket) => {
       });
     }
 
-    // Notifica os jogadores restantes que um jogador saiu
-    io.to(updatedGame.players.map((p) => p.socketId)).emit("playerLeft", {
-      message: `${socket.data.user.nickname} is now inactive.`,
+    // Notifica apenas o ex-dono que ele foi removido do jogo
+    io.to(previousOwnerSocketId).emit("playerLeft", {
+      message: `${socket.data.user.nickname} left the game.`,
       updatedGame,
     });
 

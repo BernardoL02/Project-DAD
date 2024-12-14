@@ -67,7 +67,7 @@ const processPurchase = async () => {
     await authStore.getNotifications();
     closeModal();
   } catch (error) {
-    console.error('Error processing payment:', error.response?.data || error.message);
+    return
   }
 };
 

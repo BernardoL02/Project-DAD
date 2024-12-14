@@ -145,6 +145,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
 
   // Recebe evento de encerramento do jogo
   socket.on('gameEnded', ({ message, totalMoves, winner, updatedGame, pairsFoundByPlayers }) => {
+    console.log('gameEnded')
     gameOver.value = true
     const currentPlayer = pairsFoundByPlayers.find(
       (player) => player.nickname === storeAuth.user.nickname
@@ -186,8 +187,8 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   }
 
   socket.on('gameCancelled', ({ message, gameId, updatedGame, winner }) => {
+    console.log('gameCancelled')
     gameOver.value = true
-    console.log(`Game ${gameId} has been cancelled.`)
 
     // Verifica se o usuário atual é o dono do lobby
     if (updatedGame && updatedGame.player1.id === storeAuth.user.id) {
@@ -195,12 +196,13 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
       storeGame.sendPostOnGameEndMuiltiplayerPlayers(updatedGame, winner)
     }
 
-    storeError.setErrorMessages(message, 'Game Cancelled')
+    notificationStore.setSuccessMessage(message, 'Game Over')
     router.push('/multiplayer/lobbys')
   })
 
   socket.on('playerLeft', ({ message, updatedGame }) => {
-    storeError.setErrorMessages(message, 'Jogador Saiu')
+    console.log('playerLeft')
+    storeError.setErrorMessages(message, [], 500, 'Player Left')
 
     // Atualiza o jogo no estado ativo
     const gameIndex = activeGames.value.findIndex((game) => game.id === updatedGame.id)
