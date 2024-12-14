@@ -14,8 +14,6 @@ exports.createGameEngine = (lobby) => {
         ...card,
         flipped: false,
       }));
-    } else {
-      console.error("Invalid board format in initGame:", gameFromDB.board);
     }
 
     return gameFromDB;
@@ -26,14 +24,11 @@ exports.createGameEngine = (lobby) => {
   const startTurnTimer = (game, io, lobby) => {
     stopTurnTimer(game.id);
 
-    // Define o tempo inicial (20 segundos) e registra o início
-    const TURN_DURATION = 20000; // 20 segundos em milissegundos
+    const TURN_DURATION = 20000;
     game.turnStartTime = Date.now();
 
     const timer = setTimeout(() => {
       const currentPlayer = game.players[game.currentPlayerIndex];
-
-      console.log(`Player ${currentPlayer.nickname} did not play in time.`);
 
       const updatedGame = lobby.playerInativo(game.id, currentPlayer.id);
 
@@ -44,24 +39,18 @@ exports.createGameEngine = (lobby) => {
 
       const activePlayers = updatedGame.players.filter((p) => !p.inactive);
 
-      // Guarda o socketId do ex-dono antes de fazer a troca
       const previousOwnerSocketId = updatedGame.player1SocketId;
 
-      // Verifica se o jogador removido era o dono (player1)
       if (updatedGame.player1.id === currentPlayer.id) {
         if (activePlayers.length > 0) {
           updatedGame.player1 = activePlayers[0];
           updatedGame.player1SocketId = activePlayers[0].socketId;
 
-          console.log(`Ownership transferred to ${activePlayers[0].nickname}`);
-
-          // Notifica apenas o ex-dono sobre a mudança de dono
           io.to(previousOwnerSocketId).emit("ownerChanged", {
             message: `You have been removed as the lobby owner. Ownership transferred to ${activePlayers[0].nickname}.`,
             updatedGame,
           });
 
-          // Adiciona um pequeno atraso para garantir que o dono seja atualizado antes de continuar
           setTimeout(() => {
             proceedAfterOwnerChange(
               updatedGame,
@@ -70,7 +59,7 @@ exports.createGameEngine = (lobby) => {
               lobby,
               TURN_DURATION
             );
-          }, 1000); // Atraso de 1 segundo
+          }, 1000);
         }
       } else {
         proceedAfterOwnerChange(
@@ -85,7 +74,6 @@ exports.createGameEngine = (lobby) => {
 
     timers.set(game.id, timer);
 
-    // Envia o tempo restante para os clientes
     io.to(game.players.map((p) => p.socketId)).emit("gameUpdated", {
       ...game,
       remainingTime: TURN_DURATION / 1000,
@@ -99,18 +87,10 @@ exports.createGameEngine = (lobby) => {
     lobby,
     TURN_DURATION
   ) => {
-    // Verifica se restou apenas um jogador ativo
-    console.log(`Active players count: ${activePlayers.length}`);
-
     if (activePlayers.length === 1) {
-      console.log(
-        `Only one player left in game ${updatedGame.id}. Ending the game.`
-      );
-
       updatedGame.status = "ended";
       const winner = activePlayers[0];
 
-      // Notifica o vencedor por desistência do adversário
       io.to(winner.socketId).emit("gameCancelled", {
         message:
           "Your opponent was removed for inactivity. You win by default!",
@@ -119,18 +99,11 @@ exports.createGameEngine = (lobby) => {
         winner,
       });
 
-      // Remove o jogo do lobby
       lobby.deleteGame(updatedGame.id);
       io.to("lobby").emit("lobbyChanged", lobby.getGames());
 
       return;
     }
-
-    // Se há mais de um jogador ativo, continua o jogo
-    console.log(
-      "Players notified with playerLeft",
-      activePlayers.map((p) => p.nickname)
-    );
 
     io.to(activePlayers.map((p) => p.socketId)).emit("playerLeft", {
       message: `${
@@ -139,7 +112,6 @@ exports.createGameEngine = (lobby) => {
       updatedGame,
     });
 
-    // Continua o jogo com o próximo jogador
     io.to(activePlayers.map((p) => p.socketId)).emit("gameUpdated", {
       ...updatedGame,
       remainingTime: TURN_DURATION / 1000,
@@ -182,7 +154,6 @@ exports.createGameEngine = (lobby) => {
       };
     }
 
-    // Define o startTime na primeira jogada
     if (!game.startTime) {
       game.startTime = Date.now();
     }
@@ -192,9 +163,9 @@ exports.createGameEngine = (lobby) => {
 
     if (game.selectedCards.length === 2) {
       game.isLocked = true;
-      stopTurnTimer(game.id); // Para o timer atual durante a jogada
-      game.totalMoves += 1; // Incrementa o contador de jogadas
-      currentPlayer.totalTurns = (currentPlayer.totalTurns || 0) + 1; // Incrementa o totalTurns do jogador atual
+      stopTurnTimer(game.id);
+      game.totalMoves += 1;
+      currentPlayer.totalTurns = (currentPlayer.totalTurns || 0) + 1;
 
       const [firstIndex, secondIndex] = game.selectedCards;
 
@@ -206,7 +177,6 @@ exports.createGameEngine = (lobby) => {
           game.board[firstIndex].flipped = false;
           game.board[secondIndex].flipped = false;
 
-          // Passa para o próximo jogador ativo apenas quando erra
           do {
             game.currentPlayerIndex =
               (game.currentPlayerIndex + 1) % game.players.length;
@@ -217,11 +187,9 @@ exports.createGameEngine = (lobby) => {
         game.selectedCards = [];
         game.isLocked = false;
 
-        // Verifica se o jogo terminou
         if (game.matchedPairs.length === game.board.length) {
           game.status = "ended";
 
-          // Determina o vencedor
           const winner = determineWinner(game.players);
 
           io.to(game.players.map((p) => p.socketId)).emit("gameEnded", {
@@ -253,12 +221,10 @@ exports.createGameEngine = (lobby) => {
     return game;
   };
 
-  // Função para determinar o vencedor
   const determineWinner = (players) => {
     return players.reduce((best, player) => {
       if (!best) return player;
 
-      // Se o jogador atual encontrou mais pares que o "best", ele se torna o novo vencedor
       if (player.pairsFound > best.pairsFound) {
         return player;
       }

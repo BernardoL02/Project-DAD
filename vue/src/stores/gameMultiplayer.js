@@ -28,7 +28,6 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   const turnTimer = ref(0)
   const turnTimerInterval = ref(null)
 
-  // Adiciona um novo jogo ativo à lista
   const addActiveGame = (game) => {
     if (!activeGames.value.find((g) => g.id === game.id)) {
       if (!game.matchedPairs) game.matchedPairs = []
@@ -36,41 +35,28 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     }
   }
 
-  // Obtém um jogo ativo pelo ID
   const getActiveGameById = (gameId) => {
     return activeGames.value.find((game) => game.id === gameId)
   }
 
   const gameOver = ref(false)
 
-  // Recebe evento de início do jogo e redireciona todos os jogadores
   socket.on('gameStarted', async (game) => {
     gameOver.value = false
-    console.log(`Game started event received for gameId ${game.id}`)
-
-    console.log('Adiciona Game', game)
     addActiveGame(game)
 
     await storeLobby.leaveOtherLobbies(game.id)
 
-    // Buscar os boards
     await boardStore.getBoards()
 
-    // Encontrar o board correspondente com base em rows e cols
     const matchingBoard = boardStore.boards.find(
       (board) => board.board_rows === game.rows && board.board_cols === game.cols
     )
 
     if (matchingBoard) {
       const boardId = matchingBoard.id
-      console.log(`Board ID encontrado: ${boardId}`)
 
-      // Criar transação usando o boardId
       await transactionStore.createTransactionsGames(game.id, 5, boardId, 'Multi-Player')
-    } else {
-      console.error(
-        'Nenhum board correspondente encontrado para as linhas e colunas especificadas.'
-      )
     }
 
     router.push({ path: '/multiplayer/game', query: { gameId: game.id } })
@@ -78,29 +64,24 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     startTimer()
   })
 
-  // Recebe atualizações do jogo
   socket.on('gameUpdated', (updatedGame) => {
     const game = getActiveGameById(updatedGame.id)
-    console.log(game)
     if (game) {
       Object.assign(game, updatedGame)
       currentPlayerId.value = updatedGame.players[updatedGame.currentPlayerIndex].id
 
       game.players = updatedGame.players
 
-      // Inicia o timer do turno com o tempo restante enviado pelo servidor
       if (updatedGame.remainingTime) {
         startTurnTimer(updatedGame.remainingTime)
       }
 
-      // Inicia o timer total apenas quando startTime estiver definido
       if (updatedGame.startTime && !startTime.value) {
         startTimer(updatedGame.startTime)
       }
     }
   })
 
-  // Inicia o timer do turno baseado no tempo restante recebido do servidor
   const startTurnTimer = (remainingTime) => {
     if (turnTimerInterval.value) clearInterval(turnTimerInterval.value)
 
@@ -115,7 +96,6 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     }, 1000)
   }
 
-  // Para o timer do turno
   const stopTurnTimer = () => {
     if (turnTimerInterval.value) {
       clearInterval(turnTimerInterval.value)
@@ -124,7 +104,6 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     turnTimer.value = 0
   }
 
-  // Inicia o timer baseado no startTime do servidor
   const startTimer = (serverStartTime) => {
     if (timerInterval.value) clearInterval(timerInterval.value)
 
@@ -143,9 +122,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     startTime.value = null
   }
 
-  // Recebe evento de encerramento do jogo
   socket.on('gameEnded', ({ message, totalMoves, winner, updatedGame, pairsFoundByPlayers }) => {
-    console.log('gameEnded')
     gameOver.value = true
     const currentPlayer = pairsFoundByPlayers.find(
       (player) => player.nickname === storeAuth.user.nickname
@@ -172,25 +149,17 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     router.push('/multiplayer/lobbys')
   })
 
-  // Verifica se é o turno do jogador atual
   const isCurrentPlayerTurn = computed(() => {
     return currentPlayerId.value === storeAuth.user.id
   })
 
-  // Vira a carta e envia para o servidor
   const flipCard = (gameId, index) => {
-    socket.emit('flipCard', { gameId: Number(gameId), index }, (response) => {
-      if (response.errorCode) {
-        console.error(response.errorMessage)
-      }
-    })
+    socket.emit('flipCard', { gameId: Number(gameId), index }, (response) => {})
   }
 
   socket.on('gameCancelled', ({ message, gameId, updatedGame, winner }) => {
-    console.log('gameCancelled')
     gameOver.value = true
 
-    // Verifica se o usuário atual é o dono do lobby
     if (updatedGame && updatedGame.player1.id === storeAuth.user.id) {
       storeGame.sendPostOnForfeitMuiltiplayer(updatedGame, winner)
       storeGame.sendPostOnGameEndMuiltiplayerPlayers(updatedGame, winner)
@@ -201,13 +170,10 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   })
 
   socket.on('playerLeft', ({ message, updatedGame }) => {
-    console.log('playerLeft')
     storeError.setErrorMessages(message, [], 500, 'Player Left')
 
-    // Atualiza o jogo no estado ativo
     const gameIndex = activeGames.value.findIndex((game) => game.id === updatedGame.id)
     if (gameIndex !== -1) {
-      // Substitui o jogo antigo pelo jogo atualizado
       activeGames.value.splice(gameIndex, 1, updatedGame)
     }
 
@@ -215,28 +181,25 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   })
 
   const leaveAllLobbies = () => {
-    socket.emit('leaveAllLobbies', storeAuth.user.id, (response) => {
-      if (response.errorCode) {
-        console.error('Erro ao sair de todos os lobbies:', response.errorMessage)
-      } else {
-        console.log('Saiu de todos os lobbies com sucesso')
-      }
-    })
+    socket.emit('leaveAllLobbies', storeAuth.user.id, (response) => {})
   }
 
   const leaveGameLobby = (gameId) => {
     socket.emit('leaveGame', gameId, (response) => {
       if (response.errorCode) {
-        console.error('Erro ao sair do lobby:', response.errorMessage)
+        storeError.setErrorMessages(
+          response.errorMessage || 'An error occurred while leaving the game lobby.',
+          [],
+          response.errorCode,
+          'Leave Game Error'
+        )
       } else {
-        console.log('Saiu do lobby do jogo com sucesso')
+        storeError.setSuccessMessages('Successfully left the game lobby.', {}, 200, 'Leave Game')
       }
     })
   }
 
   socket.on('ownerChanged', (response) => {
-    console.log('Owner changed:', response)
-
     storeGame.sendPostUpdateOwner(response.updatedGame.id, response.updatedGame.player1.id)
   })
 
@@ -245,7 +208,6 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
 
     const game = getActiveGameById(gameIdInt)
 
-    console.log('RestoreGame', game)
     currentPlayerId.value = game.players[game.currentPlayerIndex]?.id || null
 
     if (game.startTime) {
@@ -253,23 +215,16 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     }
 
     if (game.remainingTime) {
-      console.log('Starting turn timer with remainingTime:', game.remainingTime)
       startTurnTimer(game.remainingTime)
-    } else {
-      console.warn('No remainingTime available for game:', gameIdInt)
     }
   }
 
   const fetchGameById = async (gameId) => {
     return new Promise((resolve, reject) => {
       socket.emit('fetchGame', gameId, (game) => {
-        console.log('Fecht Game', game)
         if (game) {
           addActiveGame(game)
           resolve(game)
-        } else {
-          console.error(`Game with ID ${gameId} not found.`)
-          reject(new Error(`Game with ID ${gameId} not found.`))
         }
       })
     })

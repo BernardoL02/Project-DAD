@@ -37,21 +37,10 @@ io.on("connection", (socket) => {
     if (user && user.id) {
       for (const game of lobby.getGames()) {
         if (game.status === "started") {
-          const callback = (response) => {
-            console.log(
-              response.message ||
-                `User ${user.nickname} left the game ${game.id} via logout.`
-            );
-          };
-
           if (util.checkAuthenticatedUser(socket, callback)) {
             const currentGame = lobby.getGame(game.id);
 
             if (currentGame) {
-              console.log(
-                `User ${user.nickname} (${user.id}) is leaving game ${game.id} via logout.`
-              );
-
               const previousOwner = currentGame.player1;
               const previousOwnerSocketId = currentGame.player1SocketId;
 
@@ -66,15 +55,12 @@ io.on("connection", (socket) => {
                 updatedGame.player1 = newOwner;
                 updatedGame.player1SocketId = newOwner.socketId;
 
-                console.log(`Ownership transferred to ${newOwner.nickname}`);
-
-                // Aguarda a notificação ser enviada antes de prosseguir
                 await new Promise((resolve) => {
                   io.to(previousOwnerSocketId).emit("ownerChanged", {
                     message: `You have been removed as the lobby owner. Ownership transferred to ${newOwner.nickname}.`,
                     updatedGame,
                   });
-                  setTimeout(resolve, 500); // Delay para garantir a entrega
+                  setTimeout(resolve, 500);
                 });
               }
 
@@ -115,7 +101,6 @@ io.on("connection", (socket) => {
         }
       }
 
-      // Executa o socket.leave após todos os processos estarem concluídos
       io.to("lobby").emit("lobbyChanged", lobby.getGames());
       socket.leave("lobby");
       socket.leave("user_" + user.id);
@@ -126,7 +111,6 @@ io.on("connection", (socket) => {
   socket.on("updateSocketId", (userId) => {
     if (!userId) return;
 
-    // Atualiza o socketId em todos os jogos nos quais o usuário está presente
     lobby.getGames().forEach((game) => {
       game.players.forEach((player) => {
         if (player.id === userId) {
@@ -138,8 +122,6 @@ io.on("connection", (socket) => {
         game.player1SocketId = socket.id;
       }
     });
-
-    console.log(`Socket ID for user ${userId} updated to ${socket.id}`);
   });
 
   socket.on("updateSocketIdInGame", (userId, gameId) => {
@@ -148,41 +130,30 @@ io.on("connection", (socket) => {
       game.players.forEach((player) => {
         if (player.id === userId) {
           player.socketId = socket.id;
-          console.log(
-            `Updated socketId for player ${player.nickname} in game ${gameId}`
-          );
         }
       });
-    } else {
-      console.error(`Game with ID ${gameId} not found`);
     }
   });
 
   socket.on("fetchGame", (gameId, callback) => {
-    console.log("Fetching Game", gameId);
-
-    // Converte gameId para um número inteiro
     const gameIdInt = parseInt(gameId, 10);
 
     if (isNaN(gameIdInt)) {
-      console.error("Invalid gameId:", gameId);
       return callback({ error: "Invalid game ID" });
     }
 
     const game = lobby.getGame(gameIdInt);
-    console.log("Fetch Game", game);
 
     if (game) {
-      // Calcula o remainingTime com base no turnStartTime
       if (game.turnStartTime) {
-        const TURN_DURATION = 20000; // 20 segundos
+        const TURN_DURATION = 20000;
         const elapsedTime = Date.now() - game.turnStartTime;
         game.remainingTime = Math.max(
           Math.ceil((TURN_DURATION - elapsedTime) / 1000),
           0
         );
       } else {
-        game.remainingTime = 20; // Valor padrão caso não haja turnStartTime
+        game.remainingTime = 20;
       }
 
       callback(game);
@@ -327,7 +298,6 @@ io.on("connection", (socket) => {
       return callback({ errorCode: 5, errorMessage: "Game not found!" });
     }
 
-    // Verifica se o usuário que está tentando remover é o dono do lobby
     if (socket.data.user.id !== game.player1.id) {
       return callback({
         errorCode: 10,
@@ -335,7 +305,6 @@ io.on("connection", (socket) => {
       });
     }
 
-    // Remove o jogador
     game.players = game.players.filter((player) => player.id !== playerId);
 
     io.to("lobby").emit("lobbyChanged", lobby.getGames());
@@ -346,7 +315,6 @@ io.on("connection", (socket) => {
   // Multiplayer Game
   // ------------------------------------------------------
 
-  // Função auxiliar para gerar o tabuleiro com cartas aleatórias
   function generateRandomBoard(rows, cols) {
     let totalCards = rows * cols;
     if (totalCards % 2 !== 0) totalCards -= 1;
@@ -404,7 +372,6 @@ io.on("connection", (socket) => {
     return cardPairs.map((id) => ({ id, flipped: false }));
   }
 
-  // Evento de início do jogo
   socket.on("startGame", (gameId, callback) => {
     let game = lobby.getGame(gameId);
     if (!game) {
@@ -427,12 +394,7 @@ io.on("connection", (socket) => {
 
     game.players.forEach((player) => {
       if (player.socketId) {
-        console.log(
-          `Sending gameStarted to ${player.nickname} (${player.socketId})`
-        );
         io.to(player.socketId).emit("gameStarted", game);
-      } else {
-        console.error(`Player ${player.nickname} has no socketId!`);
       }
     });
 
@@ -477,49 +439,35 @@ io.on("connection", (socket) => {
       return;
     }
 
-    console.log(
-      `User ${socket.data.user.nickname} (${socket.data.user.id}) is leaving game ${gameId}`
-    );
-
     const currentGame = lobby.getGame(gameId);
 
     if (!currentGame) {
-      console.log(`Game ${gameId} not found.`);
       return callback({ errorCode: 5, errorMessage: "Game not found!" });
     }
 
-    // Guarda o dono atual antes de marcar o jogador como inativo
     const previousOwner = currentGame.player1;
     const previousOwnerSocketId = currentGame.player1SocketId;
 
-    // Marca o jogador como inativo
     const updatedGame = lobby.playerInativo(gameId, socket.data.user.id);
 
-    // Filtra os jogadores ativos
     const activePlayers = updatedGame.players.filter((p) => !p.inactive);
 
-    // Se o jogador que saiu era o dono (player1), transfere a liderança para outro jogador ativo
     if (previousOwner.id === socket.data.user.id && activePlayers.length > 0) {
       const newOwner = activePlayers[0];
       updatedGame.player1 = newOwner;
       updatedGame.player1SocketId = newOwner.socketId;
 
-      console.log(`Ownership transferred to ${newOwner.nickname}`);
-
-      // Notifica apenas o ex-dono sobre a mudança de liderança
       await new Promise((resolve) => {
         io.to(previousOwnerSocketId).emit("ownerChanged", {
           message: `You have been removed as the lobby owner. Ownership transferred to ${newOwner.nickname}.`,
           updatedGame,
         });
-        setTimeout(resolve, 500); // Espera 500ms para garantir que a notificação seja processada
+        setTimeout(resolve, 500);
       });
     }
 
-    // Verifica se restou apenas um jogador ativo
     if (activePlayers.length === 1) {
       gameEngine.stopTurnTimer(updatedGame.id);
-      console.log(`Only one player left in game ${gameId}. Ending the game.`);
 
       updatedGame.status = "ended";
       const winner = activePlayers[0];
@@ -539,7 +487,6 @@ io.on("connection", (socket) => {
       });
     }
 
-    // Notifica os jogadores restantes que um jogador saiu
     io.to(activePlayers.map((p) => p.socketId)).emit("playerLeft", {
       message: `${socket.data.user.nickname} left the game.`,
       updatedGame,

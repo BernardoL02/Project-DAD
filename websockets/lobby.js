@@ -24,7 +24,6 @@ exports.createLobby = () => {
     return game;
   };
 
-  // Função auxiliar para determinar o limite de jogadores com base no board
   const determineMaxPlayers = (rows, cols) => {
     if (cols === 3 && rows === 4) return 2;
     if (cols === 4 && rows === 4) return 3;
@@ -34,11 +33,10 @@ exports.createLobby = () => {
   const setGameBoard = (gameId, board) => {
     const game = games.get(gameId);
     if (game) {
-      game.board = board; // Atualiza o board corretamente
-      games.set(gameId, game); // Salva o jogo atualizado no mapa
-      return game; // Retorna o jogo atualizado
+      game.board = board;
+      games.set(gameId, game);
+      return game;
     } else {
-      console.error(`Game with ID ${gameId} not found in setGameBoard`);
       return null;
     }
   };
@@ -50,12 +48,9 @@ exports.createLobby = () => {
     const previousOwnerId = game.player1.id;
 
     if (game.status === "waiting") {
-      // Remove o jogador do lobby
       game.players = game.players.filter((player) => player.id !== userId);
 
-      // Se não houver mais jogadores no lobby, deleta o lobby
       if (game.players.length === 0) {
-        console.log(`Deleting lobby ${gameId} because it has no more players.`);
         games.delete(gameId);
         return { games: getGames(), previousOwnerId };
       }
@@ -63,14 +58,7 @@ exports.createLobby = () => {
       if (game.player1.id === userId) {
         game.player1 = game.players[0];
         game.player1SocketId = game.players[0].socketId;
-        console.log(
-          `Transferred leadership of lobby ${gameId} to ${game.player1.nickname}`
-        );
       }
-    } else {
-      console.log(
-        `Cannot leave game ${gameId} because it is not in "waiting" status.`
-      );
     }
 
     return { games: getGames(), previousOwnerId, game };
@@ -101,8 +89,6 @@ exports.createLobby = () => {
   };
 
   const getGame = (id) => {
-    console.log("Searching for game with ID:", id);
-    console.log("Available game IDs:", [...games.keys()]);
     return games.get(id);
   };
 
@@ -124,20 +110,14 @@ exports.createLobby = () => {
   const playerInativo = (gameId, userId) => {
     const game = games.get(gameId);
     if (!game) {
-      console.log(`Game ${gameId} not found.`);
       return null;
     }
-
-    console.log(`Marking player ${userId} as inactive in game ${gameId}`);
 
     const player = game.players.find((p) => p.id === userId);
     if (player) {
       player.inactive = true;
     }
 
-    console.log("Players status after marking inactive:", game.players);
-
-    // Se o jogador inativo era o jogador atual, avance para o próximo jogador ativo
     let currentPlayer = game.players[game.currentPlayerIndex];
     if (currentPlayer.id === userId) {
       do {
@@ -147,7 +127,6 @@ exports.createLobby = () => {
       } while (currentPlayer.inactive);
     }
 
-    // Retorna o jogo atualizado
     return game;
   };
 
@@ -155,7 +134,6 @@ exports.createLobby = () => {
     const now = Date.now();
     for (const [gameId, game] of games.entries()) {
       if (game.expires_at && game.expires_at <= now) {
-        console.log(`Deleting expired lobby ${gameId}`);
         games.delete(gameId);
       }
     }
