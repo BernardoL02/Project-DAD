@@ -66,6 +66,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   // Recebe evento de início do jogo e redireciona todos os jogadores
   socket.on('gameStarted', async (game) => {
     await storeLobby.leaveOtherLobbies(game.id)
+
     router.push({ path: '/multiplayer/game', query: { gameId: game.id } })
     startTimer()
   })
