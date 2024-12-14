@@ -130,7 +130,7 @@ onMounted(async () => {
               'disabled': selectedPaymentType !== 'MBWAY'
             }" />
 
-            <img src="/Store/MB.png" @click="hanglePayment('MB')" alt="Payment Icon" class="w-11 h-10" :class="{
+            <img src="/Store/MB.png" @click="hanglePayment('MB')" alt="Payment Icon" class="w-8 h-10" :class="{
               'disabled': selectedPaymentType !== 'MB'
             }" />
 
