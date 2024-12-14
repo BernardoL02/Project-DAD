@@ -6,6 +6,8 @@ G0. Geral
 [] - Sons nos jogos
 [] - Ver o restore token
 [] - colocar o token em local storage
+[] - Mudar nome site na tab e meter icon
+[] - Apagar store profile
 
 G1. USER REGISTRATION, AUTHENTICATION, PROFILE, END SESSION, 
 ACCOUNT

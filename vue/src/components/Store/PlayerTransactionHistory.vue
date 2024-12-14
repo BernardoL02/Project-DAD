@@ -74,6 +74,9 @@ onMounted(() => {
             :options="paymentMethodOptions"
             v-model="selectedPaymentMethod"
             @select="(value) => handleSelect(value, 'paymentMethod')"
+            :class="{
+              disabled: selectedType !== 'All' && selectedType !== 'Purchase'
+            }"
           />
         </div>
       </div>
@@ -97,3 +100,15 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+</style>

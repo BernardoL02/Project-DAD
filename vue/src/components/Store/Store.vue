@@ -38,6 +38,9 @@ const closeModal = () => {
   selectedPaymentType.value = 'MB';
 };
 
+const hanglePayment = (type) => {
+  selectedPaymentType.value = type
+}
 
 const processPurchase = async () => {
   try {
@@ -114,7 +117,6 @@ onMounted(async () => {
       </div>
     </div>
 
-
     <!-- Modal -->
     <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div class="bg-white p-6 rounded-lg shadow-lg w-96">
@@ -122,14 +124,29 @@ onMounted(async () => {
 
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-600 mb-2">Payment Type</label>
-          <select v-model="selectedPaymentType"
-            class="block w-full border border-gray-300 rounded-md p-2 focus:ring-sky-500 focus:border-sky-500">
-            <option value="MBWAY">MBWay</option>
-            <option value="PAYPAL">PayPal</option>
-            <option value="IBAN">IBAN</option>
-            <option value="MB">MB</option>
-            <option value="VISA">VISA</option>
-          </select>
+          <div class="flex flex-row space-x-6 justify-center">
+            <img src="/Store/mbway.png" @click="hanglePayment('MBWAY')" alt="Payment Icon" class="w-8 h-10" :class="{
+              'disabled': selectedPaymentType !== 'MBWAY'
+            }" />
+
+            <img src="/Store/multibanco.png" @click="hanglePayment('MB')" alt="Payment Icon" class="w-11 h-10" :class="{
+              'disabled': selectedPaymentType !== 'MB'
+            }" />
+
+            <img src="/Store/paypal.png" @click="hanglePayment('PAYPAL')" alt="Payment Icon" class="mt-1 w-8 h-8"
+              :class="{
+                'disabled': selectedPaymentType !== 'PAYPAL'
+              }" />
+
+            <img src="/Store/visa.png" @click="hanglePayment('VISA')" alt="Payment Icon" class="mt-1 w-8 h-8" :class="{
+              'disabled': selectedPaymentType !== 'VISA'
+            }" />
+
+            <img src="/Store/bank.png" @click="hanglePayment('IBAN')" alt="Payment Icon" class="mt-1 w-8 h-8" :class="{
+              'disabled': selectedPaymentType !== 'IBAN'
+            }" />
+          </div>
+
         </div>
 
         <div class="mb-4">
@@ -172,5 +189,9 @@ img {
 
 img:hover {
   transform: scale(1.1);
+}
+
+.disabled {
+  opacity: 0.4;
 }
 </style>
