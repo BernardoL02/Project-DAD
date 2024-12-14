@@ -99,17 +99,14 @@ export const useGameStore = defineStore('game', () => {
         let replay = null
         let difficulty = 'Normal'
 
-        // Processa o campo `custom` para extrair `replay` e `difficulty`
         if (game.custom) {
           try {
             const customData = JSON.parse(game.custom)
             if (customData.replay) {
-              replay = customData.replay // Extrai os dados do replay
+              replay = customData.replay
             }
             difficulty = customData.difficulty === 'hard' ? 'Hard' : 'Normal'
-          } catch (error) {
-            console.error(`Erro ao processar o campo custom do jogo ID ${game.id}:`, error)
-          }
+          } catch (error) {}
         }
 
         return {
@@ -404,7 +401,6 @@ export const useGameStore = defineStore('game', () => {
         board_id: board_id
       }
 
-      // Adicionar "custom" apenas se a dificuldade for válida
       if (difficulty && difficulty !== 'normal') {
         payload.custom = JSON.stringify({ difficulty })
       }
@@ -414,14 +410,12 @@ export const useGameStore = defineStore('game', () => {
       const createdGame = response.data.data
       return createdGame.id
     } catch (e) {
-      console.error('Error creating single-player game:', e)
       throw new Error('Failed to create single-player game')
     }
   }
 
   const createMultiPlayer = async (board_id) => {
     try {
-      console.log('Iniciando createMultiPlayer com board_id:', board_id)
       const payload = {
         type: 'M',
         status: 'PE',
@@ -429,12 +423,10 @@ export const useGameStore = defineStore('game', () => {
       }
 
       const response = await axios.post('games', payload)
-      console.log('Resposta do servidor ao criar o jogo:', response.data)
 
       const createdGame = response.data.data
       return createdGame.id
     } catch (e) {
-      console.error('Erro ao criar o jogo multiplayer:', e)
       throw new Error('Falha ao criar o jogo multiplayer')
     }
   }
@@ -442,20 +434,16 @@ export const useGameStore = defineStore('game', () => {
   const sendPostUpdateOwner = async (gameId, IdUser) => {
     try {
       if (!gameId) {
-        console.error('Game ID não está definido.')
         return
       }
       if (!IdUser) {
-        console.error('User ID não está definido.')
         return
       }
 
       await axios.patch(`/games/${gameId}/owner`, {
         new_owner_id: IdUser
       })
-    } catch (error) {
-      console.error('Erro ao atualizar Owner do jogo:', error.response?.data || error.message)
-    }
+    } catch (error) {}
   }
 
   const saveInitialBoard = () => {
@@ -478,14 +466,12 @@ export const useGameStore = defineStore('game', () => {
     }
 
     initialBoard.value = boardMatrix
-    console.log(boardMatrix)
   }
 
   const registerAction = (position) => {
-    console.log(position)
     replayActions.value.push({
-      time: Date.now() - startTime.value.getTime(), // Captura o tempo decorrido em milissegundos
-      position: position // Posição da carta virada
+      time: Date.now() - startTime.value.getTime(),
+      position: position
     })
   }
 
@@ -498,25 +484,19 @@ export const useGameStore = defineStore('game', () => {
       await axios.patch(`/games/${gameId}`, {
         status: 'I'
       })
-    } catch (error) {
-      console.error('Erro ao atualizar status do jogo:', error.response?.data || error.message)
-    }
+    } catch (error) {}
   }
 
   const sendPostOnInPorgress = async (gameId) => {
     try {
       if (!gameId) {
-        console.error('Game ID não está definido.')
         return
       }
-      console.log('SendPost', gameId)
 
       await axios.patch(`/games/${gameId}`, {
         status: 'PL'
       })
-    } catch (error) {
-      console.error('Erro ao atualizar status do jogo:', error.response?.data || error.message)
-    }
+    } catch (error) {}
   }
 
   const storePlayers = async (game) => {
@@ -529,24 +509,20 @@ export const useGameStore = defineStore('game', () => {
         user_ids: userIds
       })
 
-      console.log('Players stored successfully:', response.data)
       return response.data
     } catch (error) {
-      console.error('Error storing players:', error)
       storeError.setErrorMessages(error.response?.data?.message || 'Error storing players', 'Error')
     }
   }
 
   const updatePlayers = async (game) => {
     try {
-      console.log(game)
       const response = await axios.patch(`/games/${gameId}/players`, {
         updates
       })
 
       return response.data
     } catch (error) {
-      console.error('Error updating players:', error)
       storeError.setErrorMessages(
         error.response?.data?.message || 'Error updating players',
         'Error'
@@ -557,21 +533,16 @@ export const useGameStore = defineStore('game', () => {
   const sendPostOnGameEndMuiltiplayer = async (game, winner) => {
     try {
       if (!game.id) {
-        console.error('Game ID is not defined.')
         return
       }
 
-      // Verifica se startTime está definido
       if (!game.startTime) {
-        console.error('Game start time is not defined.')
         return
       }
 
-      // Calcula o tempo total em segundos
       const ended = new Date().toISOString().slice(0, 19).replace('T', ' ')
       const totalTime = Math.floor((Date.now() - game.startTime) / 1000)
 
-      // Prepara os dados para enviar
       const requestData = {
         status: 'E',
         began_at: new Date(game.startTime).toISOString().slice(0, 19).replace('T', ' '),
@@ -581,89 +552,58 @@ export const useGameStore = defineStore('game', () => {
         total_turns_winner: winner.totalTurns
       }
 
-      console.log('Request Data:', requestData)
-
-      // Envia os dados para o backend
       await axios.patch(`/games/${game.id}`, requestData)
-
-      console.log('Game status updated successfully.')
-    } catch (error) {
-      console.error('Error updating game status:', error.response?.data || error.message)
-    }
+    } catch (error) {}
   }
 
   const sendPostOnForfeitMuiltiplayer = async (game, winner) => {
     try {
       if (!game.id) {
-        console.error('Game ID is not defined.')
         return
       }
 
-      // Define o objeto base dos dados para enviar
       const requestData = {
         status: 'E',
         winner_user_id: winner.id
       }
 
-      // Se startTime estiver definido, calcula ended_at e adiciona began_at
       if (game.startTime) {
         const ended = new Date().toISOString().slice(0, 19).replace('T', ' ')
         requestData.began_at = new Date(game.startTime).toISOString().slice(0, 19).replace('T', ' ')
         requestData.ended_at = ended
       }
 
-      console.log('Request Data:', requestData)
-
-      // Envia os dados para o backend
       await axios.patch(`/games/${game.id}`, requestData)
-
-      console.log('Game status updated successfully.')
-    } catch (error) {
-      console.error('Error updating game status:', error.response?.data || error.message)
-    }
+    } catch (error) {}
   }
 
   const sendPostOnGameEndMuiltiplayerPlayers = async (game, winner) => {
     try {
       if (!game.id) {
-        console.error('Game ID is not defined.')
         return
       }
 
       if (!game.players || !Array.isArray(game.players)) {
-        console.error('Players data is not defined or invalid.')
         return
       }
 
-      console.log('Game Data:', game)
-
-      // Monta o array de updates para cada jogador
       const updates = game.players.map((player) => ({
         id: player.id,
         player_won: player.id === winner.id,
         pairs_discovered: player.pairsFound || 0
       }))
 
-      // Prepara os dados para enviar
       const requestData = {
         updates
       }
 
-      console.log('Request Data:', requestData)
-
-      // Envia os dados para o backend
       await axios.patch(`/games/${game.id}/players`, requestData)
-
-      console.log('Players data updated successfully.')
-    } catch (error) {
-      console.error('Error updating players data:', error.response?.data || error.message)
-    }
+    } catch (error) {}
   }
 
   const sendPostOnGameEnd = async (totalTime, totalTurns, gameId) => {
     try {
       if (!gameId) {
-        console.error('Game ID is not defined.')
         return
       }
 
@@ -671,22 +611,19 @@ export const useGameStore = defineStore('game', () => {
 
       const replayData = {
         replay: {
-          board: initialBoard.value, // The initial board state
-          actions: replayActions.value // The actions performed by the player
+          board: initialBoard.value,
+          actions: replayActions.value
         }
       }
 
-      // Send updated data to the backend
       await axios.patch(`/games/${gameId}`, {
         status: 'E',
         ended_at: ended,
         total_time: totalTime,
         total_turns_winner: totalTurns,
-        custom: JSON.stringify(replayData) // Only send replay data
+        custom: JSON.stringify(replayData)
       })
-    } catch (error) {
-      console.error('Error updating game status:', error.response?.data || error.message)
-    }
+    } catch (error) {}
   }
 
   const shuffleArray = (array) => array.sort(() => Math.random() - 0.5)

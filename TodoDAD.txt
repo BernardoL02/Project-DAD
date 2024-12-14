@@ -5,7 +5,7 @@ G4. MULTIPLAYER GAMES
 [X] - Se jogador ficar inativo por 20 segundos é expulso
 [X] - Transacões por ganhos no multiplayer e notificacoes
 [X] - Verificar se os estados dos jogos estão corretos (Ex: pending = jogos que ainda nao comecaram e estão à espera de jogadores)
-[] - Policy para multiplayer games JOSE TIVE DE COMENTAR A DOS storePLayer aquelas estao me a bloquear
+[X] - Policy para multiplayer games JOSE TIVE DE COMENTAR A DOS storePLayer aquelas estao me a bloquear
 [X] - Cada jogo custa 5 moedas, vencedor recebe todas as coins em jogo - 3
 [X] - Aumentar o numero de vitorias e de derrotas de cada jogador
 [] - Remover console.log espalhados pelo código
@@ -35,8 +35,9 @@ Lobbys:
         Nota: Para nao ser possivel criar lobbys e ficarem muito tempo sem uso
     [x] - Necessidade de dar Ready para que o dono do lobby possa começar o jogo so quando todos tiverem ready se nao nao possivel
         Nota: Obtamos por esta opçao e nao quando tiver full para ser uma forma mais estavel e nao começar jogos sem jogadores prontos
-    [+-] - Quando um player da logout ou disconnect ele e removido de todos os lobbys a que pertence ou esta atribuido
+    [+] - Quando um player da logout ou disconnect ele e removido de todos os lobbys a que pertence ou esta atribuido
     [x] - E possivel estando num lobby dar F5 e ele permanecer no lobby(Atualiza o socketId)
+    [x] - E possivel tambem dar F5 no jogo e ele atualiza o Socket e vai buscar o seu jogo onde depois e reconstruido
     [x] - Quando um player é o dono do lobby e opta por sair com mais pessoas no lobby o Dono e atribuido a outro player  
     [x] - E possivel remover players indesejados do lobby
 

@@ -74,7 +74,6 @@ let allowNavigation = false
 let unregisterGuard = null
 
 const confirmExit = () => {
-  console.log('Confirmar saída chamado')
   storeGameMultiplayer.stopTimer()
   storeGameMultiplayer.stopTurnTimer()
   storeGameMultiplayer.leaveGameLobby(Number(gameId))
@@ -82,7 +81,7 @@ const confirmExit = () => {
   allowNavigation = true
 
   if (pendingRoute) {
-    router.push(pendingRoute).catch((err) => console.error('Erro ao redirecionar:', err))
+    router.push(pendingRoute).catch(() => { })
     pendingRoute = null
   } else {
     router.push('/multiplayer/lobbys')
@@ -108,17 +107,13 @@ onMounted(async () => {
     }
   })
 
-  // Buscar o jogo se `gameData` não estiver disponível
   if (!gameData.value) {
-    console.log("Fetching Game", gameId)
     await storeGameMultiplayer.fetchGameById(gameId)
     await storeGameMultiplayer.restoreGame(gameId);
   }
 
 
   unregisterGuard = router.beforeEach((to, from, next) => {
-    console.log('beforeEach chamado:', from.path, to.fullPath)
-
     if (storeGameMultiplayer.gameOver || !storeAuth.user) {
       allowNavigation = true
     }
@@ -243,7 +238,8 @@ onUnmounted(() => {
         <div class="flip-card-inner w-full h-full transition-transform duration-500" :class="{
           'rotate-y-180': !(
             gameData.matchedPairs.includes(index) || gameData.selectedCards.includes(index)
-          )
+          ),
+          'matched-card': gameData.matchedPairs.includes(index)
         }">
           <!-- Card Front -->
           <div class="flip-card-front absolute w-full h-full backface-hidden">
@@ -305,7 +301,6 @@ onUnmounted(() => {
   display: grid;
 }
 
-/* Efeito de virar a carta */
 .card {
   perspective: 1000px;
 }
@@ -341,7 +336,6 @@ onUnmounted(() => {
   gap: 1rem;
   width: 100%;
   max-width: 300px;
-  /* Ajuste conforme necessário */
 }
 
 .chat-panel-container {
@@ -353,9 +347,7 @@ onUnmounted(() => {
 
 .info-chat-container {
   width: 300px;
-  /* Largura fixa */
   max-width: 300px;
-  /* Certifique-se de que não expanda */
 }
 
 .relative {
@@ -378,5 +370,11 @@ onUnmounted(() => {
   100% {
     transform: scale(1);
   }
+}
+
+.matched-card {
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
 </style>

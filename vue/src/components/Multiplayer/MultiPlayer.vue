@@ -105,7 +105,7 @@ const onBoardClick = (size) => {
           <p class="text-lg font-bold">Join a Lobby</p>
           <p class="text-sm text-gray-500 mt-2">Enter a lobby code to join.</p>
           <p class="text-sm text-gray-500 mt-2">Required Coins - 5 coins</p>
-          <input v-model="lobbyId" type="text" placeholder="Enter lobby code"
+          <input v-if="authStore.coins >= 5" v-model="lobbyId" type="text" placeholder="Enter lobby code"
             class="w-full px-4 py-2 mt-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500" />
           <div class="flex justify-center items-center mt-4 w-full">
             <button @click="joinLobby" v-if="authStore.coins >= 5"
@@ -155,13 +155,13 @@ const onBoardClick = (size) => {
                         Total Victories -
                         <span class="text-sm text-green-500">{{
                           gameStore.totalMultiplayerVictorys
-                        }}</span>
+                          }}</span>
                       </p>
                       <p class="text-sm text-gray-700">
                         Total Losses -
                         <span class="text-sm text-red-500">{{
                           gameStore.totalMultiplayerLosses
-                        }}</span>
+                          }}</span>
                       </p>
 
                       <p class="text-sm text-gray-700">
