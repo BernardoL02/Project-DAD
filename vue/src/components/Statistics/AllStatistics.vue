@@ -104,7 +104,7 @@
               <Bar :data="chartData" />
             </div>
             <div class="chart-container p-1 w-96 h-96">
-              <div class="text-center font-semibold text-xl mb-2">
+              <div class="text-center font-semibold text-xl mb-2 pt-8">
                 Number of Games for Each Board Size
               </div>
               <Pie :data="pieChartData" />
@@ -114,7 +114,7 @@
         <!--ESTATISTICA DAS COMPRAS PARA O ADMIN-->
         <div v-if="selectedView === 'purchase'" class="chart-container p-4">
           <div v-if="playerStats">
-            <div class="mb-6">
+            <div class="mb-6 text-center mr-20">
               <p class="font-semibold text-xl">
                 Total Purchases:
                 <span class="text-blue-600">{{ playerStats.totalPurchases }}</span>
@@ -124,7 +124,7 @@
                 <span class="text-blue-600">{{ playerStats.totalPurchaseValue }} €</span>
               </p>
             </div>
-            <div class="flex justify-between space-x-2">
+            <div class="flex justify-between pt-10 space-x-20">
               <div class="w-6/12 text-center">
                 <div class="font-semibold text-xl mb-2">Number of Purchases per Payment Type</div>
                 <div class="chart-container p-4">
@@ -151,6 +151,12 @@
         </div>
         <!--ESTATISTICA DOS PLAYERS PARA O ADMIN-->
         <div v-if="selectedView === 'players'" class="chart-container p-4 w-1/2">
+          <div class="mb-6 text-center">
+            <p class="font-semibold text-xl">
+              Total Players Registered:
+              <span class="text-blue-600">{{ totalPlayers }}</span>
+            </p>
+          </div>
           <div class="font-semibold text-center text-xl mb-2">
             Total Registered Player Each Month
           </div>
@@ -205,7 +211,7 @@
         </div>
         <!--ESTATISTICA DAS COMPRAS PARA O USER LOGADO-->
         <div v-if="selectedView === 'myPurchases'" class="chart-container p-4 w-full">
-          <div class="mb-6">
+          <div class="mb-6 text-center">
             <p class="font-semibold text-xl">
               Total Purchases:
               <span class="text-blue-600">{{ playerStatsUser.totalPurchasesUser }}</span>
@@ -215,7 +221,7 @@
               <span class="text-blue-600">{{ playerStatsUser.totalPurchaseUserValue }} €</span>
             </p>
           </div>
-          <div class="flex justify-between space-x-2">
+          <div class="flex justify-between space-x-2 pt-10 pl-36">
             <div class="w-6/12 text-center">
               <div class="font-semibold text-xl mb-2">Number of Purchases per Pack</div>
               <div class="chart-container p-4 w-96">
@@ -739,6 +745,10 @@ const horizontalBarOptions = {
     }
   }
 }
+const totalPlayers = computed(() => {
+  if (!statisticsStore.users) return 0 // Se não houver dados de usuários
+  return statisticsStore.users.length // Contar o número de jogadores
+})
 
 onMounted(() => {
   if (authStore.isAdmin) {

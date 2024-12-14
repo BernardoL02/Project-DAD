@@ -123,7 +123,7 @@
               All Games
             </RouterLink>
 
-            <RouterLink :to="{ name: 'statistics' }" :class="[
+            <RouterLink v-if="authStore.isPlayer || authStore.isAdmin" :to="{ name: 'statistics' }" :class="[
               'px-3 py-2 rounded-md text-sm font-medium transition-colors pt-[10px]',
               route.path === '/statistics'
                 ? 'text-indigo-500 font-semibold'
@@ -165,7 +165,7 @@
                           <div class="flex flex-row space-x-1">
                             <span class="text-xs">{{
                               new Date(notification.date).toLocaleDateString()
-                            }}</span>
+                              }}</span>
 
                             <img src="/delete.png" alt="Delete Notification Icon"
                               @click="handleDeleteNotificaitonClick(notification.id)"
