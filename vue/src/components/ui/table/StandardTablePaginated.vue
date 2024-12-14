@@ -83,7 +83,7 @@ watch(
                 value === 'PAYPAL' ? 'w-6 h-6' : '',
                 value === 'VISA' ? 'w-6 h-6' : '',
                 value === 'IBAN' ? 'w-6 h-6' : '',
-                value === 'MB' ? 'w-6 h-6' : ''
+                value === 'MB' ? 'w-6 h-8' : ''
               ]" />
 
               <div class="pt-1">
