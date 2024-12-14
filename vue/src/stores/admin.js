@@ -282,7 +282,6 @@ export const useAdminStore = defineStore('admin', () => {
       const response = await axios.post('games/all', requestData)
 
       const updatedGames = response.data.data.map((game) => ({
-        id: game.id,
         board_id:
           game.board_id === 1
             ? '3x4'
@@ -403,7 +402,6 @@ export const useAdminStore = defineStore('admin', () => {
       const response = await axios.post(`admin/transactions`, requestData)
 
       const updatedTransactions = response.data.data.map((transaction) => ({
-        id: transaction.id,
         Name: userFirstLastName(transaction.user?.name),
         date: transaction.transaction_datetime,
         type:

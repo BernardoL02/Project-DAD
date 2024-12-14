@@ -8,7 +8,7 @@ import 'vue-datepicker-next/index.css'
 
 const adminStore = useAdminStore()
 
-const tableColumns = ['Id', 'Name', 'Date', 'Type', 'Value', 'Payment Method', 'Reference', 'Coins']
+const tableColumns = ['Name', 'Date', 'Type', 'Value', 'Payment Method', 'Reference', 'Coins']
 
 const typeOptions = ['All', 'Game', 'Purchase', 'Bonus']
 const paymentMethodOptions = ['All', 'MB', 'PAYPAL', 'MBWAY', 'IBAN', 'VISA']
@@ -18,7 +18,11 @@ const dateRange = ref([null, null])
 const currentPage = ref(1)
 
 watch(
-  [computed(() => adminStore.selectedType), computed(() => adminStore.selectedPaymentMethod), dateRange],
+  [
+    computed(() => adminStore.selectedType),
+    computed(() => adminStore.selectedPaymentMethod),
+    dateRange
+  ],
   async () => {
     changePage(1)
   }
@@ -35,8 +39,7 @@ const changePage = async (newPage) => {
       selectedType: adminStore.selectedType,
       selectedPaymentMethod: adminStore.selectedPaymentMethod,
       dateRange: dateRange.value
-    }
-    )
+    })
   }
 }
 
@@ -55,7 +58,9 @@ const formattedDateRange = computed(() => {
 })
 
 const handleDateChange = (newRange) => {
-  dateRange.value = newRange.map((date) => (date ? new Date(date).toISOString().split('T')[0] : null))
+  dateRange.value = newRange.map((date) =>
+    date ? new Date(date).toISOString().split('T')[0] : null
+  )
 }
 
 const handleResetFilters = () => {
@@ -63,7 +68,6 @@ const handleResetFilters = () => {
   adminStore.selectedPaymentMethod = 'All'
   dateRange.value = [null, null]
 }
-
 </script>
 
 <template>
@@ -72,26 +76,45 @@ const handleResetFilters = () => {
     <div class="bg-white p-6 rounded-lg shadow-md mb-6">
       <div class="flex flex-col sm:flex-row sm:justify-between gap-5">
         <div class="w-full sm:w-auto">
-          <label for="began_at" class="block text-sm font-medium text-gray-700 mb-2">Date Range</label>
-          <DatePicker v-model="dateRange" range format="YYYY-MM-DD" value-format="YYYY-MM-DD"
+          <label for="began_at" class="block text-sm font-medium text-gray-700 mb-2"
+            >Date Range</label
+          >
+          <DatePicker
+            v-model="dateRange"
+            range
+            format="YYYY-MM-DD"
+            value-format="YYYY-MM-DD"
             class="w-full border-gray-300 rounded-md shadow-sm focus:ring-sky-500 focus:border-sky-500"
-            :placeholder="formattedDateRange" @change="handleDateChange" />
+            :placeholder="formattedDateRange"
+            @change="handleDateChange"
+          />
         </div>
 
         <div class="w-full sm:w-auto">
-          <label for="type" class="block text-sm font-medium text-gray-700 pb-2">Transaction Type</label>
+          <label for="type" class="block text-sm font-medium text-gray-700 pb-2"
+            >Transaction Type</label
+          >
           <DropdownButton :options="typeOptions" v-model="adminStore.selectedType" />
         </div>
         <div class="w-full sm:w-auto">
-          <label for="paymentMethod" class="block text-sm font-medium text-gray-700 pb-2">Payment Method</label>
-          <DropdownButton :options="paymentMethodOptions" v-model="adminStore.selectedPaymentMethod" :class="{
-            'disabled': adminStore.selectedType !== 'All' && adminStore.selectedType !== 'Purchase'
-          }" />
+          <label for="paymentMethod" class="block text-sm font-medium text-gray-700 pb-2"
+            >Payment Method</label
+          >
+          <DropdownButton
+            :options="paymentMethodOptions"
+            v-model="adminStore.selectedPaymentMethod"
+            :class="{
+              disabled: adminStore.selectedType !== 'All' && adminStore.selectedType !== 'Purchase'
+            }"
+          />
         </div>
       </div>
 
       <div class="flex justify-end text-xs pt-5 mb-[-15px]">
-        <button @click="handleResetFilters" class="text-gray-500 hover:text-black hover:border-gray-700">
+        <button
+          @click="handleResetFilters"
+          class="text-gray-500 hover:text-black hover:border-gray-700"
+        >
           Reset Filters
         </button>
       </div>
@@ -100,15 +123,21 @@ const handleResetFilters = () => {
     <div class="overflow-x-auto shadow-md rounded-lg">
       <PaginatedTable :columns="tableColumns" :data="adminStore.transactions" :pagination="false" />
 
-      <div v-if="adminStore.totalPages != 0" class="flex items-center justify-between m-4 ">
+      <div v-if="adminStore.totalPages != 0" class="flex items-center justify-between m-4">
         <div>
-          <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1"
-            class="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400">
+          <button
+            @click="changePage(currentPage - 1)"
+            :disabled="currentPage === 1"
+            class="px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
+          >
             Previous
           </button>
 
-          <button @click="changePage(currentPage + 1)" :disabled="currentPage === adminStore.totalPages"
-            class="ml-2 px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400">
+          <button
+            @click="changePage(currentPage + 1)"
+            :disabled="currentPage === adminStore.totalPages"
+            class="ml-2 px-3 py-1 bg-gray-200 rounded-md hover:bg-gray-300 disabled:bg-gray-100 disabled:text-gray-400"
+          >
             Next
           </button>
         </div>
