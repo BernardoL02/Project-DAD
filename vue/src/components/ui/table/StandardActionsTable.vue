@@ -85,7 +85,17 @@ watch(
                     class="odd:bg-white even:bg-gray-100">
                     <td v-for="(value, colIndex) in filteredRow(row)" :key="'cell-' + rowIndex + '-' + colIndex"
                         class="border border-gray-300 px-4 py-2">
-                        {{ value }}
+                        <div v-if="value === 'Ended' || value === 'Interrupted' || value === 'In Progress' || value === 'Pending'"
+                            class="relative flex items-center">
+                            <span class="absolute w-2.5 h-2.5 rounded-full pr-2" :class="{
+                                'bg-green-400': value === 'Ended', 'bg-red-400': value === 'Interrupted', 'bg-blue-400': value === 'In Progress', 'bg-yellow-400': value === 'Pending'
+                            }"></span>
+
+                            <span class="pl-4">{{ value }}</span>
+                        </div>
+                        <div v-else>
+                            {{ value }}
+                        </div>
                     </td>
                     <td class="border border-gray-300 px-4 py-2">
                         <slot name="actions" :row="row"></slot>

@@ -126,24 +126,24 @@ onMounted(async () => {
         <div class="mb-4">
           <label class="block text-sm font-medium text-gray-600 mb-2">Payment Type</label>
           <div class="flex flex-row space-x-6 justify-center">
-            <img src="/Store/mbway.png" @click="hanglePayment('MBWAY')" alt="Payment Icon" class="w-8 h-10" :class="{
+            <img src="/Store/MBWAY.png" @click="hanglePayment('MBWAY')" alt="Payment Icon" class="w-8 h-10" :class="{
               'disabled': selectedPaymentType !== 'MBWAY'
             }" />
 
-            <img src="/Store/multibanco.png" @click="hanglePayment('MB')" alt="Payment Icon" class="w-11 h-10" :class="{
+            <img src="/Store/MB.png" @click="hanglePayment('MB')" alt="Payment Icon" class="w-11 h-10" :class="{
               'disabled': selectedPaymentType !== 'MB'
             }" />
 
-            <img src="/Store/paypal.png" @click="hanglePayment('PAYPAL')" alt="Payment Icon" class="mt-1 w-8 h-8"
+            <img src="/Store/PAYPAL.png" @click="hanglePayment('PAYPAL')" alt="Payment Icon" class="mt-1 w-8 h-8"
               :class="{
                 'disabled': selectedPaymentType !== 'PAYPAL'
               }" />
 
-            <img src="/Store/visa.png" @click="hanglePayment('VISA')" alt="Payment Icon" class="mt-1 w-8 h-8" :class="{
+            <img src="/Store/VISA.png" @click="hanglePayment('VISA')" alt="Payment Icon" class="mt-1 w-8 h-8" :class="{
               'disabled': selectedPaymentType !== 'VISA'
             }" />
 
-            <img src="/Store/bank.png" @click="hanglePayment('IBAN')" alt="Payment Icon" class="mt-1 w-8 h-8" :class="{
+            <img src="/Store/IBAN.png" @click="hanglePayment('IBAN')" alt="Payment Icon" class="mt-1 w-8 h-8" :class="{
               'disabled': selectedPaymentType !== 'IBAN'
             }" />
           </div>
