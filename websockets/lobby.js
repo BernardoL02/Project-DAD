@@ -101,6 +101,8 @@ exports.createLobby = () => {
   };
 
   const getGame = (id) => {
+    console.log("Searching for game with ID:", id);
+    console.log("Available game IDs:", [...games.keys()]);
     return games.get(id);
   };
 

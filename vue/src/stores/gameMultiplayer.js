@@ -240,16 +240,32 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     storeGame.sendPostUpdateOwner(response.updatedGame.id, response.updatedGame.player1.id)
   })
 
-  const restoreGame = (game) => {
-    activeGames.value = game
-    console.log('Game restored:', game)
+  const restoreGame = async (gameId) => {
+    const gameIdInt = parseInt(gameId, 10)
+
+    const game = getActiveGameById(gameIdInt)
+
+    console.log('RestoreGame', game)
+    currentPlayerId.value = game.players[game.currentPlayerIndex]?.id || null
+
+    if (game.startTime) {
+      startTimer(game.startTime)
+    }
+
+    if (game.remainingTime) {
+      console.log('Starting turn timer with remainingTime:', game.remainingTime)
+      startTurnTimer(game.remainingTime)
+    } else {
+      console.warn('No remainingTime available for game:', gameIdInt)
+    }
   }
 
   const fetchGameById = async (gameId) => {
     return new Promise((resolve, reject) => {
       socket.emit('fetchGame', gameId, (game) => {
+        console.log('Fecht Game', game)
         if (game) {
-          addActiveGame(game) // Adiciona o jogo aos jogos ativos
+          addActiveGame(game)
           resolve(game)
         } else {
           console.error(`Game with ID ${gameId} not found.`)
@@ -272,6 +288,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     leaveAllLobbies,
     leaveGameLobby,
     turnTimer,
+    startTurnTimer,
     stopTurnTimer,
     restoreGame,
     fetchGameById

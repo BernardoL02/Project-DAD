@@ -33,31 +33,94 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("logout", (user) => {
+  socket.on("logout", async (user) => {
     if (user && user.id) {
-      socket.leave("user_" + user.id);
+      for (const game of lobby.getGames()) {
+        if (game.status === "started") {
+          const callback = (response) => {
+            console.log(
+              response.message ||
+                `User ${user.nickname} left the game ${game.id} via logout.`
+            );
+          };
 
-      // Deixa apenas os lobbies que estão em "waiting"
-      lobby.getGames().forEach((game) => {
-        if (game.status === "waiting") {
+          if (util.checkAuthenticatedUser(socket, callback)) {
+            const currentGame = lobby.getGame(game.id);
+
+            if (currentGame) {
+              console.log(
+                `User ${user.nickname} (${user.id}) is leaving game ${game.id} via logout.`
+              );
+
+              const previousOwner = currentGame.player1;
+              const previousOwnerSocketId = currentGame.player1SocketId;
+
+              const updatedGame = lobby.playerInativo(game.id, user.id);
+
+              const activePlayers = updatedGame.players.filter(
+                (p) => !p.inactive
+              );
+
+              if (previousOwner.id === user.id && activePlayers.length > 0) {
+                const newOwner = activePlayers[0];
+                updatedGame.player1 = newOwner;
+                updatedGame.player1SocketId = newOwner.socketId;
+
+                console.log(`Ownership transferred to ${newOwner.nickname}`);
+
+                // Aguarda a notificação ser enviada antes de prosseguir
+                await new Promise((resolve) => {
+                  io.to(previousOwnerSocketId).emit("ownerChanged", {
+                    message: `You have been removed as the lobby owner. Ownership transferred to ${newOwner.nickname}.`,
+                    updatedGame,
+                  });
+                  setTimeout(resolve, 500); // Delay para garantir a entrega
+                });
+              }
+
+              callback();
+
+              if (activePlayers.length === 1) {
+                gameEngine.stopTurnTimer(updatedGame.id);
+                updatedGame.status = "ended";
+                const winner = activePlayers[0];
+
+                io.to(winner.socketId).emit("gameCancelled", {
+                  message: "Your opponent left the game. You win by default!",
+                  gameId: game.id,
+                  updatedGame,
+                  winner,
+                });
+
+                lobby.deleteGame(game.id);
+                io.to("lobby").emit("lobbyChanged", lobby.getGames());
+                callback({
+                  success: true,
+                  message: "Game ended as the opponent left.",
+                });
+              } else {
+                io.to(activePlayers.map((p) => p.socketId)).emit("playerLeft", {
+                  message: `${user.nickname} left the game.`,
+                  updatedGame,
+                });
+                callback({
+                  success: true,
+                  message: "You left the game successfully!",
+                });
+              }
+            }
+          }
+        } else if (game.status === "waiting") {
           lobby.leave(game.id, user.id);
         }
-      });
+      }
 
+      // Executa o socket.leave após todos os processos estarem concluídos
       io.to("lobby").emit("lobbyChanged", lobby.getGames());
       socket.leave("lobby");
-
-      util.getRoomGamesPlaying(socket).forEach(([roomName, room]) => {
-        socket.leave(roomName);
-        if (!gameEngine.gameEnded(room.game)) {
-          room.game.status = "interrupted";
-          room.game.gameStatus = 3;
-          io.to(roomName).emit("gameInterrupted", room.game);
-        }
-      });
+      socket.leave("user_" + user.id);
+      socket.data.user = undefined;
     }
-
-    socket.data.user = undefined;
   });
 
   socket.on("updateSocketId", (userId) => {
@@ -68,9 +131,6 @@ io.on("connection", (socket) => {
       game.players.forEach((player) => {
         if (player.id === userId) {
           player.socketId = socket.id;
-          console.log(
-            `Updated socketId for player ${player.nickname} in game ${game.id}`
-          );
         }
       });
 
@@ -91,19 +151,40 @@ io.on("connection", (socket) => {
           console.log(
             `Updated socketId for player ${player.nickname} in game ${gameId}`
           );
-          gameEngine.startTurnTimer(game, io, lobby); // Reinicia o timer ao reconectar
         }
       });
-
-      io.to(socket.id).emit("gameRestored", game);
     } else {
       console.error(`Game with ID ${gameId} not found`);
     }
   });
 
   socket.on("fetchGame", (gameId, callback) => {
-    const game = lobby.getGame(gameId);
+    console.log("Fetching Game", gameId);
+
+    // Converte gameId para um número inteiro
+    const gameIdInt = parseInt(gameId, 10);
+
+    if (isNaN(gameIdInt)) {
+      console.error("Invalid gameId:", gameId);
+      return callback({ error: "Invalid game ID" });
+    }
+
+    const game = lobby.getGame(gameIdInt);
+    console.log("Fetch Game", game);
+
     if (game) {
+      // Calcula o remainingTime com base no turnStartTime
+      if (game.turnStartTime) {
+        const TURN_DURATION = 20000; // 20 segundos
+        const elapsedTime = Date.now() - game.turnStartTime;
+        game.remainingTime = Math.max(
+          Math.ceil((TURN_DURATION - elapsedTime) / 1000),
+          0
+        );
+      } else {
+        game.remainingTime = 20; // Valor padrão caso não haja turnStartTime
+      }
+
       callback(game);
     } else {
       callback({ error: "Game not found" });

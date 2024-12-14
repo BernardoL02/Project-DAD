@@ -92,7 +92,6 @@ export const useAuthStore = defineStore('auth', () => {
         err.response?.data?.status,
         'Profile Fetch Error'
       )
-      console.error('Error fetching profile:', err)
     } finally {
       loading.value = false
     }
@@ -258,9 +257,6 @@ export const useAuthStore = defineStore('auth', () => {
   // This function is "private" - not exported by the store
   const clearUser = () => {
     resetIntervalToRefreshToken()
-    if (user.value) {
-      socket.emit('logout', user.value)
-    }
     user.value = null
     token.value = ''
     sessionStorage.removeItem('token')
@@ -365,15 +361,28 @@ export const useAuthStore = defineStore('auth', () => {
   const logout = async () => {
     storeError.resetMessages()
     try {
+      if (user.value) {
+        await new Promise((resolve, reject) => {
+          const timeout = setTimeout(() => {
+            resolve()
+          }, 1000)
+
+          socket.emit('logout', user.value, () => {
+            clearTimeout(timeout)
+            resolve()
+          })
+        })
+      }
+
       await axios.post('auth/logout')
       clearUser()
       return true
     } catch (e) {
       clearUser()
       storeError.setErrorMessages(
-        e.response.data.message,
-        [],
-        e.response.status,
+        e.response?.data?.message || 'Logout failed.',
+        e.response?.data?.errors || [],
+        e.response?.status || 500,
         'Authentication Error!'
       )
       return false

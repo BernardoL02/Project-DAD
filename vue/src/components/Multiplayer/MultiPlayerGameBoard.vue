@@ -56,7 +56,9 @@ const invalidAttemptPlayerId = ref(null)
 
 const flipCard = (index) => {
   if (!storeGameMultiplayer.isCurrentPlayerTurn) {
-    invalidAttemptPlayerId.value = gameData.value.players[gameData.value.currentPlayerIndex].id
+    if (gameData.value && gameData.value.players && gameData.value.players[gameData.value.currentPlayerIndex]) {
+      invalidAttemptPlayerId.value = gameData.value.players[gameData.value.currentPlayerIndex].id
+    }
     setTimeout(() => {
       invalidAttemptPlayerId.value = null
     }, 500)
@@ -106,19 +108,18 @@ onMounted(async () => {
     }
   })
 
-  storeAuth.socket.on('gameRestored', (game) => {
-    storeGameMultiplayer.restoreGame(game)
-  })
-
   // Buscar o jogo se `gameData` não estiver disponível
   if (!gameData.value) {
+    console.log("Fetching Game", gameId)
     await storeGameMultiplayer.fetchGameById(gameId)
+    await storeGameMultiplayer.restoreGame(gameId);
   }
+
 
   unregisterGuard = router.beforeEach((to, from, next) => {
     console.log('beforeEach chamado:', from.path, to.fullPath)
 
-    if (storeGameMultiplayer.gameOver) {
+    if (storeGameMultiplayer.gameOver || !storeAuth.user) {
       allowNavigation = true
     }
 
@@ -133,6 +134,7 @@ onMounted(async () => {
       next()
     }
   })
+
   window.addEventListener('beforeunload', handleBeforeUnload)
   storeLobby.loadChatsFromSession()
   storeLobby.isChatOpen = true
