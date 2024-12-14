@@ -130,16 +130,6 @@ exports.createLobby = () => {
 
     console.log("Players status after marking inactive:", game.players);
 
-    // Se resta apenas um jogador ativo, delete o jogo
-    const activePlayers = game.players.filter((p) => !p.inactive);
-    if (activePlayers.length <= 1) {
-      console.log(
-        `Only one or no active players left. Deleting game ${gameId}`
-      );
-      games.delete(gameId);
-      return null;
-    }
-
     // Se o jogador inativo era o jogador atual, avance para o próximo jogador ativo
     let currentPlayer = game.players[game.currentPlayerIndex];
     if (currentPlayer.id === userId) {
@@ -150,6 +140,7 @@ exports.createLobby = () => {
       } while (currentPlayer.inactive);
     }
 
+    // Retorna o jogo atualizado
     return game;
   };
 

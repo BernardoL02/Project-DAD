@@ -13,13 +13,10 @@ const storeGameMultiplayer = useGameMultiplayerStore()
 const storeAuth = useAuthStore()
 const storeLobby = useLobbyStore()
 
-// Obtém o gameId dos query params
 const gameId = route.query.gameId
 
-// Busca o jogo ativo com base no ID
 const gameData = computed(() => storeGameMultiplayer.getActiveGameById(Number(gameId)))
 
-// Estados do jogo
 const timer = computed(() => {
     return isNaN(storeGameMultiplayer.timer) ? 0 : storeGameMultiplayer.timer
 })
@@ -39,13 +36,11 @@ const circleStyle = computed(() => {
 const lastTurnTimer = ref(storeGameMultiplayer.turnTimer);
 const animateCountdown = ref(false);
 
-// Observa mudanças no turnTimer para ativar a animação
 watch(() => storeGameMultiplayer.turnTimer, (newVal) => {
     if (newVal <= 5 && newVal !== lastTurnTimer.value) {
         animateCountdown.value = true;
         lastTurnTimer.value = newVal;
 
-        // Remove a classe de animação após 300ms (duração da animação)
         setTimeout(() => {
             animateCountdown.value = false;
         }, 300);

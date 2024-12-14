@@ -1,4 +1,3 @@
-// stores/gameMultiplayer.js
 import { ref, computed, inject } from 'vue'
 import { defineStore } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
@@ -7,6 +6,8 @@ import { useNotificationStore } from '@/stores/notification'
 import { useErrorStore } from '@/stores/error'
 import { useLobbyStore } from '@/stores/lobby'
 import { useGameStore } from '@/stores/game'
+import { useTransactionStore } from '@/stores/transaction'
+import { useBoardStore } from '@/stores/board'
 
 export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   const activeGames = ref([])
@@ -18,6 +19,8 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   const storeError = useErrorStore()
   const storeLobby = useLobbyStore()
   const storeGame = useGameStore()
+  const transactionStore = useTransactionStore()
+  const boardStore = useBoardStore()
 
   const timer = ref(0)
   const startTime = ref(0)
@@ -63,14 +66,6 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   // Recebe evento de início do jogo e redireciona todos os jogadores
   socket.on('gameStarted', async (game) => {
     await storeLobby.leaveOtherLobbies(game.id)
-
-    addActiveGame(game)
-    if (game.players && Array.isArray(game.players) && game.players[game.currentPlayerIndex]) {
-      currentPlayerId.value = game.players[game.currentPlayerIndex].id
-    } else {
-      console.error('Invalid players or currentPlayerIndex:', game)
-    }
-
     router.push({ path: '/multiplayer/game', query: { gameId: game.id } })
     startTimer()
   })
@@ -159,10 +154,11 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
       )
     }
 
-    console.log('Testttttttttttttttttttttt: ', updatedGame)
+    if (updatedGame.player1.id === storeAuth.user.id) {
+      storeGame.sendPostOnGameEndMuiltiplayer(updatedGame, winner)
+      storeGame.sendPostOnGameEndMuiltiplayerPlayers(updatedGame, winner)
+    }
 
-    storeGame.sendPostOnGameEndMuiltiplayer(updatedGame, winner)
-    storeGame.sendPostOnGameEndMuiltiplayerPlayers(updatedGame, winner)
     stopTimer()
     router.push('/multiplayer/lobbys')
   })
@@ -181,19 +177,17 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     })
   }
 
-  socket.on('gameCancelled', ({ message, gameId }) => {
+  socket.on('gameCancelled', ({ message, gameId, updatedGame, winner }) => {
     gameOver.value = true
     console.log(`Game ${gameId} has been cancelled.`)
 
-    // Obtém o jogo ativo pelo ID
-    const game = getActiveGameById(gameId)
-
     // Verifica se o usuário atual é o dono do lobby
-    if (game && game.player1.id === storeAuth.user.id) {
-      storeGame.sendPostOnExit(gameId)
+    if (updatedGame && updatedGame.player1.id === storeAuth.user.id) {
+      storeGame.sendPostOnForfeitMuiltiplayer(updatedGame, winner)
+      storeGame.sendPostOnGameEndMuiltiplayerPlayers(updatedGame, winner)
     }
 
-    storeError.setErrorMessages(message, 'Jogo Cancelado')
+    storeError.setErrorMessages(message, 'Game Cancelled')
     router.push('/multiplayer/lobbys')
   })
 
@@ -229,6 +223,12 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
       }
     })
   }
+
+  socket.on('ownerChanged', (response) => {
+    console.log('Owner changed:', response)
+
+    storeGame.sendPostUpdateOwner(response.updatedGame.id, response.updatedGame.player1.id)
+  })
 
   return {
     activeGames,

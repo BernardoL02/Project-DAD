@@ -37,21 +37,65 @@ exports.createGameEngine = (lobby) => {
 
       const updatedGame = lobby.playerInativo(game.id, currentPlayer.id);
 
-      if (!updatedGame) {
-        io.to(game.players.map((p) => p.socketId)).emit("gameCancelled", {
-          message:
-            "The game was cancelled because all players became inactive.",
-          updatedGame: game,
-        });
+      io.to(currentPlayer.socketId).emit("gameCancelled", {
+        message: "You were removed for inactivity.",
+        gameId: game.id,
+      });
 
-        return;
+      // Verifica se o jogador removido era o dono (player1)
+      if (updatedGame.player1.id === currentPlayer.id) {
+        const activePlayers = updatedGame.players.filter((p) => !p.inactive);
+
+        if (activePlayers.length > 0) {
+          updatedGame.player1 = activePlayers[0];
+          updatedGame.player1SocketId = activePlayers[0].socketId;
+
+          console.log(`Ownership transferred to ${activePlayers[0].nickname}`);
+
+          // Notifica os jogadores sobre a mudança de dono
+          io.to(updatedGame.players.map((p) => p.socketId)).emit(
+            "ownerChanged",
+            {
+              message: `Ownership transferred to ${activePlayers[0].nickname}`,
+              updatedGame,
+            }
+          );
+        }
       }
 
+      // Notifica os jogadores restantes que um jogador foi removido por inatividade
       io.to(updatedGame.players.map((p) => p.socketId)).emit("playerLeft", {
         message: `${currentPlayer.nickname} was removed for inactivity.`,
         updatedGame,
       });
 
+      // Verifica se restou apenas um jogador ativo
+      const activePlayers = updatedGame.players.filter((p) => !p.inactive);
+      if (activePlayers.length === 1) {
+        console.log(
+          `Only one player left in game ${game.id}. Ending the game.`
+        );
+
+        updatedGame.status = "ended";
+        const winner = activePlayers[0];
+
+        // Notifica o vencedor por desistência do adversário
+        io.to(winner.socketId).emit("gameCancelled", {
+          message:
+            "Your opponent was removed for inactivity. You win by default!",
+          gameId: game.id,
+          updatedGame,
+          winner,
+        });
+
+        // Remove o jogo do lobby
+        lobby.deleteGame(game.id);
+        io.to("lobby").emit("lobbyChanged", lobby.getGames());
+
+        return;
+      }
+
+      // Continua o jogo com o próximo jogador
       io.to(updatedGame.players.map((p) => p.socketId)).emit("gameUpdated", {
         ...updatedGame,
         remainingTime: TURN_DURATION / 1000,

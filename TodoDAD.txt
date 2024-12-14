@@ -18,11 +18,11 @@ REMOVAL
 G4. MULTIPLAYER GAMES
 
 [+-] - Tudo
-[x] - Se jogador ficar inativo por 20 segundos é expulso
-[] - Transacões por ganhos no multiplayer e notificacoes
-[] - Verificar se os estados dos jogos estão corretos (Ex: pending = jogos que ainda nao comecaram e estão à espera de jogadores)
+[X] - Se jogador ficar inativo por 20 segundos é expulso
+[X] - Transacões por ganhos no multiplayer e notificacoes
+[X] - Verificar se os estados dos jogos estão corretos (Ex: pending = jogos que ainda nao comecaram e estão à espera de jogadores)
 [] - Policy para multiplayer games 
-[] - Cada jogo custa 5 moedas, vencedor recebe todas as coins em jogo - 3
+[X] - Cada jogo custa 5 moedas, vencedor recebe todas as coins em jogo - 3
 [] - Aumentar o numero de vitorias e de derrotas de cada jogador
 [] - Remover console.log espalhados pelo código
 
@@ -77,5 +77,7 @@ Game:
         Nota: Tempo e mostrado na foto com o circulo a diminuir e com contagem regressiva de 5s
         Optamos por fazer assim porque achamos em questao de implementaçao e jogabilidade seria melhor porque se fosse como o enunciado diz um jogador inicial 
         podia ficar sem clicar na carta e o jogo bloqueava
+    [x] - No caso de algum jogador sair a meio de um jogo ele ja nao é removido da partida apenas passa para inativo
+        Nota: Em caso for o dono da partida ele é atribuido a outro jogador por ser necessario para dar update no final da partida
 Nota: Na parte dos jogos para os jogadores estarem todos sincronizados com o mesmos segundos posemos uma hora de incio onde depois no frontend caculos os segundos
 com base nisso

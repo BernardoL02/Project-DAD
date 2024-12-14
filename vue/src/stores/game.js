@@ -545,7 +545,6 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
-  // Função para atualizar os resultados dos jogadores
   const updatePlayers = async (game) => {
     try {
       console.log(game)
@@ -588,6 +587,37 @@ export const useGameStore = defineStore('game', () => {
         winner_user_id: winner.id,
         total_time: totalTime,
         total_turns_winner: winner.totalTurns
+      }
+
+      console.log('Request Data:', requestData)
+
+      // Envia os dados para o backend
+      await axios.patch(`/games/${game.id}`, requestData)
+
+      console.log('Game status updated successfully.')
+    } catch (error) {
+      console.error('Error updating game status:', error.response?.data || error.message)
+    }
+  }
+
+  const sendPostOnForfeitMuiltiplayer = async (game, winner) => {
+    try {
+      if (!game.id) {
+        console.error('Game ID is not defined.')
+        return
+      }
+
+      // Define o objeto base dos dados para enviar
+      const requestData = {
+        status: 'E',
+        winner_user_id: winner.id
+      }
+
+      // Se startTime estiver definido, calcula ended_at e adiciona began_at
+      if (game.startTime) {
+        const ended = new Date().toISOString().slice(0, 19).replace('T', ' ')
+        requestData.began_at = new Date(game.startTime).toISOString().slice(0, 19).replace('T', ' ')
+        requestData.ended_at = ended
       }
 
       console.log('Request Data:', requestData)
@@ -859,6 +889,7 @@ export const useGameStore = defineStore('game', () => {
     storePlayers,
     updatePlayers,
     sendPostOnGameEndMuiltiplayer,
-    sendPostOnGameEndMuiltiplayerPlayers
+    sendPostOnGameEndMuiltiplayerPlayers,
+    sendPostOnForfeitMuiltiplayer
   }
 })

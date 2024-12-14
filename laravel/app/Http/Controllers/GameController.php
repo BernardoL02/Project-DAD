@@ -15,6 +15,7 @@ use App\Http\Resources\MultiPlayerGameResource;
 use App\Http\Resources\MyMultiPlayerGameResource;
 use App\Http\Resources\ShowMultiplayerGameResource;
 use App\Models\MultiplayerGame;
+use App\Models\User;
 
 class GameController extends Controller
 {
@@ -182,7 +183,7 @@ class GameController extends Controller
                 $query->where('user_id', $user->id);
             })
             ->where('type', 'M')
-            ->orderBy('began_at', 'desc')
+            ->orderBy('id', 'desc')
             ->get();
 
         $multiPlayerGames->each(function ($game) use ($user) {
@@ -324,6 +325,8 @@ class GameController extends Controller
 
         $updates = $request->input('updates');
 
+        $game = Game::findOrFail($gameId);
+
         foreach ($updates as $update) {
             MultiplayerGame::where('user_id', $update['id'])
                 ->where('game_id', $gameId)
@@ -333,11 +336,41 @@ class GameController extends Controller
                 ]);
         }
 
+        $winnerUpdate = collect($updates)->firstWhere('player_won', true);
+
+        if ($winnerUpdate) {
+            $winnerId = $winnerUpdate['id'];
+            $winner = User::find($winnerId);
+
+            if ($winner) {
+                $totalPlayers = count($updates);
+                $reward = ($totalPlayers * 5) - 3;
+
+                $transactionData = [
+                    'type' => 'I',
+                    'user_id' => $winnerId,
+                    'brain_coins' => $reward,
+                    'game_id' => $gameId,
+                    'transaction_datetime' => now(),
+                    'custom' => json_encode([
+                        'notificationRead' => 1,
+                        'msg' => "You received $reward brain coins for winning the multiplayer game ($gameId)!",
+                    ]),
+                ];
+
+                $transaction = Transaction::create($transactionData);
+                $winner->brain_coins_balance += $reward;
+                $winner->save();
+            }
+        }
+
         return response()->json([
             'message' => 'Players updated successfully.',
             'game_id' => $gameId,
             'updates' => $updates,
         ]);
     }
+
+
 
 }

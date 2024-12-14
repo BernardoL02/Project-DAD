@@ -1,16 +1,125 @@
-[2024-12-13 19:51:41] local.INFO: Attempting to update with: {"id":8,"game_id":"24608","player_won":1,"pairs_discovered":5} 
-[2024-12-13 19:51:41] local.WARNING: No player found for update {"update":{"id":8,"player_won":true,"pairs_discovered":5}} 
-[2024-12-13 19:51:41] local.INFO: Attempting to update with: {"id":7,"game_id":"24608","player_won":0,"pairs_discovered":1} 
-[2024-12-13 19:51:41] local.WARNING: No player found for update {"update":{"id":7,"player_won":false,"pairs_discovered":1}} 
-[2024-12-13 19:51:41] local.INFO: Attempting to update with: {"id":8,"game_id":"24608","player_won":1,"pairs_discovered":5} 
-[2024-12-13 19:51:41] local.WARNING: No player found for update {"update":{"id":8,"player_won":true,"pairs_discovered":5}} 
-[2024-12-13 19:51:41] local.INFO: Attempting to update with: {"id":7,"game_id":"24608","player_won":0,"pairs_discovered":1} 
-[2024-12-13 19:51:41] local.WARNING: No player found for update {"update":{"id":7,"player_won":false,"pairs_discovered":1}} 
-[2024-12-13 19:54:17] local.INFO: Attempting to update with: {"id":8,"game_id":24609,"player_won":1,"pairs_discovered":4} 
-[2024-12-13 19:54:17] local.WARNING: No player found for update {"update":{"id":8,"player_won":true,"pairs_discovered":4}} 
-[2024-12-13 19:54:17] local.INFO: Attempting to update with: {"id":7,"game_id":24609,"player_won":0,"pairs_discovered":2} 
-[2024-12-13 19:54:17] local.WARNING: No player found for update {"update":{"id":7,"player_won":false,"pairs_discovered":2}} 
-[2024-12-13 19:54:17] local.INFO: Attempting to update with: {"id":8,"game_id":24609,"player_won":1,"pairs_discovered":4} 
-[2024-12-13 19:54:17] local.WARNING: No player found for update {"update":{"id":8,"player_won":true,"pairs_discovered":4}} 
-[2024-12-13 19:54:17] local.INFO: Attempting to update with: {"id":7,"game_id":24609,"player_won":0,"pairs_discovered":2} 
-[2024-12-13 19:54:17] local.WARNING: No player found for update {"update":{"id":7,"player_won":false,"pairs_discovered":2}} 
+[2024-12-14 00:05:27] local.ERROR: Trait "App\Http\Controllers\Illuminate\Support\Facades\Log" not found {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Trait \"App\\Http\\Controllers\\Illuminate\\Support\\Facades\\Log\" not found at /var/www/html/app/Http/Controllers/GameController.php:19)
+[stacktrace]
+#0 {main}
+"} 
+[2024-12-14 00:06:04] local.ERROR: Trait "App\Http\Controllers\Illuminate\Support\Facades\Log" not found {"exception":"[object] (Symfony\\Component\\ErrorHandler\\Error\\FatalError(code: 0): Trait \"App\\Http\\Controllers\\Illuminate\\Support\\Facades\\Log\" not found at /var/www/html/app/Http/Controllers/GameController.php:19)
+[stacktrace]
+#0 {main}
+"} 
+[2024-12-14 00:06:50] local.INFO: updatePlayers called {"gameId":"24213","request":{"updates":[{"id":7,"player_won":false,"pairs_discovered":0},{"id":507,"player_won":true,"pairs_discovered":0}]}} 
+[2024-12-14 00:06:50] local.INFO: Updates validated {"updates":[{"id":7,"player_won":false,"pairs_discovered":0},{"id":507,"player_won":true,"pairs_discovered":0}]} 
+[2024-12-14 00:06:50] local.INFO: Game found {"game":{"App\\Models\\Game":{"id":24213,"created_user_id":507,"winner_user_id":507,"type":"M","status":"E","began_at":null,"ended_at":null,"total_time":null,"board_id":1,"custom":"[]","created_at":"2024-12-14T00:06:41.000000Z","updated_at":"2024-12-14T00:06:50.000000Z","total_turns_winner":null}}} 
+[2024-12-14 00:06:50] local.INFO: Updating player {"update":{"id":7,"player_won":false,"pairs_discovered":0}} 
+[2024-12-14 00:06:50] local.INFO: Updating player {"update":{"id":507,"player_won":true,"pairs_discovered":0}} 
+[2024-12-14 00:06:50] local.INFO: Winner update found {"winnerUpdate":{"id":507,"player_won":true,"pairs_discovered":0}} 
+[2024-12-14 00:06:50] local.ERROR: Class "App\Http\Controllers\User" not found {"userId":507,"exception":"[object] (Error(code: 0): Class \"App\\Http\\Controllers\\User\" not found at /var/www/html/app/Http/Controllers/GameController.php:350)
+[stacktrace]
+#0 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(46): App\\Http\\Controllers\\GameController->updatePlayers()
+#1 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Route.php(264): Illuminate\\Routing\\ControllerDispatcher->dispatch()
+#2 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Route.php(210): Illuminate\\Routing\\Route->runController()
+#3 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(808): Illuminate\\Routing\\Route->run()
+#4 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}()
+#5 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(51): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#6 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle()
+#7 /var/www/html/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(64): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#8 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Auth\\Middleware\\Authenticate->handle()
+#9 /var/www/html/vendor/laravel/sanctum/src/Http/Middleware/EnsureFrontendRequestsAreStateful.php(25): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#10 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Laravel\\Sanctum\\Http\\Middleware\\EnsureFrontendRequestsAreStateful->Laravel\\Sanctum\\Http\\Middleware\\{closure}()
+#11 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#12 /var/www/html/vendor/laravel/sanctum/src/Http/Middleware/EnsureFrontendRequestsAreStateful.php(24): Illuminate\\Pipeline\\Pipeline->then()
+#13 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Laravel\\Sanctum\\Http\\Middleware\\EnsureFrontendRequestsAreStateful->handle()
+#14 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#15 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(807): Illuminate\\Pipeline\\Pipeline->then()
+#16 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(786): Illuminate\\Routing\\Router->runRouteWithinStack()
+#17 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(750): Illuminate\\Routing\\Router->runRoute()
+#18 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(739): Illuminate\\Routing\\Router->dispatchToRoute()
+#19 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(201): Illuminate\\Routing\\Router->dispatch()
+#20 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}()
+#21 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#22 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle()
+#23 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle()
+#24 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#25 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle()
+#26 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle()
+#27 /var/www/html/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#28 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\ValidatePostSize->handle()
+#29 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(110): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#30 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle()
+#31 /var/www/html/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#32 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle()
+#33 /var/www/html/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#34 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle()
+#35 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#36 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks->handle()
+#37 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#38 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(176): Illuminate\\Pipeline\\Pipeline->then()
+#39 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(145): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter()
+#40 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1190): Illuminate\\Foundation\\Http\\Kernel->handle()
+#41 /var/www/html/public/index.php(17): Illuminate\\Foundation\\Application->handleRequest()
+#42 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('...')
+#43 {main}
+"} 
+[2024-12-14 00:07:21] local.INFO: updatePlayers called {"gameId":"24214","request":{"updates":[{"id":7,"player_won":false,"pairs_discovered":0},{"id":8,"player_won":true,"pairs_discovered":0}]}} 
+[2024-12-14 00:07:21] local.INFO: Updates validated {"updates":[{"id":7,"player_won":false,"pairs_discovered":0},{"id":8,"player_won":true,"pairs_discovered":0}]} 
+[2024-12-14 00:07:21] local.INFO: Game found {"game":{"App\\Models\\Game":{"id":24214,"created_user_id":8,"winner_user_id":8,"type":"M","status":"E","began_at":null,"ended_at":null,"total_time":null,"board_id":1,"custom":"[]","created_at":"2024-12-14T00:07:07.000000Z","updated_at":"2024-12-14T00:07:21.000000Z","total_turns_winner":null}}} 
+[2024-12-14 00:07:21] local.INFO: Updating player {"update":{"id":7,"player_won":false,"pairs_discovered":0}} 
+[2024-12-14 00:07:21] local.INFO: Updating player {"update":{"id":8,"player_won":true,"pairs_discovered":0}} 
+[2024-12-14 00:07:21] local.INFO: Winner update found {"winnerUpdate":{"id":8,"player_won":true,"pairs_discovered":0}} 
+[2024-12-14 00:07:21] local.ERROR: Class "App\Http\Controllers\User" not found {"userId":8,"exception":"[object] (Error(code: 0): Class \"App\\Http\\Controllers\\User\" not found at /var/www/html/app/Http/Controllers/GameController.php:350)
+[stacktrace]
+#0 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/ControllerDispatcher.php(46): App\\Http\\Controllers\\GameController->updatePlayers()
+#1 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Route.php(264): Illuminate\\Routing\\ControllerDispatcher->dispatch()
+#2 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Route.php(210): Illuminate\\Routing\\Route->runController()
+#3 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(808): Illuminate\\Routing\\Route->run()
+#4 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}()
+#5 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(51): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#6 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle()
+#7 /var/www/html/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(64): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#8 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Auth\\Middleware\\Authenticate->handle()
+#9 /var/www/html/vendor/laravel/sanctum/src/Http/Middleware/EnsureFrontendRequestsAreStateful.php(25): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#10 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Laravel\\Sanctum\\Http\\Middleware\\EnsureFrontendRequestsAreStateful->Laravel\\Sanctum\\Http\\Middleware\\{closure}()
+#11 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#12 /var/www/html/vendor/laravel/sanctum/src/Http/Middleware/EnsureFrontendRequestsAreStateful.php(24): Illuminate\\Pipeline\\Pipeline->then()
+#13 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Laravel\\Sanctum\\Http\\Middleware\\EnsureFrontendRequestsAreStateful->handle()
+#14 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#15 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(807): Illuminate\\Pipeline\\Pipeline->then()
+#16 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(786): Illuminate\\Routing\\Router->runRouteWithinStack()
+#17 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(750): Illuminate\\Routing\\Router->runRoute()
+#18 /var/www/html/vendor/laravel/framework/src/Illuminate/Routing/Router.php(739): Illuminate\\Routing\\Router->dispatchToRoute()
+#19 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(201): Illuminate\\Routing\\Router->dispatch()
+#20 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}()
+#21 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#22 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle()
+#23 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle()
+#24 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#25 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(51): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle()
+#26 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle()
+#27 /var/www/html/vendor/laravel/framework/src/Illuminate/Http/Middleware/ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#28 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\ValidatePostSize->handle()
+#29 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(110): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#30 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle()
+#31 /var/www/html/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(62): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#32 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle()
+#33 /var/www/html/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(58): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#34 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle()
+#35 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/InvokeDeferredCallbacks.php(22): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#36 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\InvokeDeferredCallbacks->handle()
+#37 /var/www/html/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}()
+#38 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(176): Illuminate\\Pipeline\\Pipeline->then()
+#39 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(145): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter()
+#40 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/Application.php(1190): Illuminate\\Foundation\\Http\\Kernel->handle()
+#41 /var/www/html/public/index.php(17): Illuminate\\Foundation\\Application->handleRequest()
+#42 /var/www/html/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('...')
+#43 {main}
+"} 
+[2024-12-14 00:11:48] local.INFO: updatePlayers called {"gameId":"24215","request":{"updates":[{"id":7,"player_won":false,"pairs_discovered":0},{"id":8,"player_won":true,"pairs_discovered":0}]}} 
+[2024-12-14 00:11:48] local.INFO: Updates validated {"updates":[{"id":7,"player_won":false,"pairs_discovered":0},{"id":8,"player_won":true,"pairs_discovered":0}]} 
+[2024-12-14 00:11:48] local.INFO: Game found {"game":{"App\\Models\\Game":{"id":24215,"created_user_id":8,"winner_user_id":8,"type":"M","status":"E","began_at":"2024-12-14 00:11:46","ended_at":"2024-12-14 00:11:47","total_time":null,"board_id":1,"custom":"[]","created_at":"2024-12-14T00:11:42.000000Z","updated_at":"2024-12-14T00:11:48.000000Z","total_turns_winner":null}}} 
+[2024-12-14 00:11:48] local.INFO: Updating player {"update":{"id":7,"player_won":false,"pairs_discovered":0}} 
+[2024-12-14 00:11:48] local.INFO: Updating player {"update":{"id":8,"player_won":true,"pairs_discovered":0}} 
+[2024-12-14 00:11:48] local.INFO: Winner update found {"winnerUpdate":{"id":8,"player_won":true,"pairs_discovered":0}} 
+[2024-12-14 00:11:48] local.INFO: Winner user found {"winner":{"App\\Models\\User":{"id":8,"name":"Liliana Altenwerth Nolan Bartoletti","email":"p2@mail.pt","email_verified_at":"2023-12-23T08:16:02.000000Z","created_at":"2023-12-23T08:15:24.000000Z","updated_at":"2024-12-14T00:11:46.000000Z","type":"P","nickname":"liliana","blocked":0,"photo_filename":"8_675c91c3c30f4.jpg","brain_coins_balance":66,"custom":null,"deleted_at":null}}} 
+[2024-12-14 00:11:48] local.INFO: Reward calculated {"totalPlayers":2,"reward":7} 
+[2024-12-14 00:11:48] local.INFO: Creating transaction {"transactionData":{"type":"I","user_id":8,"brain_coins":7,"game_id":"24215","transaction_datetime":"2024-12-14 00:11:48","custom":"{\"notificationRead\":1,\"msg\":\"You received 7 brain coins for winning the multiplayer game (24215)!\"}"}} 
+[2024-12-14 00:11:48] local.INFO: Transaction created {"transaction":{"App\\Models\\Transaction":{"type":"I","user_id":8,"brain_coins":7,"game_id":"24215","transaction_datetime":"2024-12-14T00:11:48.978780Z","custom":"{\"notificationRead\":1,\"msg\":\"You received 7 brain coins for winning the multiplayer game (24215)!\"}","id":27061}}} 
+[2024-12-14 00:11:48] local.INFO: Winner brain coins balance updated {"winner":{"App\\Models\\User":{"id":8,"name":"Liliana Altenwerth Nolan Bartoletti","email":"p2@mail.pt","email_verified_at":"2023-12-23T08:16:02.000000Z","created_at":"2023-12-23T08:15:24.000000Z","updated_at":"2024-12-14T00:11:48.000000Z","type":"P","nickname":"liliana","blocked":0,"photo_filename":"8_675c91c3c30f4.jpg","brain_coins_balance":73,"custom":null,"deleted_at":null}}} 

@@ -209,6 +209,11 @@ router.beforeEach(async (to, from, next) => {
         return
       }
 
+      if (to.name === 'lobbys' && authStore.coins < 5) {
+        next({ name: 'store' })
+        return
+      }
+
       //Rotas que player não pode aceder
       if (
         to.name === 'login' ||

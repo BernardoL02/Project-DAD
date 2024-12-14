@@ -340,48 +340,44 @@ io.on("connection", (socket) => {
       return callback({ errorCode: 5, errorMessage: "Game not found!" });
     }
 
-    // Armazena os socket IDs dos jogadores antes de marcar o jogador como inativo
-    const playersSocketIds = currentGame.players.map((p) => p.socketId);
-
     // Marca o jogador como inativo
     const updatedGame = lobby.playerInativo(gameId, socket.data.user.id);
 
-    if (!updatedGame) {
-      console.log(
-        `Game ${gameId} has been deleted because all players are inactive.`
-      );
+    // Filtra os jogadores ativos
+    const activePlayers = updatedGame.players.filter((p) => !p.inactive);
 
-      // Notifica os jogadores que o jogo foi cancelado
-      io.to(playersSocketIds).emit("gameCancelled", {
-        message: "The game was cancelled because all players are inactive.",
-        gameId: gameId,
-      });
+    // Se o jogador que saiu era o dono (player1), transfere a liderança para outro jogador ativo
+    if (
+      updatedGame.player1.id === socket.data.user.id &&
+      activePlayers.length > 0
+    ) {
+      const newOwner = activePlayers[0];
+      updatedGame.player1 = newOwner;
+      updatedGame.player1SocketId = newOwner.socketId;
 
-      io.to("lobby").emit("lobbyChanged", lobby.getGames());
-      return callback({
-        success: true,
-        message: "Game deleted as all players are inactive.",
+      console.log(`Ownership transferred to ${newOwner.nickname}`);
+
+      // Emite um evento para os clientes informando sobre a mudança de dono
+      io.to(updatedGame.players.map((p) => p.socketId)).emit("ownerChanged", {
+        message: `Ownership transferred to ${newOwner.nickname}`,
+        updatedGame,
       });
     }
 
     // Verifica se restou apenas um jogador ativo
-    const activePlayers = updatedGame.players.filter((p) => !p.inactive);
     if (activePlayers.length === 1) {
+      gameEngine.stopTurnTimer(updatedGame.id);
       console.log(`Only one player left in game ${gameId}. Ending the game.`);
 
-      // Define o status do jogo como encerrado
       updatedGame.status = "ended";
+      const winner = activePlayers[0];
 
       // Notifica o último jogador que ele venceu por desistência do adversário
-      io.to(activePlayers[0].socketId).emit("gameEnded", {
+      io.to(winner.socketId).emit("gameCancelled", {
         message: "Your opponent left the game. You win by default!",
-        totalMoves: updatedGame.totalMoves,
-        updatedGame: updatedGame,
-        pairsFoundByPlayers: updatedGame.players.map((player) => ({
-          nickname: player.nickname,
-          pairsFound: player.pairsFound || 0,
-        })),
         gameId: gameId,
+        updatedGame,
+        winner,
       });
 
       lobby.deleteGame(gameId);

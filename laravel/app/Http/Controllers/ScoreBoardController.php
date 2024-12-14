@@ -54,11 +54,11 @@ class ScoreBoardController extends Controller
     {
         try {
             $topPlayers = User::withCount([
-                'wonGames as victories' => function ($query) {
-                    $query->where('type', 'M');
+                'multiplayerGames as victories' => function ($query) {
+                    $query->where('player_won', true);
                 },
-                'games as losses' => function ($query) {
-                    $query->where('type', 'M')->whereNull('winner_user_id');
+                'multiplayerGames as losses' => function ($query) {
+                    $query->where('player_won', false);
                 },
             ])
                 ->orderByDesc('victories')
@@ -67,7 +67,8 @@ class ScoreBoardController extends Controller
 
             return response()->json(['player_stats' => $topPlayers]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'An unexpected error occurred.'], 500);
+            return response()->json(['error' => 'An unexpected error occurred.', 'details' => $e->getMessage()], 500);
         }
     }
+
 }
