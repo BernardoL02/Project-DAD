@@ -91,7 +91,7 @@ onMounted(() => {
 
     <div v-else class="space-y-6">
       <PaginatedTable
-        :columns="['Id', 'Date', 'Type', 'Value', 'Payment Method', 'Reference', 'Coins']"
+        :columns="['Date', 'Type', 'Value', 'Payment Method', 'Reference', 'Coins']"
         :data="transactionStore.filteredTransactions"
       />
     </div>

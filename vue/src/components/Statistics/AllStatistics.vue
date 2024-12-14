@@ -177,35 +177,36 @@
             <div class="text-lg font-semibold mb-6 text-center">
               Total Games Played: <span class="text-blue-600">{{ totalGamesUser }}</span>
             </div>
-            <div class="flex flex-wrap justify-between space-x-4">
-              <div class="chart-container p-4 w-1/2 mt-10">
-                <button
-                  v-for="year in [2023, 2024]"
-                  :key="year"
-                  @click="changeYear(year)"
-                  :class="{
-                    'bg-yellow-400 text-white': selectedYear === year,
-                    'bg-gray-200': selectedYear !== year
-                  }"
-                  class="px-4 py-2 mx-2 rounded-md font-semibold"
-                >
-                  {{ year }}
-                </button>
-                <Bar :data="chartDataUser" />
+            <div class="flex flex-row space-x-28">
+              <div class="chart-container p-4 w-1/3 ml-44">
+                <div class="text-center font-semibold text-xl mb-2">
+                  Number of Games for Each Board Size
+                </div>
+                <Pie :data="pieChartDataUser" class="mt-8" />
               </div>
               <div class="chart-container p-4 w-1/3">
                 <div class="text-center font-semibold text-xl mb-2">
                   Total games for Single-Player vs Multi-Player Games
                 </div>
+
                 <Doughnut :data="horizontalBarChartDataUser" />
               </div>
             </div>
 
-            <div class="chart-container p-1 w-96 h-96">
-              <div class="text-center font-semibold text-xl mb-2">
-                Number of Games for Each Board Size
-              </div>
-              <Pie :data="pieChartDataUser" />
+            <div class="chart-container p-1 w-1/2 mt-20">
+              <button
+                v-for="year in [2023, 2024]"
+                :key="year"
+                @click="changeYear(year)"
+                :class="{
+                  'bg-yellow-400 text-white': selectedYear === year,
+                  'bg-gray-200': selectedYear !== year
+                }"
+                class="px-4 py-2 mx-2 rounded-md font-semibold"
+              >
+                {{ year }}
+              </button>
+              <Bar :data="chartDataUser" />
             </div>
           </div>
         </div>

@@ -80,32 +80,45 @@ onUnmounted(() => {
     <transition name="fade-in-scale" appear>
       <div v-if="gameStartedAnimation" class="game-container flex justify-center gap-10">
         <!-- Tabuleiro -->
-        <div class="game-board grid gap-2 bg-gray-100 p-4 rounded-lg shadow-md" :style="{
-          gridTemplateRows: `repeat(${props.size.split('x')[0] || 4}, 1fr)`,
-          gridTemplateColumns: `repeat(${props.size.split('x')[1] || 4}, 1fr)`
-        }">
-          <div v-for="(card, index) in gameStore.shuffledCards" :key="index"
+        <div
+          class="game-board grid gap-2 bg-gray-100 p-4 rounded-lg shadow-md"
+          :style="{
+            gridTemplateRows: `repeat(${props.size.split('x')[0] || 4}, 1fr)`,
+            gridTemplateColumns: `repeat(${props.size.split('x')[1] || 4}, 1fr)`
+          }"
+        >
+          <div
+            v-for="(card, index) in gameStore.shuffledCards"
+            :key="index"
             class="relative cursor-pointer transition-opacity duration-300"
             :class="{ 'opacity-50 pointer-events-none': gameStore.matchedPairs.includes(index) }"
-            @click="gameStore.flipCard(index)">
+            @click="gameStore.flipCard(index)"
+          >
             <!-- Carta -->
-            <div class="w-24 h-36 transform-style-preserve-3d transition-transform duration-500 rotate-y-180" :class="{
-              'rotate-y-0':
-                gameStore.matchedPairs.includes(index) || gameStore.selectedCards.includes(index)
-            }">
+            <div
+              class="w-24 h-36 transform-style-preserve-3d transition-transform duration-500 rotate-y-180"
+              :class="{
+                'rotate-y-0':
+                  gameStore.matchedPairs.includes(index) || gameStore.selectedCards.includes(index)
+              }"
+            >
               <div class="absolute w-full h-full backface-hidden bg-white rounded-lg">
                 <img :src="`/Cards/${card.image}`" alt="Card" class="w-full h-full rounded-lg" />
               </div>
 
-              <div class="absolute w-full h-full backface-hidden transform rotate-y-180 bg-red-500 rounded-lg">
+              <div
+                class="absolute w-full h-full backface-hidden transform rotate-y-180 bg-red-500 rounded-lg"
+              >
                 <img src="/Cards/semFace.png" alt="Card Back" class="w-full h-full rounded-lg" />
               </div>
             </div>
           </div>
-        </div>  
+        </div>
 
         <!-- Informações do Jogo -->
-        <div class="game-info p-4 bg-gray-50 border border-gray-300 rounded-lg shadow-md sticky top-4 w-64">
+        <div
+          class="game-info p-4 bg-gray-50 border border-gray-300 rounded-lg shadow-md sticky top-4 w-64"
+        >
           <p class="text-lg font-medium">Tempo: {{ gameStore.elapsedTime }} seg</p>
           <p class="text-lg font-medium">Jogadas: {{ gameStore.moves }}</p>
         </div>
@@ -113,7 +126,10 @@ onUnmounted(() => {
     </transition>
 
     <!-- Modal de Confirmação -->
-    <div v-if="showModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div
+      v-if="showModal"
+      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+    >
       <div class="bg-white p-6 rounded shadow-md w-96">
         <h2 class="text-xl font-bold mb-4">Confirmação</h2>
         <p class="mb-4">
@@ -121,10 +137,16 @@ onUnmounted(() => {
           O progresso será perdido.
         </p>
         <div class="flex justify-end space-x-4">
-          <button class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400" @click="cancelExit">
+          <button
+            class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+            @click="cancelExit"
+          >
             Cancelar
           </button>
-          <button class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" @click="confirmExit">
+          <button
+            class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            @click="confirmExit"
+          >
             Sair
           </button>
         </div>
