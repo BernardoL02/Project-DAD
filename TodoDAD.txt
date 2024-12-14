@@ -1,13 +1,10 @@
 G0. Geral
 
 [] - Proteger rotas front end e backend estatisticas e multiplayer
-[] - Remover ids das tabelas
 [] - Limpar todas as stores e ver se os dados ja existem antes de os ir buscar no 
 [] - Sons nos jogos
 [] - Ver o restore token
 [] - colocar o token em local storage
-[] - Mudar nome site na tab e meter icon
-[] - Apagar store profile
 
 G1. USER REGISTRATION, AUTHENTICATION, PROFILE, END SESSION, 
 ACCOUNT
@@ -25,10 +22,6 @@ G4. MULTIPLAYER GAMES
 [] - Cada jogo custa 5 moedas, vencedor recebe todas as coins em jogo - 3
 [] - Aumentar o numero de vitorias e de derrotas de cada jogador
 [] - Remover console.log espalhados pelo código
-
-G5. GAME HISTORY AND SCORING BOARDS
-
-[] - Ver os jogadores involvidos no game multiplayer
 
 G8. CUSTOM FEATURES AND IMPLEMENTATION DETAILS
 
