@@ -37,6 +37,7 @@ io.on("connection", (socket) => {
     if (user && user.id) {
       for (const game of lobby.getGames()) {
         if (game.status === "started") {
+          const callback = () => {};
           if (util.checkAuthenticatedUser(socket, callback)) {
             const currentGame = lobby.getGame(game.id);
 

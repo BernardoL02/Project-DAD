@@ -204,7 +204,7 @@ onUnmounted(() => {
             </div>
 
             <!-- Botão de Chat -->
-            <button v-if="player.id !== storeAuth.user.id" @click.stop="storeLobby.openChatPanel(player)"
+            <button v-if="player.id !== storeAuth.user?.id" @click.stop="storeLobby.openChatPanel(player)"
               class="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-1 hover:bg-blue-600 shadow-md z-20">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" fill="none" viewBox="0 0 20 20"
                 stroke="currentColor">

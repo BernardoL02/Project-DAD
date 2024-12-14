@@ -365,7 +365,7 @@ export const useAuthStore = defineStore('auth', () => {
         await new Promise((resolve, reject) => {
           const timeout = setTimeout(() => {
             resolve()
-          }, 1000)
+          }, 100)
 
           socket.emit('logout', user.value, () => {
             clearTimeout(timeout)
