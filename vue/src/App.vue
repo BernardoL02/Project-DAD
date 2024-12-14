@@ -151,7 +151,7 @@
 
                 <!-- Dropdown Menu -->
                 <div
-                  class="absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col right-[-150px] top-[57px] bg-white shadow-lg rounded-lg w-40 z-10 transition-all duration-300 ease-in-out">
+                  class="absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col right-[-80px] lg:right-[-100px] xl:right-[-150px] top-[57px] bg-white shadow-lg rounded-lg w-40 z-10 transition-all duration-300 ease-in-out">
                   <div class="absolute right-0 mt-2 w-[270px] bg-white border border-gray-200 rounded-lg shadow-lg"
                     v-if="authStore.notifications.length > 0">
                     <!-- Adicionar overflow-y-auto e max-h -->
@@ -165,7 +165,7 @@
                           <div class="flex flex-row space-x-1">
                             <span class="text-xs">{{
                               new Date(notification.date).toLocaleDateString()
-                              }}</span>
+                            }}</span>
 
                             <img src="/delete.png" alt="Delete Notification Icon"
                               @click="handleDeleteNotificaitonClick(notification.id)"
@@ -215,7 +215,7 @@
 
                   <!-- Dropdown Menu -->
                   <div
-                    class="border border-gray-200 rounded-lg shadow-lg absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col right-[-65px] top-[64px] bg-white w-40 z-10 transition-all duration-300 ease-in-out">
+                    class="border border-gray-200 rounded-lg shadow-lg absolute opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col right-[-7px] lg:right-[-25px] xl:right-[-65px] top-[64px] bg-white w-40 z-10 transition-all duration-300 ease-in-out">
                     <RouterLink to="/playerProfile"
                       class="block text-gray-900 hover:bg-sky-100 px-4 py-2 text-sm rounded-t-lg">
                       View Profile
