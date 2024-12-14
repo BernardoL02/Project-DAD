@@ -26,6 +26,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::patch('/users/me', [UserController::class, 'updatePassword']);
     Route::delete('/users/me', [UserController::class, 'destroy'])->can("deleteMyAccount", User::class);
     Route::get('/users/me/notifications', [UserController::class , 'getNotifications'])->can("viewNotifications", User::class);
+    Route::delete('/users/me/notifications', [UserController::class , 'deleteAllNotifications'])->can("deleteNotifications", User::class);
 
     //------Administrator -----
     Route::get('/admin/users', [AdministratorController::class, 'index'])->can("viewAny", User::class);
@@ -51,8 +52,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // ----- Transactions -----
     Route::get('/transactions', [TransactionController::class, 'index'])->can("viewAny", Transaction::class);
     Route::post('/transactions', [TransactionController::class, 'store'])->can("create", Transaction::class);
-    Route::patch('/transactions/{transaction}', [TransactionController::class, 'changeTransactionStatus'])->can("update",Transaction::class);
-
+    Route::patch('/transactions/{transaction}', [TransactionController::class, 'changeTransactionStatus'])->can("update","transaction");
 });
 
 // ----- Boards -----

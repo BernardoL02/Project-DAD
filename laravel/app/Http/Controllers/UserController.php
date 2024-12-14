@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Http\Requests\UserRequest;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Hash;
@@ -156,6 +157,30 @@ class UserController extends Controller
         });
 
         return TransactionResource::collection($filteredTransactions);
+    }
+
+    public function deleteAllNotifications(Request $request)
+    {
+        $user = $request->user();
+
+        $transactions = Transaction::where('user_id', $user->id)
+            ->whereNotNull('custom')
+            ->get();
+
+        foreach ($transactions as $transaction) {
+            $custom = json_decode($transaction->custom, true);
+
+            $custom['notificationRead'] = $request->input('notificationRead') ? 1 : 0;
+
+            $transaction->custom = json_encode($custom);
+
+            $transaction->save();
+        }
+
+        return response()->json([
+            'message' => 'All notifications updated successfully.',
+            'updatedCount' => $transactions->count(),
+        ], 200);
     }
 }
 

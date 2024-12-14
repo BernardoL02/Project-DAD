@@ -154,13 +154,11 @@ export const useAuthStore = defineStore('auth', () => {
 
   const deleteAllNotifications = async () => {
     try {
-      for (const notification of notifications.value) {
-        await deleteNotification(notification.id, false)
-      }
+      await axios.delete('/users/me/notifications')
 
       storeError.setSuccessMessages('All notifications deleted successfully.', {}, 200, null)
 
-      return true
+      notifications.value = []
     } catch (error) {
       storeError.setErrorMessages(
         error.response?.data?.message,
@@ -168,7 +166,6 @@ export const useAuthStore = defineStore('auth', () => {
         error.response?.data?.status,
         'Notification Error'
       )
-      return false
     }
   }
 

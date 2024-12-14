@@ -354,10 +354,7 @@ const handleDeleteNotificaitonClick = async (notificationId) => {
 }
 
 const handleDeleteAllNotificaiton = async () => {
-  const success = await authStore.deleteAllNotifications()
-  if (success && authStore.isPlayer) {
-    authStore.getNotifications()
-  }
+  await authStore.deleteAllNotifications()
 }
 
 const isScoreBoardExpanded = ref(false)

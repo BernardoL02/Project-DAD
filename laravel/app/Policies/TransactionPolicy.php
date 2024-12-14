@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Models\Transaction;
 use App\Models\User;
 
 class TransactionPolicy
@@ -29,9 +30,9 @@ class TransactionPolicy
         return $user->isPlayer();
     }
 
-    public function update(User $user)
+    public function update(User $user, Transaction $transaction)
     {
-        return $user->isPlayer();
+        return $user->isPlayer() && $transaction->user_id == $user->id;
     }
 
 }

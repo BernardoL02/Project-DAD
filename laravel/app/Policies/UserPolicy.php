@@ -48,4 +48,9 @@ class UserPolicy
     {
         return $user->isPlayer();
     }
+
+    public function deleteNotifications(User $user)
+    {
+        return $user->isPlayer();
+    }
 }
