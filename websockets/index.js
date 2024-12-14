@@ -332,7 +332,7 @@ io.on("connection", (socket) => {
     callback({ success: true });
   });
 
-  socket.on("leaveGame", (gameId, callback) => {
+  socket.on("leaveGame", async (gameId, callback) => {
     if (!util.checkAuthenticatedUser(socket, callback)) {
       return;
     }
@@ -367,9 +367,12 @@ io.on("connection", (socket) => {
       console.log(`Ownership transferred to ${newOwner.nickname}`);
 
       // Notifica apenas o ex-dono sobre a mudança de liderança
-      io.to(previousOwnerSocketId).emit("ownerChanged", {
-        message: `You have been removed as the lobby owner. Ownership transferred to ${newOwner.nickname}.`,
-        updatedGame,
+      await new Promise((resolve) => {
+        io.to(previousOwnerSocketId).emit("ownerChanged", {
+          message: `You have been removed as the lobby owner. Ownership transferred to ${newOwner.nickname}.`,
+          updatedGame,
+        });
+        setTimeout(resolve, 500); // Espera 500ms para garantir que a notificação seja processada
       });
     }
 
@@ -396,8 +399,8 @@ io.on("connection", (socket) => {
       });
     }
 
-    // Notifica apenas o ex-dono que ele foi removido do jogo
-    io.to(previousOwnerSocketId).emit("playerLeft", {
+    // Notifica os jogadores restantes que um jogador saiu
+    io.to(activePlayers.map((p) => p.socketId)).emit("playerLeft", {
       message: `${socket.data.user.nickname} left the game.`,
       updatedGame,
     });
