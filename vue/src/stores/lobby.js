@@ -1,15 +1,18 @@
-import { ref, computed, inject } from 'vue'
+import { ref, computed, inject, nextTick, watch } from 'vue'
 import { defineStore } from 'pinia'
+import axios from 'axios'
 import { useErrorStore } from '@/stores/error'
 import { useAuthStore } from '@/stores/auth'
 import { useGameStore } from '@/stores/game'
 import { useRouter } from 'vue-router'
+import { useGameMultiplayerStore } from '@/stores/gameMultiplayer'
 import { useNotificationStore } from '@/stores/notification'
 
 export const useLobbyStore = defineStore('lobby', () => {
   const storeAuth = useAuthStore()
   const storeError = useErrorStore()
   const socket = inject('socket')
+  const storeGameMultiplayer = useGameMultiplayerStore()
   const router = useRouter()
   const games = ref([])
   const notificationStore = useNotificationStore()
@@ -68,6 +71,7 @@ export const useLobbyStore = defineStore('lobby', () => {
         if (webSocketServerResponseHasError(response)) {
           return
         }
+        console.log('Lobby created successfully:', response)
       })
     } catch (error) {
       storeError.setErrorMessages('Failed to create multiplayer game.')
@@ -89,12 +93,15 @@ export const useLobbyStore = defineStore('lobby', () => {
   //Set Ready Player on lobby
   const setReady = (gameId, playerId) => {
     storeError.resetMessages()
+    console.log(gameId)
     socket.emit('setReady', { gameId, playerId }, (response) => {
       if (webSocketServerResponseHasError(response)) return
+      console.log('Player ready status toggled:', response)
       fetchGames() // Atualiza os jogos após alterar o status de ready
     })
   }
 
+  //Leave Lobby
   const leaveLobby = (gameId) => {
     storeError.resetMessages()
     socket.emit('leaveLobby', gameId, (response) => {
@@ -102,13 +109,16 @@ export const useLobbyStore = defineStore('lobby', () => {
         return
       }
 
+      console.log('Left lobby:', response)
+
+      // Verifica se o usuário atual era o dono do lobby (player1) antes de sair
       const currentUser = storeAuth.user
       const wasLobbyOwner = response.previousOwnerId === currentUser.id
 
+      // Se a liderança mudou, atualiza o dono do jogo na base de dados
       if (wasLobbyOwner && response.player1.id !== currentUser.id) {
-        if (response.id != null && response.player1.id != null) {
-          storeGame.sendPostUpdateOwner(response.id, response.player1.id)
-        }
+        console.log(`Lobby owner changed from ${currentUser.id} to ${response.player1.id}`)
+        storeGame.sendPostUpdateOwner(response.id, response.player1.id)
       }
 
       fetchGames()
@@ -121,7 +131,7 @@ export const useLobbyStore = defineStore('lobby', () => {
         storeError.setErrorMessages(response.errorMessage)
       } else {
         notificationStore.setSuccessMessage('Player removed successfully!', 'Player Removed')
-        fetchGames()
+        fetchGames() // Atualiza os jogos após a remoção
       }
     })
   }
@@ -175,6 +185,8 @@ export const useLobbyStore = defineStore('lobby', () => {
   }
 
   socket.on('privateMessage', (payload) => {
+    console.log('Received payload:', payload)
+
     // Verifica se o chat com o usuário já existe
     const existingChatIndex = openChats.value.findIndex((chat) => chat.user.id === payload.user.id)
 
@@ -259,6 +271,7 @@ export const useLobbyStore = defineStore('lobby', () => {
     if (expiredLobbies.value.length > 0) {
       expiredLobbies.value.forEach(async (game) => {
         if (game.status === 'waiting') {
+          console.log(`Atualizando status do lobby expirado com ID: ${game.id}`)
           await storeGame.sendPostOnExit(game.id)
         }
       })
@@ -303,11 +316,14 @@ export const useLobbyStore = defineStore('lobby', () => {
       await new Promise((resolve) => {
         socket.emit('leaveLobby', lobby.id, async (response) => {
           if (!response.errorCode) {
+            console.log(`Left lobby with ID: ${lobby.id}`)
+
             // Verifica se o usuário era o dono do lobby
             const currentUser = storeAuth.user
             if (response.previousOwnerId === currentUser.id) {
               try {
                 await storeGame.sendPostOnExit(lobby.id)
+                console.log(`Lobby ${lobby.id} status updated to 'I' via API`)
               } catch (error) {
                 console.error(`Error updating lobby ${lobby.id} status via API:`, error)
               }

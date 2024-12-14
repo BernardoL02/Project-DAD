@@ -421,6 +421,7 @@ export const useGameStore = defineStore('game', () => {
 
   const createMultiPlayer = async (board_id) => {
     try {
+      console.log('Iniciando createMultiPlayer com board_id:', board_id)
       const payload = {
         type: 'M',
         status: 'PE',
@@ -428,6 +429,7 @@ export const useGameStore = defineStore('game', () => {
       }
 
       const response = await axios.post('games', payload)
+      console.log('Resposta do servidor ao criar o jogo:', response.data)
 
       const createdGame = response.data.data
       return createdGame.id
@@ -476,9 +478,11 @@ export const useGameStore = defineStore('game', () => {
     }
 
     initialBoard.value = boardMatrix
+    console.log(boardMatrix)
   }
 
   const registerAction = (position) => {
+    console.log(position)
     replayActions.value.push({
       time: Date.now() - startTime.value.getTime(), // Captura o tempo decorrido em milissegundos
       position: position // Posição da carta virada
@@ -505,6 +509,8 @@ export const useGameStore = defineStore('game', () => {
         console.error('Game ID não está definido.')
         return
       }
+      console.log('SendPost', gameId)
+
       await axios.patch(`/games/${gameId}`, {
         status: 'PL'
       })
@@ -526,6 +532,7 @@ export const useGameStore = defineStore('game', () => {
         user_ids: userIds
       })
 
+      console.log('Players stored successfully:', response.data)
       return response.data
     } catch (error) {
       console.error('Error storing players:', error)
@@ -535,6 +542,7 @@ export const useGameStore = defineStore('game', () => {
 
   const updatePlayers = async (game) => {
     try {
+      console.log(game)
       const response = await axios.patch(`/games/${gameId}/players`, {
         updates
       })
@@ -556,11 +564,13 @@ export const useGameStore = defineStore('game', () => {
         return
       }
 
+      // Verifica se startTime está definido
       if (!game.startTime) {
         console.error('Game start time is not defined.')
         return
       }
 
+      // Calcula o tempo total em segundos
       const ended = new Date().toISOString().slice(0, 19).replace('T', ' ')
       const totalTime = Math.floor((Date.now() - game.startTime) / 1000)
 
@@ -574,8 +584,12 @@ export const useGameStore = defineStore('game', () => {
         total_turns_winner: winner.totalTurns
       }
 
+      console.log('Request Data:', requestData)
+
       // Envia os dados para o backend
       await axios.patch(`/games/${game.id}`, requestData)
+
+      console.log('Game status updated successfully.')
     } catch (error) {
       console.error('Error updating game status:', error.response?.data || error.message)
     }
@@ -601,8 +615,12 @@ export const useGameStore = defineStore('game', () => {
         requestData.ended_at = ended
       }
 
+      console.log('Request Data:', requestData)
+
       // Envia os dados para o backend
       await axios.patch(`/games/${game.id}`, requestData)
+
+      console.log('Game status updated successfully.')
     } catch (error) {
       console.error('Error updating game status:', error.response?.data || error.message)
     }
@@ -620,6 +638,8 @@ export const useGameStore = defineStore('game', () => {
         return
       }
 
+      console.log('Game Data:', game)
+
       // Monta o array de updates para cada jogador
       const updates = game.players.map((player) => ({
         id: player.id,
@@ -631,8 +651,13 @@ export const useGameStore = defineStore('game', () => {
       const requestData = {
         updates
       }
+
+      console.log('Request Data:', requestData)
+
       // Envia os dados para o backend
       await axios.patch(`/games/${game.id}/players`, requestData)
+
+      console.log('Players data updated successfully.')
     } catch (error) {
       console.error('Error updating players data:', error.response?.data || error.message)
     }
