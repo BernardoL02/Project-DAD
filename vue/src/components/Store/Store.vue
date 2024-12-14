@@ -87,9 +87,10 @@ onMounted(async () => {
     <div class="bg-sky-100 p-6 rounded-xl shadow-lg flex justify-between items-center">
       <div>
         <p class="text-lg font-semibold">Hello, {{ authStore.nickname }}</p>
-        <div class="flex items-center">
-          <img src="/coin.png" alt="Coin Icon" class="w-6 h-6 object-contain mr-2" />
-          <span class="text-lg font-bold">{{ authStore.coins }}</span>
+
+        <div class="flex items-center pt-2 space-x-2">
+          <img src="/coin.png" alt="Coin Icon" class="w-6 h-6 object-contain" />
+          <span class="text-semibold font-bold">{{ authStore.coins }}</span>
         </div>
       </div>
 

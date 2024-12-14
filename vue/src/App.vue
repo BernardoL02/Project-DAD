@@ -124,7 +124,7 @@
             </RouterLink>
 
             <RouterLink v-if="authStore.isPlayer || authStore.isAdmin" :to="{ name: 'statistics' }" :class="[
-              'px-3 py-2 rounded-md text-sm font-medium transition-colors pt-[10px]',
+              'px-3 py-2 rounded-md text-sm font-medium transition-colors pt-[9px]',
               route.path === '/statistics'
                 ? 'text-indigo-500 font-semibold'
                 : 'text-gray-900 hover:text-sky-600'
@@ -323,7 +323,7 @@
 import Toaster from './components/ui/toast/Toaster.vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRoute, useRouter } from 'vue-router'
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 
 const authStore = useAuthStore()
 const route = useRoute()
