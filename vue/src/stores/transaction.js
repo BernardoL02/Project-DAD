@@ -69,7 +69,6 @@ export const useTransactionStore = defineStore('transaction', () => {
         error.response?.data?.status,
         'Game Transaction Error'
       )
-      console.error('Error creating game transaction:', error.response?.data || error.message)
       throw error
     }
   }

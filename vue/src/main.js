@@ -10,14 +10,6 @@ import router from './router'
 
 const app = createApp(App)
 
-const favicon = document.createElement('link')
-favicon.rel = 'icon'
-favicon.type = 'image/x-icon'
-favicon.href = '/spade.png'
-
-document.head.appendChild(favicon)
-document.title = 'Memory Game'
-
 app.use(router)
 
 app.use(createPinia())

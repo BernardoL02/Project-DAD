@@ -42,66 +42,45 @@ exports.createGameEngine = (lobby) => {
         gameId: game.id,
       });
 
+      const activePlayers = updatedGame.players.filter((p) => !p.inactive);
+
+      // Guarda o socketId do ex-dono antes de fazer a troca
+      const previousOwnerSocketId = updatedGame.player1SocketId;
+
       // Verifica se o jogador removido era o dono (player1)
       if (updatedGame.player1.id === currentPlayer.id) {
-        const activePlayers = updatedGame.players.filter((p) => !p.inactive);
-
         if (activePlayers.length > 0) {
           updatedGame.player1 = activePlayers[0];
           updatedGame.player1SocketId = activePlayers[0].socketId;
 
           console.log(`Ownership transferred to ${activePlayers[0].nickname}`);
 
-          // Notifica os jogadores sobre a mudança de dono
-          io.to(updatedGame.players.map((p) => p.socketId)).emit(
-            "ownerChanged",
-            {
-              message: `Ownership transferred to ${activePlayers[0].nickname}`,
+          // Notifica apenas o ex-dono sobre a mudança de dono
+          io.to(previousOwnerSocketId).emit("ownerChanged", {
+            message: `You have been removed as the lobby owner. Ownership transferred to ${activePlayers[0].nickname}.`,
+            updatedGame,
+          });
+
+          // Adiciona um pequeno atraso para garantir que o dono seja atualizado antes de continuar
+          setTimeout(() => {
+            proceedAfterOwnerChange(
               updatedGame,
-            }
-          );
+              activePlayers,
+              io,
+              lobby,
+              TURN_DURATION
+            );
+          }, 1000); // Atraso de 1 segundo
         }
-      }
-
-      // Notifica os jogadores restantes que um jogador foi removido por inatividade
-      io.to(updatedGame.players.map((p) => p.socketId)).emit("playerLeft", {
-        message: `${currentPlayer.nickname} was removed for inactivity.`,
-        updatedGame,
-      });
-
-      // Verifica se restou apenas um jogador ativo
-      const activePlayers = updatedGame.players.filter((p) => !p.inactive);
-      if (activePlayers.length === 1) {
-        console.log(
-          `Only one player left in game ${game.id}. Ending the game.`
-        );
-
-        updatedGame.status = "ended";
-        const winner = activePlayers[0];
-
-        // Notifica o vencedor por desistência do adversário
-        io.to(winner.socketId).emit("gameCancelled", {
-          message:
-            "Your opponent was removed for inactivity. You win by default!",
-          gameId: game.id,
+      } else {
+        proceedAfterOwnerChange(
           updatedGame,
-          winner,
-        });
-
-        // Remove o jogo do lobby
-        lobby.deleteGame(game.id);
-        io.to("lobby").emit("lobbyChanged", lobby.getGames());
-
-        return;
+          activePlayers,
+          io,
+          lobby,
+          TURN_DURATION
+        );
       }
-
-      // Continua o jogo com o próximo jogador
-      io.to(updatedGame.players.map((p) => p.socketId)).emit("gameUpdated", {
-        ...updatedGame,
-        remainingTime: TURN_DURATION / 1000,
-      });
-
-      startTurnTimer(updatedGame, io, lobby);
     }, TURN_DURATION);
 
     timers.set(game.id, timer);
@@ -111,6 +90,56 @@ exports.createGameEngine = (lobby) => {
       ...game,
       remainingTime: TURN_DURATION / 1000,
     });
+  };
+
+  const proceedAfterOwnerChange = (
+    updatedGame,
+    activePlayers,
+    io,
+    lobby,
+    TURN_DURATION
+  ) => {
+    // Verifica se restou apenas um jogador ativo
+    if (activePlayers.length === 1) {
+      console.log(
+        `Only one player left in game ${updatedGame.id}. Ending the game.`
+      );
+
+      updatedGame.status = "ended";
+      const winner = activePlayers[0];
+
+      // Notifica o vencedor por desistência do adversário
+      io.to(winner.socketId).emit("gameCancelled", {
+        message:
+          "Your opponent was removed for inactivity. You win by default!",
+        gameId: updatedGame.id,
+        updatedGame,
+        winner,
+      });
+
+      // Remove o jogo do lobby
+      lobby.deleteGame(updatedGame.id);
+      io.to("lobby").emit("lobbyChanged", lobby.getGames());
+
+      return;
+    }
+
+    // Notifica os jogadores restantes que um jogador foi removido por inatividade
+    console.log("Players notified with playerLeft", activePlayers);
+    io.to(activePlayers.map((p) => p.socketId)).emit("playerLeft", {
+      message: `${
+        updatedGame.players[updatedGame.currentPlayerIndex].nickname
+      } was removed for inactivity.`,
+      updatedGame,
+    });
+
+    // Continua o jogo com o próximo jogador
+    io.to(updatedGame.players.map((p) => p.socketId)).emit("gameUpdated", {
+      ...updatedGame,
+      remainingTime: TURN_DURATION / 1000,
+    });
+
+    startTurnTimer(updatedGame, io, lobby);
   };
 
   const stopTurnTimer = (gameId) => {
