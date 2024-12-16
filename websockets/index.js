@@ -198,12 +198,22 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("createLobby", (idGame, rows, cols, callback) => {
+  socket.on("createLobby", (idGame, rows, cols, currentBalance, callback) => {
     if (!util.checkAuthenticatedUser(socket, callback)) {
       return;
     }
 
+    socket.data.user.brain_coins_balance = currentBalance;
+
     const userWithSocketId = { ...socket.data.user, socketId: socket.id };
+
+    if (userWithSocketId.brain_coins_balance < 5) {
+      return callback({
+        errorCode: 11,
+        errorMessage: "Insufficient balance to create a lobby.",
+      });
+    }
+
     const game = lobby.createLobby(
       userWithSocketId,
       socket.id,
@@ -218,9 +228,20 @@ io.on("connection", (socket) => {
     }
   });
 
-  socket.on("joinlobby", (id, callback) => {
+  socket.on("joinlobby", (id, currentBalance, callback) => {
     if (!util.checkAuthenticatedUser(socket, callback)) {
       return;
+    }
+
+    socket.data.user.brain_coins_balance = currentBalance;
+
+    const user = socket.data.user;
+
+    if (user.brain_coins_balance < 5) {
+      return callback({
+        errorCode: 11,
+        errorMessage: "Insufficient balance to join the lobby.",
+      });
     }
 
     const game = lobby.getGame(id);

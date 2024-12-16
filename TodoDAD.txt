@@ -57,6 +57,7 @@ Game:
         podia ficar sem clicar na carta e o jogo bloqueava
     [x] - No caso de algum jogador sair a meio de um jogo ele ja nao é removido da partida apenas passa para inativo
         Nota: Em caso for o dono da partida ele é atribuido a outro jogador por ser necessario para dar update no final da partida
+    [x] - Nao e possivle criar lobbys nem entrar em nenhum se nao tiver mais de 5 coins
 Nota: Na parte dos jogos para os jogadores estarem todos sincronizados com o mesmos segundos posemos uma hora de incio onde depois no frontend caculos os segundos
 com base nisso
 
