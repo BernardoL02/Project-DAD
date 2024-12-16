@@ -60,3 +60,5 @@ Game:
     [x] - Nao e possivle criar lobbys nem entrar em nenhum se nao tiver mais de 5 coins
 Nota: Na parte dos jogos para os jogadores estarem todos sincronizados com o mesmos segundos posemos uma hora de incio onde depois no frontend caculos os segundos
 com base nisso
+
+[x] - Adicionar no excel que o jogadores que dão leave, ou seja, não houve disputa, não contam para a statistics
