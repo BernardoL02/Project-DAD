@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\AdminResource;
 use App\Http\Requests\RegistrationRequest;
 use App\Http\Resources\TransactionResource;
+use Illuminate\Support\Facades\DB;
 
 class AdministratorController extends Controller
 {
@@ -111,9 +112,55 @@ class AdministratorController extends Controller
 
 
 
-    public function viewTransactionsStatistics(){
-        $transactions = Transaction::with('user')->orderBy('transaction_datetime', 'desc')->get();
-        return response()->json($transactions);
+    public function viewTransactionsStatistics()
+    {
+
+        $totalPurchases = DB::table('transactions')
+            ->where('type', 'P')
+            ->count();
+
+        $totalValuePurchases = DB::table('transactions')
+            ->where('type', 'P')
+            ->sum('euros');
+
+        $numberOfPurchasesPerPack = DB::table('transactions')
+        ->selectRaw(
+            'CASE
+                WHEN euros >= 1 AND euros < 2 THEN 1
+                WHEN euros >= 2 AND euros < 3 THEN 2
+                WHEN euros >= 3 AND euros < 4 THEN 3
+                WHEN euros >= 4 AND euros < 5 THEN 4
+                WHEN euros >= 5 AND euros < 6 THEN 5
+                WHEN euros >= 6 THEN 6
+                ELSE 0
+            END as pack,
+            COUNT(*) as total'
+        )
+        ->where('type', 'P')
+        ->groupBy('pack')
+        ->orderBy('pack')
+        ->get();
+
+        $numberOfPurchasesPerPaymentType = DB::table('transactions')
+            ->selectRaw('payment_type, COUNT(*) as total')
+            ->where('type', 'P')
+            ->groupBy('payment_type')
+            ->get();
+
+        $totalPurchasesByMonth = DB::table('transactions')
+            ->selectRaw('YEAR(transaction_datetime) as year, MONTH(transaction_datetime) as month, COUNT(*) as total')
+            ->where('type', 'P')
+            ->groupByRaw('YEAR(transaction_datetime), MONTH(transaction_datetime)')
+            ->orderByRaw('YEAR(transaction_datetime), MONTH(transaction_datetime)')
+            ->get();
+
+        return [
+            'totalPurchases' => $totalPurchases,
+            'totalValuePurchases' => $totalValuePurchases,
+            'numberOfPurchasesPerPack' => $numberOfPurchasesPerPack,
+            'numberOfPurchasesPerPaymentType' => $numberOfPurchasesPerPaymentType,
+            'totalPurchasesByMonth' => $totalPurchasesByMonth
+        ];
     }
 
 }

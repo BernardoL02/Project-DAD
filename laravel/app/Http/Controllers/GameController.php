@@ -45,10 +45,39 @@ class GameController extends Controller
         ->groupByRaw('type')
         ->get();
 
+        $totalGames = DB::table('games')
+            ->where('status', 'E')
+            ->count();
+
+        $topPlayersByTimePlayed = DB::table('games')
+    ->selectRaw("
+        CASE
+            WHEN games.type = 'S' THEN games.created_user_id
+            ELSE games.winner_user_id
+        END as user_id,
+        SUM(games.total_time) as total_time
+    ")
+    ->join('users', function ($join) {
+        $join->on(DB::raw("
+            CASE
+                WHEN games.type = 'S' THEN games.created_user_id
+                ELSE games.winner_user_id
+            END
+        "), '=', 'users.id');
+    })
+    ->where('games.status', 'E')
+    ->whereNotNull('users.name')
+    ->groupByRaw('user_id')
+    ->orderByDesc('total_time')
+    ->limit(20)
+    ->get();
+
         return [
+            'total' =>$totalGames,
             'totalGamesByYearMoth' => $totalGamesByYearMoth,
             'gamesByBoardSize' => $gamesByBoardSize,
-            'gamesByType' => $gamesByType
+            'gamesByType' => $gamesByType,
+            'topPlayersByTimePlayed' => $topPlayersByTimePlayed
         ];
     }
 
