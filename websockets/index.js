@@ -194,7 +194,7 @@ io.on("connection", (socket) => {
     }
     const games = lobby.getGames();
     if (callback) {
-      callback(games);
+      callback({ games, serverTime: Date.now() });
     }
   });
 
@@ -214,7 +214,7 @@ io.on("connection", (socket) => {
 
     io.to("lobby").emit("lobbyChanged", lobby.getGames());
     if (callback) {
-      callback(game);
+      callback({ game, serverTime: Date.now() });
     }
   });
 
@@ -259,7 +259,7 @@ io.on("connection", (socket) => {
 
     io.to("lobby").emit("lobbyChanged", lobby.getGames());
     if (callback) {
-      callback(game);
+      callback({ game, serverTime: Date.now() });
     }
   });
 
@@ -285,7 +285,7 @@ io.on("connection", (socket) => {
     } = lobby.leave(gameId, socket.data.user.id);
 
     io.to("lobby").emit("lobbyChanged", updatedGames);
-    callback({ ...game, previousOwnerId });
+    callback({ ...game, previousOwnerId, serverTime: Date.now() });
   });
 
   socket.on("removePlayer", ({ gameId, playerId }, callback) => {

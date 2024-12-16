@@ -36,7 +36,8 @@ export const useLobbyStore = defineStore('lobby', () => {
     storeError.resetMessages()
     socket.emit('fetchGames', (response) => {
       if (!response.errorCode) {
-        games.value = response
+        games.value = response.games
+        now.value = response.serverTime
       } else {
         storeError.setErrorMessages(response.errorMessage)
       }
@@ -48,6 +49,7 @@ export const useLobbyStore = defineStore('lobby', () => {
       if (response.errorCode) {
         storeError.setErrorMessages(response.errorMessage)
       } else {
+        now.value = response.serverTime
         notificationStore.setSuccessMessage('Successfully joined the lobby!', 'Lobby Joined')
         router.push({ path: '/multiplayer/lobbys' })
       }
@@ -70,6 +72,7 @@ export const useLobbyStore = defineStore('lobby', () => {
         }
       })
     } catch (error) {
+      console.log(error.response)
       storeError.setErrorMessages('Failed to create multiplayer game.')
     }
   }
@@ -102,7 +105,7 @@ export const useLobbyStore = defineStore('lobby', () => {
       const currentUser = storeAuth.user
       const wasLobbyOwner = response.previousOwnerId === currentUser.id
 
-      if (wasLobbyOwner && response.player1.id !== currentUser.id) {
+      if (wasLobbyOwner && response.player1 && response.player1.id !== currentUser.id) {
         storeGame.sendPostUpdateOwner(response.id, response.player1.id)
       }
 
@@ -228,7 +231,7 @@ export const useLobbyStore = defineStore('lobby', () => {
     }
   }
 
-  const now = ref(Date.now())
+  const now = ref(0)
 
   setInterval(() => {
     now.value = Date.now()

@@ -541,7 +541,7 @@ export const useGameStore = defineStore('game', () => {
       }
 
       const ended = new Date(game.endMatch).toISOString().slice(0, 19).replace('T', ' ')
-      const totalTime = Math.floor((Date.now() - game.startTime) / 1000)
+      const totalTime = Math.floor((game.endMatch - game.startTime) / 1000)
 
       const requestData = {
         status: 'E',

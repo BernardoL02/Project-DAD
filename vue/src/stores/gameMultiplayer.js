@@ -40,6 +40,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   }
 
   const gameOver = ref(false)
+  const isTimerSynced = ref(false)
 
   socket.on('gameStarted', async (game) => {
     gameOver.value = false
@@ -60,8 +61,6 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     }
 
     router.push({ path: '/multiplayer/game', query: { gameId: game.id } })
-
-    startTimer()
   })
 
   socket.on('gameUpdated', (updatedGame) => {
@@ -102,30 +101,20 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     turnTimer.value = 0
   }
 
-  const startTimer = (serverTime) => {
-    if (timerInterval.value) clearInterval(timerInterval.value)
-
-    startTime.value = serverTime
-    timerInterval.value = setInterval(() => {
-      timer.value = Math.floor((Date.now() - startTime.value) / 1000)
-    }, 1000)
-  }
-
   const syncTimer = (serverStartTime, serverTime) => {
-    const currentTime = Date.now()
-    const elapsedServerTime = serverTime - serverStartTime
-    const elapsedLocalTime = currentTime - serverStartTime
+    if (isTimerSynced.value) return
 
-    if (Math.abs(elapsedLocalTime - elapsedServerTime) > 1000) {
-      startTime.value = serverStartTime
-      timer.value = Math.floor(elapsedServerTime / 1000)
-    }
+    const elapsedServerTime = Math.floor((serverTime - serverStartTime) / 1000)
+    timer.value = elapsedServerTime
+    startTime.value = serverTime
 
     if (!timerInterval.value) {
       timerInterval.value = setInterval(() => {
-        timer.value = Math.floor((Date.now() - startTime.value) / 1000)
+        timer.value += 1
       }, 1000)
     }
+
+    isTimerSynced.value = true
   }
 
   const stopTimer = () => {
@@ -226,7 +215,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     currentPlayerId.value = game.players[game.currentPlayerIndex]?.id || null
 
     if (game.startTime) {
-      startTimer(game.startTime)
+      syncTimer(game.startTime, game.serverTime)
     }
 
     if (game.remainingTime) {
@@ -252,7 +241,6 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     getActiveGameById,
     flipCard,
     timer,
-    startTimer,
     syncTimer,
     stopTimer,
     isCurrentPlayerTurn,
