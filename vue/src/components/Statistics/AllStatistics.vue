@@ -487,72 +487,47 @@ onMounted(() => {
     <div v-if="loading" class="text-center text-gray-400 mr-8">Loading...</div>
     <div v-else>
       <!-- BUTTONS PARA CADA PÁGINA DE ESTATISTICA -->
-      <div class="flex pb-10 justify-center">
-        <div class="flex flex-row space-x-6">
+      <div class="flex flex-row pb-10 justify-center">
+        <div v-if="authStore.isAdmin" class="flex flex-row space-x-6">
           <div class="mb-2">
-            <button
-              v-if="authStore.isAdmin"
-              @click="setSelectedView('game')"
-              :class="{
-                'bg-green-500 text-white': selectedView === 'game',
-                'bg-gray-200': selectedView !== 'game'
-              }"
-              class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300"
-            >
+            <button @click="setSelectedView('game')" :class="{
+              'bg-green-500 text-white': selectedView === 'game',
+              'bg-gray-200': selectedView !== 'game'
+            }" class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300">
               Game Statistics
             </button>
           </div>
           <div class="mb-2">
-            <button
-              v-if="authStore.isAdmin"
-              @click="setSelectedView('purchase')"
-              :class="{
-                'bg-green-500 text-white': selectedView === 'purchase',
-                'bg-gray-200': selectedView !== 'purchase'
-              }"
-              class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300"
-            >
+            <button @click="setSelectedView('purchase')" :class="{
+              'bg-green-500 text-white': selectedView === 'purchase',
+              'bg-gray-200': selectedView !== 'purchase'
+            }" class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300">
               Purchase Statistics
             </button>
           </div>
           <div class="mb-2">
-            <button
-              v-if="authStore.isAdmin"
-              @click="setSelectedView('players')"
-              :class="{
-                'bg-green-500 text-white': selectedView === 'players',
-                'bg-gray-200': selectedView !== 'players'
-              }"
-              class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300"
-            >
+            <button @click="setSelectedView('players')" :class="{
+              'bg-green-500 text-white': selectedView === 'players',
+              'bg-gray-200': selectedView !== 'players'
+            }" class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300">
               Players Statistics
             </button>
           </div>
         </div>
-        <div class="flex flex-row space-x-6 justify-center">
+        <div class="flex flex-row pb-10 justify-center space-x-6">
           <div class="mb-1">
-            <button
-              v-if="!authStore.isAdmin"
-              @click="setSelectedView('myStatistics')"
-              :class="{
-                'bg-green-500 text-white': selectedView === 'myStatistics',
-                'bg-gray-200': selectedView !== 'myStatistics'
-              }"
-              class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300"
-            >
+            <button v-if="authStore.isPlayer" @click="setSelectedView('myStatistics')" :class="{
+              'bg-green-500 text-white': selectedView === 'myStatistics',
+              'bg-gray-200': selectedView !== 'myStatistics'
+            }" class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300">
               My Statistics
             </button>
           </div>
           <div class="mb-1">
-            <button
-              v-if="!authStore.isAdmin"
-              @click="setSelectedView('myPurchases')"
-              :class="{
-                'bg-green-500 text-white': selectedView === 'myPurchases',
-                'bg-gray-200': selectedView !== 'myPurchases'
-              }"
-              class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300"
-            >
+            <button v-if="authStore.isPlayer" @click="setSelectedView('myPurchases')" :class="{
+              'bg-green-500 text-white': selectedView === 'myPurchases',
+              'bg-gray-200': selectedView !== 'myPurchases'
+            }" class="px-6 py-2 rounded-md hover:bg-green-700 transition-colors duration-300">
               My Purchase
             </button>
           </div>
@@ -567,16 +542,10 @@ onMounted(() => {
             </div>
             <div class="chart-container p-4 w-1/2 justify-center items-center flex flex-col mb-10">
               <div class="flex flex-row mb-2">
-                <button
-                  v-for="year in [2023, 2024]"
-                  :key="year"
-                  @click="changeYear(year)"
-                  :class="{
-                    'bg-yellow-400 text-white': selectedYear === year,
-                    'bg-gray-200': selectedYear !== year
-                  }"
-                  class="px-4 py-1 mx-2 rounded-md font-semibold mb-2"
-                >
+                <button v-for="year in [2023, 2024]" :key="year" @click="changeYear(year)" :class="{
+                  'bg-yellow-400 text-white': selectedYear === year,
+                  'bg-gray-200': selectedYear !== year
+                }" class="px-4 py-1 mx-2 rounded-md font-semibold mb-2">
                   {{ year }}
                 </button>
               </div>
@@ -681,16 +650,10 @@ onMounted(() => {
               </div>
             </div>
             <div class="chart-container p-1 w-1/2 mt-20">
-              <button
-                v-for="year in [2023, 2024]"
-                :key="year"
-                @click="changeYear(year)"
-                :class="{
-                  'bg-yellow-400 text-white': selectedYear === year,
-                  'bg-gray-200': selectedYear !== year
-                }"
-                class="px-4 py-1 mx-2 rounded-md font-semibold"
-              >
+              <button v-for="year in [2023, 2024]" :key="year" @click="changeYear(year)" :class="{
+                'bg-yellow-400 text-white': selectedYear === year,
+                'bg-gray-200': selectedYear !== year
+              }" class="px-4 py-1 mx-2 rounded-md font-semibold">
                 {{ year }}
               </button>
               <Bar :data="chartDataUser" />

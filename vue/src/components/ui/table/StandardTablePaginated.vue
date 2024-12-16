@@ -77,8 +77,8 @@ watch(
             </div>
             <div class="flex flex-row space-x-2"
               v-else-if="value === 'MBWAY' || value === 'PAYPAL' || value === 'VISA' || value === 'MB' || value === 'IBAN'">
-              <img :src="`/Store/${value}.png`" @click="hanglePayment(value)" alt="Payment Icon" :class="[
-                'cursor-pointer',
+              <img :src="`/Store/${value}.png`" alt="Payment Icon" :class="[
+
                 value === 'MBWAY' ? 'w-6 h-8' : '',
                 value === 'PAYPAL' ? 'w-6 h-6' : '',
                 value === 'VISA' ? 'w-6 h-6' : '',

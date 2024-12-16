@@ -1,3 +1,10 @@
+Erros:
+[x] - Join loby 
+[] - fotos
+[x] - expired time
+[x] - quando nao temos moeadas fazer fetch antes da verificacao
+[x] - transaction stores erro ao clicar nos icons
+
 
 G4. MULTIPLAYER GAMES
 
