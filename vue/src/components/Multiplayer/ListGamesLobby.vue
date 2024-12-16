@@ -39,7 +39,8 @@ const handleSwitchChat = (index) => {
     storeLobby.switchChatPanel(index);
 };
 
-onMounted(() => {
+onMounted(async () => {
+    await storeAuth.fetchProfile()
     storeLobby.loadChatsFromSession();
     storeLobby.isChatOpen = false
 });

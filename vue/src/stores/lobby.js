@@ -65,8 +65,9 @@ export const useLobbyStore = defineStore('lobby', () => {
 
     try {
       const idGame = await storeGame.createMultiPlayer(board_id)
+      const currentBalance = storeAuth.user.brain_coins_balance
 
-      socket.emit('createLobby', idGame, rows, cols, (response) => {
+      socket.emit('createLobby', idGame, rows, cols, currentBalance, (response) => {
         if (webSocketServerResponseHasError(response)) {
           return
         }
@@ -79,7 +80,10 @@ export const useLobbyStore = defineStore('lobby', () => {
 
   const joinlobby = (id) => {
     storeError.resetMessages()
-    socket.emit('joinlobby', id, (response) => {
+
+    const currentBalance = storeAuth.user.brain_coins_balance
+
+    socket.emit('joinlobby', id, currentBalance, (response) => {
       if (webSocketServerResponseHasError(response)) {
         return
       }
@@ -236,10 +240,10 @@ export const useLobbyStore = defineStore('lobby', () => {
   setInterval(() => {
     now.value = Date.now()
     refreshExpiredLobbies()
-  }, 1000)
+  }, 500)
 
   const expiredLobbies = computed(() => {
-    return games.value.filter((game) => game.expires_at <= now.value)
+    return games.value.filter((game) => game.expires_at <= now.value + 1000)
   })
 
   const refreshExpiredLobbies = () => {
@@ -255,7 +259,7 @@ export const useLobbyStore = defineStore('lobby', () => {
 
   const timeRemaining = (expiresAt) => {
     const diff = expiresAt - now.value
-    if (diff <= 0) return 'Expired'
+    if (diff <= 1000) return 'Expired'
 
     const minutes = Math.floor(diff / 60000)
     const seconds = Math.floor((diff % 60000) / 1000)
