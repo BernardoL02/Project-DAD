@@ -70,14 +70,12 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
       Object.assign(game, updatedGame)
       currentPlayerId.value = updatedGame.players[updatedGame.currentPlayerIndex].id
 
-      game.players = updatedGame.players
-
       if (updatedGame.remainingTime) {
         startTurnTimer(updatedGame.remainingTime)
       }
 
-      if (updatedGame.serverTime) {
-        startTimer(updatedGame.serverTime)
+      if (updatedGame.startTime && updatedGame.serverTime) {
+        syncTimer(updatedGame.startTime, updatedGame.serverTime)
       }
     }
   })
@@ -111,6 +109,23 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     timerInterval.value = setInterval(() => {
       timer.value = Math.floor((Date.now() - startTime.value) / 1000)
     }, 1000)
+  }
+
+  const syncTimer = (serverStartTime, serverTime) => {
+    const currentTime = Date.now()
+    const elapsedServerTime = serverTime - serverStartTime
+    const elapsedLocalTime = currentTime - serverStartTime
+
+    if (Math.abs(elapsedLocalTime - elapsedServerTime) > 1000) {
+      startTime.value = serverStartTime
+      timer.value = Math.floor(elapsedServerTime / 1000)
+    }
+
+    if (!timerInterval.value) {
+      timerInterval.value = setInterval(() => {
+        timer.value = Math.floor((Date.now() - startTime.value) / 1000)
+      }, 1000)
+    }
   }
 
   const stopTimer = () => {
@@ -238,6 +253,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     flipCard,
     timer,
     startTimer,
+    syncTimer,
     stopTimer,
     isCurrentPlayerTurn,
     leaveAllLobbies,

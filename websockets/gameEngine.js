@@ -9,6 +9,7 @@ exports.createGameEngine = (lobby) => {
     gameFromDB.turnStartTime = null;
     gameFromDB.totalMoves = 0;
     gameFromDB.serverTime = null;
+    gameFromDB.endMatch = null;
 
     if (Array.isArray(gameFromDB.board)) {
       gameFromDB.board = gameFromDB.board.map((card) => ({
@@ -80,6 +81,8 @@ exports.createGameEngine = (lobby) => {
     io.to(game.players.map((p) => p.socketId)).emit("gameUpdated", {
       ...game,
       remainingTime: TURN_DURATION / 1000,
+      serverTime: game.serverTime,
+      startTime: game.startTime,
     });
   };
 
@@ -196,6 +199,8 @@ exports.createGameEngine = (lobby) => {
           game.status = "ended";
 
           const winner = determineWinner(game.players);
+
+          game.endMatch = Date.now();
 
           io.to(game.players.map((p) => p.socketId)).emit("gameEnded", {
             message: `Game Over! ${winner.nickname} won the game!`,

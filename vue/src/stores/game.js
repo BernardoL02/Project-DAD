@@ -540,7 +540,7 @@ export const useGameStore = defineStore('game', () => {
         return
       }
 
-      const ended = new Date().toISOString().slice(0, 19).replace('T', ' ')
+      const ended = new Date(game.endMatch).toISOString().slice(0, 19).replace('T', ' ')
       const totalTime = Math.floor((Date.now() - game.startTime) / 1000)
 
       const requestData = {
@@ -568,7 +568,7 @@ export const useGameStore = defineStore('game', () => {
       }
 
       if (game.startTime) {
-        const ended = new Date().toISOString().slice(0, 19).replace('T', ' ')
+        const ended = new Date(game.endMatch).toISOString().slice(0, 19).replace('T', ' ')
         requestData.began_at = new Date(game.startTime).toISOString().slice(0, 19).replace('T', ' ')
         requestData.ended_at = ended
       }
