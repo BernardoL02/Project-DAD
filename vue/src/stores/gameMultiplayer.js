@@ -43,6 +43,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   const isTimerSynced = ref(false)
 
   socket.on('gameStarted', async (game) => {
+    resetTimer()
     gameOver.value = false
     addActiveGame(game)
 
@@ -134,7 +135,19 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
       timerInterval.value = null
     }
     timer.value = 0
-    startTime.value = null
+    startTime.value = 0
+    isTimerSynced.value = false
+  }
+
+  const resetTimer = () => {
+    timer.value = 0
+    startTime.value = 0
+    isTimerSynced.value = false
+
+    if (timerInterval.value) {
+      clearInterval(timerInterval.value)
+      timerInterval.value = null
+    }
   }
 
   socket.on(
