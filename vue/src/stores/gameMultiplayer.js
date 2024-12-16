@@ -105,7 +105,11 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     if (isTimerSynced.value) return
 
     const elapsedServerTime = Math.floor((serverTime - serverStartTime) / 1000)
-    timer.value = elapsedServerTime
+
+    if (timer.value === 0) {
+      timer.value = elapsedServerTime
+    }
+
     startTime.value = serverTime
 
     if (!timerInterval.value) {
@@ -126,32 +130,40 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     startTime.value = null
   }
 
-  socket.on('gameEnded', ({ message, totalMoves, winner, updatedGame, pairsFoundByPlayers }) => {
-    gameOver.value = true
-    const currentPlayer = pairsFoundByPlayers.find(
-      (player) => player.nickname === storeAuth.user.nickname
-    )
-
-    if (currentPlayer) {
-      notificationStore.setSuccessMessage(
-        `You completed the game in ${totalMoves} moves! You found ${currentPlayer.pairsFound} pairs.`,
-        'Congratulations!'
+  socket.on(
+    'gameEnded',
+    async ({ message, totalMoves, winner, updatedGame, pairsFoundByPlayers }) => {
+      gameOver.value = true
+      const currentPlayer = pairsFoundByPlayers.find(
+        (player) => player.nickname === storeAuth.user.nickname
       )
-    } else {
-      notificationStore.setSuccessMessage(
-        `You completed the game in ${totalMoves} moves!`,
-        'Game Over'
-      )
-    }
 
-    if (updatedGame.player1.id === storeAuth.user.id) {
-      storeGame.sendPostOnGameEndMuiltiplayer(updatedGame, winner)
-      storeGame.sendPostOnGameEndMuiltiplayerPlayers(updatedGame, winner)
-    }
+      if (currentPlayer) {
+        notificationStore.setSuccessMessage(
+          `You completed the game in ${totalMoves} moves! You found ${currentPlayer.pairsFound} pairs.`,
+          'Congratulations!'
+        )
+      } else {
+        notificationStore.setSuccessMessage(
+          `You completed the game in ${totalMoves} moves!`,
+          'Game Over'
+        )
+      }
 
-    stopTimer()
-    router.push('/multiplayer/lobbys')
-  })
+      if (updatedGame.player1.id === storeAuth.user.id) {
+        storeGame.sendPostOnGameEndMuiltiplayer(updatedGame, winner)
+        storeGame.sendPostOnGameEndMuiltiplayerPlayers(updatedGame, winner)
+      }
+
+      stopTimer()
+      await storeAuth.fetchProfile()
+      if (storeAuth.user.brain_coins_balance >= 5) {
+        router.push('/multiplayer/lobbys')
+      } else {
+        router.push('/store')
+      }
+    }
+  )
 
   const isCurrentPlayerTurn = computed(() => {
     return currentPlayerId.value === storeAuth.user.id
@@ -161,16 +173,21 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     socket.emit('flipCard', { gameId: Number(gameId), index }, (response) => {})
   }
 
-  socket.on('gameCancelled', ({ message, gameId, updatedGame, winner }) => {
+  socket.on('gameCancelled', async ({ message, gameId, updatedGame, winner }) => {
     gameOver.value = true
 
     if (updatedGame && updatedGame.player1.id === storeAuth.user.id) {
       storeGame.sendPostOnForfeitMuiltiplayer(updatedGame, winner)
-      storeGame.sendPostOnGameEndMuiltiplayerPlayers(updatedGame, winner)
+      await storeGame.sendPostOnGameEndMuiltiplayerPlayers(updatedGame, winner)
     }
 
     notificationStore.setSuccessMessage(message, 'Game Over')
-    router.push('/multiplayer/lobbys')
+    await storeAuth.fetchProfile()
+    if (storeAuth.user.brain_coins_balance >= 5) {
+      router.push('/multiplayer/lobbys')
+    } else {
+      router.push('/store')
+    }
   })
 
   socket.on('playerLeft', ({ message, updatedGame }) => {

@@ -4,19 +4,20 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Models\Game;
+use App\Models\User;
 use App\Models\Board;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use App\Models\MultiplayerGame;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Http\Resources\GameResource;
+use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\StoreGameRequest;
 use App\Http\Requests\UpdateGameRequest;
 use App\Http\Resources\MultiPlayerGameResource;
 use App\Http\Resources\MyMultiPlayerGameResource;
 use App\Http\Resources\ShowMultiplayerGameResource;
-use App\Models\MultiplayerGame;
-use App\Models\User;
-use Illuminate\Support\Facades\DB;
 
 class GameController extends Controller
 {
@@ -139,6 +140,14 @@ class GameController extends Controller
     {
         $gameData = $request->validated();
         $gameData['created_user_id'] = $request->user()->id;
+
+        $game = new Game($gameData);
+
+        if (Gate::denies('create', $game)) {
+            return response()->json([
+                'message' => 'You do not have permission to create this game.'
+            ], 403);
+        }
 
         if ($request->has('custom')) {
             $customData = json_decode($request->input('custom'), true);

@@ -227,6 +227,12 @@ exports.createGameEngine = (lobby) => {
           startTurnTimer(game, io, lobby);
         }
       }, 1000);
+    } else {
+      game.serverTime = Date.now();
+      io.to(game.players.map((p) => p.socketId)).emit("gameUpdated", {
+        ...game,
+        startTime: game.startTime,
+      });
     }
 
     return game;
@@ -238,6 +244,10 @@ exports.createGameEngine = (lobby) => {
 
       if (player.pairsFound > best.pairsFound) {
         return player;
+      }
+
+      if (player.pairsFound === best.pairsFound) {
+        return best;
       }
 
       return best;
