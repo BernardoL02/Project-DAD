@@ -17,8 +17,6 @@ export const useAdminStore = defineStore('admin', () => {
   const dateRange = ref([null, null])
   const searchTerm = ref('')
   const selectedStatus = ref('All')
-
-  //Dados tabelas e filtros
   const last_page = ref(0)
   const gameStatusFilter = ref('All')
   const gameTypeFilter = ref('All')
@@ -69,9 +67,6 @@ export const useAdminStore = defineStore('admin', () => {
     })
   })
 
-  const setSearchTerm = (term) => {
-    searchTerm.value = term
-  }
   const setSelectedType = (type) => {
     selectedType.value = type
   }
@@ -108,48 +103,6 @@ export const useAdminStore = defineStore('admin', () => {
       (transaction) => transaction.paymentMethod === paymentMethodFilter.value
     )
   })
-
-  /*
-  const filteredGames = computed(() => {
-    let filtered = games.value
-
-    // Filter by Date Range
-    if (dateRange.value[0] || dateRange.value[1]) {
-      const [start, end] = dateRange.value
-      filtered = filtered.filter((game) => {
-        const gameDate = new Date(game.began_at).setHours(0, 0, 0, 0)
-        return (!start || gameDate >= start) && (!end || gameDate <= end)
-      })
-    }
-
-    // Filter by Game Status
-    if (gameStatusFilter.value !== 'All') {
-      filtered = filtered.filter((game) => game.status === gameStatusFilter.value)
-    }
-
-    // Filter by Game Type
-    if (gameTypeFilter.value !== 'All') {
-      filtered = filtered.filter((game) => game.Type === gameTypeFilter.value)
-    }
-
-    // Filter by Board Size
-    if (boardSizeFilter.value !== 'All') {
-      filtered = filtered.filter((game) => game.board_id === boardSizeFilter.value)
-    }
-
-    return filtered
-  })*/
-
-  const filterByBoardSize = (size) => {
-    boardSizeFilter.value = size
-  }
-  const filterByGameType = (type) => {
-    gameTypeFilter.value = type
-  }
-
-  const filterByGameStatus = (status) => {
-    gameStatusFilter.value = status
-  }
 
   const filterByType = (type) => {
     typeFilter.value = type
@@ -449,18 +402,14 @@ export const useAdminStore = defineStore('admin', () => {
     getAllGames,
     totalPages,
     gameStatusFilter,
-    filterByGameStatus,
-    filterByGameType,
     gameTypeFilter,
     filteredUsers,
     searchTerm,
-    setSearchTerm,
     setSelectedType,
     selectedType,
     selectedPaymentMethod,
     setSelectedStatus,
     selectedStatus,
-    boardSizeFilter,
-    filterByBoardSize
+    boardSizeFilter
   }
 })
