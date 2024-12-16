@@ -19,9 +19,10 @@ const gameData = computed(() => storeGameMultiplayer.getActiveGameById(Number(ga
 
 const timer = computed(() => {
   return isNaN(storeGameMultiplayer.timer) || storeGameMultiplayer.timer < 0
-    ? 0
-    : storeGameMultiplayer.timer
-})
+    ? '0.00'
+    : storeGameMultiplayer.timer.toFixed(2);
+});
+
 
 const circleStyle = computed(() => {
   const radius = 18

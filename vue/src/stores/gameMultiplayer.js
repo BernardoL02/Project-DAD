@@ -104,7 +104,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
   const syncTimer = (serverStartTime, serverTime) => {
     if (isTimerSynced.value) return
 
-    const elapsedServerTime = Math.floor((serverTime - serverStartTime) / 1000)
+    const elapsedServerTime = (serverTime - serverStartTime) / 1000
 
     if (timer.value === 0) {
       timer.value = elapsedServerTime
@@ -114,8 +114,15 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
 
     if (!timerInterval.value) {
       timerInterval.value = setInterval(() => {
-        timer.value += 1
-      }, 1000)
+        const currentTime = Date.now()
+        const diff = (currentTime - startTime.value) / 1000
+
+        if (Math.abs(diff - timer.value) > 2) {
+          timer.value = diff
+        } else {
+          timer.value += 0.1
+        }
+      }, 100)
     }
 
     isTimerSynced.value = true

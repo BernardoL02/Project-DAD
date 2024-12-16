@@ -540,8 +540,9 @@ export const useGameStore = defineStore('game', () => {
         return
       }
 
+      const totalTime = ((game.endMatch - game.startTime) / 1000).toFixed(2)
+
       const ended = new Date(game.endMatch).toISOString().slice(0, 19).replace('T', ' ')
-      const totalTime = Math.floor((game.endMatch - game.startTime) / 1000)
 
       const requestData = {
         status: 'E',
@@ -553,7 +554,9 @@ export const useGameStore = defineStore('game', () => {
       }
 
       await axios.patch(`/games/${game.id}`, requestData)
-    } catch (error) {}
+    } catch (error) {
+      console.error('Error sending game end data:', error)
+    }
   }
 
   const sendPostOnForfeitMuiltiplayer = async (game, winner) => {
@@ -692,8 +695,8 @@ export const useGameStore = defineStore('game', () => {
       startTime.value = new Date()
       timerInterval.value = setInterval(() => {
         const now = new Date()
-        timer.value = Math.floor((now - startTime.value) / 1000)
-      }, 1000)
+        timer.value = now - startTime.value
+      }, 10)
     }
 
     const position = [
@@ -748,12 +751,12 @@ export const useGameStore = defineStore('game', () => {
       endTime.value = new Date()
       clearInterval(timerInterval.value)
       timerInterval.value = null
-      const totalTime = Math.floor((endTime.value - startTime.value) / 1000)
+      const totalTime = (endTime.value - startTime.value) / 1000
       sendPostOnGameEnd(totalTime, moves.value, currentGameId.value)
       setIsLeaving(true)
 
       notificationStore.setSuccessMessage(
-        `You completed the game in ${totalTime} seconds!`,
+        `You completed the game in ${totalTime.toFixed(2)} seconds!`,
         'Congratulations!'
       )
 
@@ -763,9 +766,9 @@ export const useGameStore = defineStore('game', () => {
 
   const elapsedTime = computed(() => {
     if (startTime.value && endTime.value) {
-      return Math.floor((endTime.value - startTime.value) / 1000)
+      return ((endTime.value - startTime.value) / 1000).toFixed(2) + 's'
     }
-    return timer.value
+    return (timer.value / 1000).toFixed(2) + 's'
   })
 
   const setIsLeaving = (value) => {
