@@ -155,13 +155,13 @@ const onBoardClick = (size) => {
                         Total Victories -
                         <span class="text-sm text-green-500">{{
                           gameStore.totalMultiplayerVictorys
-                          }}</span>
+                        }}</span>
                       </p>
                       <p class="text-sm text-gray-700">
                         Total Losses -
                         <span class="text-sm text-red-500">{{
                           gameStore.totalMultiplayerLosses
-                          }}</span>
+                        }}</span>
                       </p>
 
                       <p class="text-sm text-gray-700">
