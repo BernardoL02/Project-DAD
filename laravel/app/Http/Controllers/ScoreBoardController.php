@@ -6,47 +6,33 @@ use App\Models\Board;
 use App\Models\Game;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ScoreBoardController extends Controller
 {
     public function globalSinglePlayerScoreboard()
     {
-            $boards = Board::all();
+        $allScoreboards = Game::select(
+            'games.board_id',
+            'games.created_user_id',
+            DB::raw('MIN(games.total_time) as best_time'),
+            'games.status',
+            'games.total_turns_winner as min_turns',
+            'users.nickname'
+        )
+        ->join('users', 'users.id', '=', 'games.created_user_id')
+        ->where('games.type', "S")
+        ->whereNotNull('games.total_time')
+        ->groupBy('games.board_id', 'games.created_user_id', 'games.status', 'games.total_turns_winner', 'users.nickname')
+        ->orderBy('best_time', 'asc')
+        ->orderBy('total_turns_winner', 'asc')
+        ->get()
+        ->groupBy('board_id')
+        ->map(function ($games) {
+            return $games->unique('created_user_id')->take(10)->values();
+        });
 
-            $allScoreboards = [];
-
-            foreach ($boards as $board) {
-
-                $boardSize = "{$board->board_cols}x{$board->board_rows}";
-
-                $scoreboards = Game::singlePlayer()
-                    ->where('board_id', $board->id)
-                    ->where('status', 'E')
-                    ->with('creator:id,nickname')
-                    ->get()
-                    ->groupBy('created_user_id')
-                    ->map(function ($games) {
-                        $bestGame = $games->sortBy('total_time')->first();
-                        return [
-
-                            'nickname' => $bestGame->creator->nickname ?? 'Unknown',
-                            'best_time' => $bestGame->total_time,
-                            'status' => $bestGame->status,
-                            'min_turns' => $bestGame->total_turns_winner,
-                        ];
-                    })
-                    ->sortBy('best_time')
-                    ->take(10)
-                    ->values();
-
-                $scoreboards = $scoreboards->map(function ($scoreboard, $index) {
-                    $scoreboard['rank'] = $index + 1;
-                    return $scoreboard;
-                });
-                $allScoreboards[$boardSize] = $scoreboards;
-            }
-
-            return response()->json(['scoreboards' => $allScoreboards]);
+        return response()->json(['scoreboards' => $allScoreboards]);
     }
 
 

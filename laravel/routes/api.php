@@ -67,5 +67,3 @@ Route::get('/users/{nickname}', [UserController::class , 'profileUser']);
 
 
 
-
-

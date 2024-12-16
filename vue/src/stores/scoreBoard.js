@@ -8,6 +8,7 @@ export const usescoreBoardStore = defineStore('scoreBoard', () => {
   const scoreboards = ref([])
   const loading = ref(false)
   const allScoreboards = ref({})
+  const boardSizeMap = ref({})
   const topPlayer1 = ref(null)
   const topPlayer2 = ref(null)
   const topPlayer3 = ref(null)
@@ -21,20 +22,24 @@ export const usescoreBoardStore = defineStore('scoreBoard', () => {
 
       const topPlayersByBoardSize = {}
 
-      Object.keys(response.data.scoreboards).forEach((boardSize) => {
-        const topPlayers = response.data.scoreboards[boardSize].map((player) => ({
-          rank: player.rank,
+      Object.keys(response.data.scoreboards).forEach((boardId) => {
+        let i = 1
+        const boardSize =
+          boardSizeMap.value.value[boardId - 1].board_cols +
+            'x' +
+            boardSizeMap.value.value[boardId - 1].board_rows || 'Unknown'
+
+        const topPlayers = response.data.scoreboards[boardId].map((player) => ({
+          rank: i++,
           nickname: player.nickname,
           best_time: player.best_time,
           min_turns: player.min_turns,
           status: player.status === 'E' ? 'Ended' : player.status
         }))
 
-        // Assign the top players for the specific board size
         topPlayersByBoardSize[boardSize] = topPlayers
       })
 
-      // Store the grouped scoreboards by board size
       allScoreboards.value = topPlayersByBoardSize
     } catch (e) {
       console.error('Error fetching all scoreboards:', e)
@@ -42,6 +47,7 @@ export const usescoreBoardStore = defineStore('scoreBoard', () => {
       loading.value = false
     }
   }
+
   const fetchProfileTopPlayers = async (nickname) => {
     loading.value = true // Start loading
     try {
@@ -94,6 +100,7 @@ export const usescoreBoardStore = defineStore('scoreBoard', () => {
   return {
     boardSize,
     scoreboards,
+    boardSizeMap,
     loading,
     fetchAllScoreboards,
     fetchMultiPlayerScoreboard,
