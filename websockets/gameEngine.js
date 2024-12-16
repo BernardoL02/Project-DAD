@@ -8,6 +8,7 @@ exports.createGameEngine = (lobby) => {
     gameFromDB.startTime = null;
     gameFromDB.turnStartTime = null;
     gameFromDB.totalMoves = 0;
+    gameFromDB.serverTime = null;
 
     if (Array.isArray(gameFromDB.board)) {
       gameFromDB.board = gameFromDB.board.map((card) => ({
@@ -74,6 +75,8 @@ exports.createGameEngine = (lobby) => {
 
     timers.set(game.id, timer);
 
+    game.serverTime = Date.now();
+
     io.to(game.players.map((p) => p.socketId)).emit("gameUpdated", {
       ...game,
       remainingTime: TURN_DURATION / 1000,
@@ -111,6 +114,8 @@ exports.createGameEngine = (lobby) => {
       } was removed for inactivity.`,
       updatedGame,
     });
+
+    game.serverTime = Date.now();
 
     io.to(activePlayers.map((p) => p.socketId)).emit("gameUpdated", {
       ...updatedGame,
@@ -207,6 +212,7 @@ exports.createGameEngine = (lobby) => {
           lobby.deleteGame(game.id);
           io.to("lobby").emit("lobbyChanged", lobby.getGames());
         } else {
+          game.serverTime = Date.now();
           io.to(game.players.map((p) => p.socketId)).emit("gameUpdated", {
             ...game,
             remainingTime: 20,

@@ -76,8 +76,8 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
         startTurnTimer(updatedGame.remainingTime)
       }
 
-      if (updatedGame.startTime && !startTime.value) {
-        startTimer(updatedGame.startTime)
+      if (updatedGame.serverTime) {
+        startTimer(updatedGame.serverTime)
       }
     }
   })
@@ -104,10 +104,10 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
     turnTimer.value = 0
   }
 
-  const startTimer = (serverStartTime) => {
+  const startTimer = (serverTime) => {
     if (timerInterval.value) clearInterval(timerInterval.value)
 
-    startTime.value = serverStartTime
+    startTime.value = serverTime
     timerInterval.value = setInterval(() => {
       timer.value = Math.floor((Date.now() - startTime.value) / 1000)
     }, 1000)
