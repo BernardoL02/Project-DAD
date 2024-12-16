@@ -37,11 +37,12 @@ const loading = computed(() => statisticsStore.loading)
 const totalGames = computed(() => statisticsStore.totalGames || 0)
 const totalGamesUser = computed(() => statisticsStore.totalGamesUser || 0)
 const selectedYear = computed(() => statisticsStore.selectedYear)
-const transactions = computed(() => statisticsStore.transactions)
+const transactionsStatistics = computed(() => statisticsStore.transactionsStatistics)
 const transactionsUser = computed(() => statisticsStore.transactionsUser)
-const games = computed(() => statisticsStore.games)
 const totalMultiPlayerGames = computed(() => statisticsStore.totalMultiPlayerGames)
 const totalSinglePlayerGames = computed(() => statisticsStore.totalSinglePlayerGames)
+const gameStatistics = computed(() => statisticsStore.gameStatistics)
+const topPlayersByTimePlayed = computed(() => statisticsStore.topPlayersByTimePlayed)
 const selectedView = ref('')
 
 if (authStore.isAdmin) {
@@ -50,17 +51,35 @@ if (authStore.isAdmin) {
   selectedView.value = 'myStatistics'
 }
 
-const monthlyGameCounts = computed(() => statisticsStore.monthlyGameCounts)
 const monthlyGameCountsUser = computed(() => statisticsStore.monthlyGameCountsUser)
 
 const chartData = computed(() => {
-  const gameCounts = monthlyGameCounts.value
+  const monthlyData = gameStatistics.value.totalGamesByYearMoth
+    .filter((item) => item.year === selectedYear.value)
+    .reduce((acc, { month, total }) => {
+      const monthName = new Date(0, month - 1).toLocaleString('default', { month: 'short' })
+      acc[monthName] = total
+      return acc
+    }, {})
 
-  const months = Object.keys(gameCounts)
-  const counts = Object.values(gameCounts)
+  const allMonths = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+  ]
+  const counts = allMonths.map((month) => monthlyData[month] || 0)
 
   return {
-    labels: months,
+    labels: allMonths,
     datasets: [
       {
         label: 'Games Played Each Month',
@@ -89,21 +108,21 @@ const chartDataUser = computed(() => {
 })
 
 const pieChartData = computed(() => {
-  const games = statisticsStore.filteredGames
-
-  const boardSizeCounts = games.reduce((acc, game) => {
-    if (!acc[game.board_id]) {
-      acc[game.board_id] = 0
-    }
-    acc[game.board_id]++
-    return acc
-  }, {})
+  const boardSizes = gameStatistics.value.gamesByBoardSize || []
 
   return {
-    labels: Object.keys(boardSizeCounts),
+    labels: boardSizes.map((item) => {
+      return item.board === 1
+        ? '3x4'
+        : item.board === 2
+          ? '4x4'
+          : item.board === 3
+            ? '6x6'
+            : 'Other'
+    }),
     datasets: [
       {
-        data: Object.values(boardSizeCounts),
+        data: boardSizes.map((item) => item.total),
         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722'],
         hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722']
       }
@@ -137,7 +156,7 @@ const pieChartDataUser = computed(() => {
 })
 
 const horizontalBarChartOptions = {
-  indexAxis: 'y', // This makes the bars horizontal
+  indexAxis: 'y',
   responsive: true,
   plugins: {
     legend: {
@@ -146,8 +165,10 @@ const horizontalBarChartOptions = {
   }
 }
 const horizontalBarChartData = computed(() => {
-  const singlePlayerGames = games.value.filter((game) => game.Type === 'Single-Player').length
-  const multiplayerGames = games.value.filter((game) => game.Type === 'Multi-Player').length
+  const gamesByType = gameStatistics.value.gamesByType || []
+
+  const singlePlayerGames = gamesByType.find((type) => type.type === 'S')?.total || 0
+  const multiplayerGames = gamesByType.find((type) => type.type === 'M')?.total || 0
 
   return {
     labels: ['Single-Player', 'Multiplayer'],
@@ -161,7 +182,6 @@ const horizontalBarChartData = computed(() => {
     ]
   }
 })
-
 const horizontalBarChartDataUser = computed(() => {
   const singlePlayerCount = totalSinglePlayerGames.value
   const multiPlayerCount = totalMultiPlayerGames.value // Extract plain number
@@ -239,25 +259,6 @@ const userRegistrationData = computed(() => {
   }
 })
 
-const playerStats = computed(() => {
-  if (!transactions.value) return null
-
-  const purchaseTransactions = transactions.value.filter(
-    (transaction) => transaction.type === 'Purchase'
-  )
-
-  const totalPurchases = purchaseTransactions.length
-  const totalPurchaseValue = purchaseTransactions.reduce(
-    (sum, transaction) => sum + (parseFloat(transaction.value) || 0),
-    0
-  )
-
-  return {
-    totalPurchases,
-    totalPurchaseValue
-  }
-})
-
 const playerStatsUser = computed(() => {
   if (!transactionsUser.value) return null
 
@@ -307,27 +308,14 @@ const packSalesDataUser = computed(() => {
 })
 
 const paymentTypesData = computed(() => {
-  const validPaymentTypes = ['PAYPAL', 'MBWAY', 'VISA', 'IBAN', 'MB']
-
-  const filteredTransactions = transactions.value.filter((transaction) =>
-    validPaymentTypes.includes(transaction.paymentMethod)
-  )
-
-  const paymentTypeCounts = filteredTransactions.reduce((acc, transaction) => {
-    const paymentType = transaction.paymentMethod
-    if (!acc[paymentType]) {
-      acc[paymentType] = 0
-    }
-    acc[paymentType]++
-    return acc
-  }, {})
+  const paymentTypeCounts = transactionsStatistics.value.numberOfPurchasesPerPaymentType || []
 
   return {
-    labels: Object.keys(paymentTypeCounts),
+    labels: paymentTypeCounts.map((item) => item.payment_type), // Correct field for labels
     datasets: [
       {
         label: 'Purchases per Payment Type',
-        data: Object.values(paymentTypeCounts),
+        data: paymentTypeCounts.map((item) => item.total), // Use "total" instead of "purchases"
         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722'],
         hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722']
       }
@@ -335,29 +323,26 @@ const paymentTypesData = computed(() => {
   }
 })
 
-const packSalesData = computed(() => {
-  const packCounts = transactions.value.reduce((acc, transaction) => {
-    const pack = transaction.pack
-    if (!acc[pack]) {
-      acc[pack] = 0
-    }
-    acc[pack]++
-    return acc
-  }, {})
+const playerStats = computed(() => {
+  if (!transactionsStatistics.value) return null
 
-  const allPacks = [1, 2, 3, 4, 5, 6]
-  allPacks.forEach((pack) => {
-    if (!packCounts[pack]) {
-      packCounts[pack] = 0
-    }
-  })
+  const totalPurchases = transactionsStatistics.value.totalPurchases || 0
+  const totalPurchaseValue = transactionsStatistics.value.totalPurchaseValue || 0
 
   return {
-    labels: allPacks.map((pack) => `${pack * 10} Coins`),
+    totalPurchases,
+    totalPurchaseValue
+  }
+})
+
+const packSalesData = computed(() => {
+  const packCounts = transactionsStatistics.value.numberOfPurchasesPerPack || []
+  return {
+    labels: packCounts.map((item) => `${item.pack * 10} Coins`),
     datasets: [
       {
         label: 'Purchases per Pack',
-        data: allPacks.map((pack) => packCounts[pack]),
+        data: packCounts.map((item) => item.total),
         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722', '#7F8C8D'],
         hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722', '#7F8C8D']
       }
@@ -366,42 +351,16 @@ const packSalesData = computed(() => {
 })
 
 const monthlyPurchaseData = computed(() => {
-  const purchaseCounts = statisticsStore.monthlyPurchaseCounts
+  const purchasesByMonth = transactionsStatistics.value.totalPurchasesByMonth || []
 
   return {
-    labels: Object.keys(purchaseCounts),
+    labels: purchasesByMonth.map((item) => `${item.month}/${item.year}`), // Showing month and year
     datasets: [
       {
-        label: 'Purchases by Month',
-        data: Object.values(purchaseCounts),
-        backgroundColor: [
-          '#FF6384',
-          '#36A2EB',
-          '#FFCE56',
-          '#8BC34A',
-          '#FF5722',
-          '#7F8C8D',
-          '#E91E63',
-          '#9C27B0',
-          '#2196F3',
-          '#00BCD4',
-          '#4CAF50',
-          '#FFC107'
-        ],
-        hoverBackgroundColor: [
-          '#FF6384',
-          '#36A2EB',
-          '#FFCE56',
-          '#8BC34A',
-          '#FF5722',
-          '#7F8C8D',
-          '#E91E63',
-          '#9C27B0',
-          '#2196F3',
-          '#00BCD4',
-          '#4CAF50',
-          '#FFC107'
-        ]
+        label: 'Purchases per Month',
+        data: purchasesByMonth.map((item) => item.total), // Use "total" instead of "purchases"
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722'],
+        hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722']
       }
     ]
   }
@@ -458,7 +417,7 @@ const setSelectedView = (view) => {
 }
 
 const topPlayersChartData = computed(() => {
-  const players = statisticsStore.topPlayersByTimePlayed
+  const players = topPlayersByTimePlayed.value
 
   return {
     labels: players.map((player) => player.name),
@@ -474,7 +433,7 @@ const topPlayersChartData = computed(() => {
 })
 
 const horizontalBarOptions = {
-  indexAxis: 'y', // Makes the bar chart horizontalue,
+  indexAxis: 'y',
   maintainAspectRatio: false,
   plugins: {
     legend: {
@@ -502,15 +461,15 @@ const horizontalBarOptions = {
   }
 }
 const totalPlayers = computed(() => {
-  if (!statisticsStore.users) return 0 // Se não houver dados de usuários
-  return statisticsStore.users.length // Contar o número de jogadores
+  if (!statisticsStore.users) return 0
+  return statisticsStore.users.length
 })
 
 onMounted(() => {
   if (authStore.isAdmin) {
-    statisticsStore.getTransactions()
-    statisticsStore.getAllGames()
-    statisticsStore.fetchProfile()
+    statisticsStore.fetchTransactionStatistics()
+    statisticsStore.fetchGameStatistics()
+    //statisticsStore.fetchProfile()
     statisticsStore.getUsers()
   } else {
     statisticsStore.fetchProfile()
@@ -642,7 +601,7 @@ onMounted(() => {
         </div>
         <!--ESTATISTICA DAS COMPRAS PARA O ADMIN-->
         <div v-if="selectedView === 'purchase'" class="chart-container p-4">
-          <div v-if="playerStats">
+          <div>
             <div class="mb-6 text-center mr-20">
               <p class="font-semibold text-xl">
                 Total Purchases:
