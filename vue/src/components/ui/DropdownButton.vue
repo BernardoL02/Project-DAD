@@ -35,11 +35,14 @@ const handleSelect = (option) => {
 };
 
 const closeDropdownOnOutsideClick = (event) => {
+    const rootElement = dropdownRef.value?.closest('[data-v-app]');
     if (
         dropdownRef.value &&
         !dropdownRef.value.contains(event.target) &&
         buttonRef.value &&
-        !buttonRef.value.contains(event.target)
+        !buttonRef.value.contains(event.target) &&
+        rootElement &&
+        rootElement.contains(event.target)
     ) {
         isOpen.value = false;
     }
@@ -54,11 +57,13 @@ defineExpose({
 });
 
 onMounted(() => {
-    document.addEventListener('click', closeDropdownOnOutsideClick);
+    const rootElement = dropdownRef.value?.closest('[data-v-app]');
+    rootElement?.addEventListener('click', closeDropdownOnOutsideClick);
 });
 
 onBeforeUnmount(() => {
-    document.removeEventListener('click', closeDropdownOnOutsideClick);
+    const rootElement = dropdownRef.value?.closest('[data-v-app]');
+    rootElement?.removeEventListener('click', closeDropdownOnOutsideClick);
 });
 </script>
 
