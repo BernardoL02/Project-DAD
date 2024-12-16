@@ -157,11 +157,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
 
       stopTimer()
       await storeAuth.fetchProfile()
-      if (storeAuth.user.brain_coins_balance >= 5) {
-        router.push('/multiplayer/lobbys')
-      } else {
-        router.push('/store')
-      }
+      router.push('/multiplayer')
     }
   )
 
@@ -183,11 +179,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
 
     notificationStore.setSuccessMessage(message, 'Game Over')
     await storeAuth.fetchProfile()
-    if (storeAuth.user.brain_coins_balance >= 5) {
-      router.push('/multiplayer/lobbys')
-    } else {
-      router.push('/store')
-    }
+    router.push('/multiplayer')
   })
 
   socket.on('playerLeft', ({ message, updatedGame }) => {

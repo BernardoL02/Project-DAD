@@ -45,7 +45,8 @@ export const useLobbyStore = defineStore('lobby', () => {
   }
 
   const joinLobbyById = (lobbyId) => {
-    socket.emit('joinlobby', Number(lobbyId), (response) => {
+    const currentBalance = storeAuth.user.brain_coins_balance
+    socket.emit('joinlobby', Number(lobbyId), currentBalance, (response) => {
       if (response.errorCode) {
         storeError.setErrorMessages(response.errorMessage)
       } else {
@@ -238,12 +239,12 @@ export const useLobbyStore = defineStore('lobby', () => {
   const now = ref(0)
 
   setInterval(() => {
-    now.value = Date.now()
+    now.value += 1000
     refreshExpiredLobbies()
-  }, 500)
+  }, 1000)
 
   const expiredLobbies = computed(() => {
-    return games.value.filter((game) => game.expires_at <= now.value + 1000)
+    return games.value.filter((game) => game.expires_at <= now.value)
   })
 
   const refreshExpiredLobbies = () => {
@@ -263,6 +264,10 @@ export const useLobbyStore = defineStore('lobby', () => {
 
     const minutes = Math.floor(diff / 60000)
     const seconds = Math.floor((diff % 60000) / 1000)
+
+    if (minutes === 0) {
+      return `${seconds}s`
+    }
 
     return `${minutes}m ${seconds}s`
   }
