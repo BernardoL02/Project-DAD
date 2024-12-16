@@ -26,9 +26,22 @@ class GamePolicy
         return $user->isPlayer();
     }
 
-    public function create(?User $user): bool
+
+    public function create(?User $user, Game $game): bool
     {
-        return $user->isPlayer();
+        if(!$user->isPlayer()){
+            return false;
+        }
+
+        if ($game->type === "S" && $game->board_id != 1 && $user->brain_coins_balance < 1) {
+            return false;
+        }
+
+        if ($game->type === "M" && $user->brain_coins_balance < 5) {
+            return false;
+        }
+
+        return true;
     }
 
     public function update(?User $user, Game $game): bool
