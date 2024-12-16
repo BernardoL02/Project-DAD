@@ -59,3 +59,5 @@ Game:
         Nota: Em caso for o dono da partida ele é atribuido a outro jogador por ser necessario para dar update no final da partida
 Nota: Na parte dos jogos para os jogadores estarem todos sincronizados com o mesmos segundos posemos uma hora de incio onde depois no frontend caculos os segundos
 com base nisso
+
+[x] - Adicionar no excel que o jogadores que dão leave, ou seja, não houve disputa, não contam para a statistics

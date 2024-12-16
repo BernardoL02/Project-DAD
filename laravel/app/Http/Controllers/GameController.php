@@ -16,6 +16,7 @@ use App\Http\Resources\MyMultiPlayerGameResource;
 use App\Http\Resources\ShowMultiplayerGameResource;
 use App\Models\MultiplayerGame;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class GameController extends Controller
 {
@@ -23,18 +24,32 @@ class GameController extends Controller
      * Display a listing of the resource.
      */
 
-    public function viewAll(Request $request){
+    public function viewAll()
+    {
+        $totalGamesByYearMoth = DB::table('games')
+            ->selectRaw('YEAR(began_at) as year, MONTH(began_at) as month, COUNT(*) as total')
+            ->where('status', 'E')
+            ->groupByRaw('YEAR(began_at), MONTH(began_at)')
+            ->orderByRaw('YEAR(began_at), MONTH(began_at)')
+            ->get();
 
-        $games = Game::with([
-        'createdUser' => function ($query) {
-            $query->withTrashed();
-        },
-        'winnerUser' => function ($query) {
-            $query->withTrashed();
-        },
-        ])->orderBy('began_at', 'desc')->get();
+        $gamesByBoardSize = DB::table('games')
+            ->selectRaw('board_id as board,COUNT(*) as total')
+            ->where('status', 'E')
+            ->groupByRaw('board_id')
+            ->get();
 
-        return GameResource::collection($games);
+        $gamesByType = DB::table('games')
+        ->selectRaw('type,COUNT(*) as total')
+        ->where('status', 'E')
+        ->groupByRaw('type')
+        ->get();
+
+        return [
+            'totalGamesByYearMoth' => $totalGamesByYearMoth,
+            'gamesByBoardSize' => $gamesByBoardSize,
+            'gamesByType' => $gamesByType
+        ];
     }
 
 
