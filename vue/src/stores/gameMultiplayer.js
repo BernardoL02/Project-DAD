@@ -115,14 +115,7 @@ export const useGameMultiplayerStore = defineStore('gameMultiplayer', () => {
 
     if (!timerInterval.value) {
       timerInterval.value = setInterval(() => {
-        const currentTime = Date.now()
-        const diff = (currentTime - startTime.value) / 1000
-
-        if (Math.abs(diff - timer.value) > 2) {
-          timer.value = diff
-        } else {
-          timer.value += 0.1
-        }
+        timer.value += 0.1
       }, 100)
     }
 
