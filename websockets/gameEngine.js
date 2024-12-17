@@ -10,6 +10,7 @@ exports.createGameEngine = (lobby) => {
     gameFromDB.totalMoves = 0;
     gameFromDB.serverTime = null;
     gameFromDB.endMatch = null;
+    gameFromDB.bestPlayer = null;
 
     if (Array.isArray(gameFromDB.board)) {
       gameFromDB.board = gameFromDB.board.map((card) => ({
@@ -181,6 +182,13 @@ exports.createGameEngine = (lobby) => {
         if (game.board[firstIndex].id === game.board[secondIndex].id) {
           game.matchedPairs.push(firstIndex, secondIndex);
           currentPlayer.pairsFound = (currentPlayer.pairsFound || 0) + 1;
+
+          if (
+            !game.bestPlayer ||
+            currentPlayer.pairsFound > game.bestPlayer.pairsFound
+          ) {
+            game.bestPlayer = currentPlayer;
+          }
         } else {
           game.board[firstIndex].flipped = false;
           game.board[secondIndex].flipped = false;
@@ -198,7 +206,7 @@ exports.createGameEngine = (lobby) => {
         if (game.matchedPairs.length === game.board.length) {
           game.status = "ended";
 
-          const winner = determineWinner(game.players);
+          const winner = determineWinner(game.players, game.bestPlayer);
 
           game.endMatch = Date.now();
 
@@ -238,20 +246,8 @@ exports.createGameEngine = (lobby) => {
     return game;
   };
 
-  const determineWinner = (players) => {
-    return players.reduce((best, player) => {
-      if (!best) return player;
-
-      if (player.pairsFound > best.pairsFound) {
-        return player;
-      }
-
-      if (player.pairsFound === best.pairsFound) {
-        return best;
-      }
-
-      return best;
-    }, null);
+  const determineWinner = (players, bestPlayer) => {
+    return bestPlayer || players[0];
   };
 
   return {
