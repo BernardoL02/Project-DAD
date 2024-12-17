@@ -171,14 +171,14 @@ export const useGameStore = defineStore('game', () => {
             ? 'You'
             : gameData.created_user.nickname,
         created_user_photo: gameData.created_user.photo_filename
-          ? `${baseUrl}/storage/photos/${gameData.created_user.photo_filename}`
+          ? authStore.getPhotoUrl(gameData.created_user.photo_filename)
           : avatarNoneAssetURL,
         winner_user:
           gameData.winner_user.nickname === authStore.nickname
             ? 'You'
             : gameData.winner_user.nickname,
         winner_user_photo: gameData.winner_user.photo_filename
-          ? `${baseUrl}/storage/photos/${gameData.winner_user.photo_filename}`
+          ? authStore.getPhotoUrl(gameData.winner_user.photo_filename)
           : avatarNoneAssetURL,
         participants_count: gameData.participants_count || '-',
         participants: gameData.participants.map((participant) => ({
@@ -188,7 +188,7 @@ export const useGameStore = defineStore('game', () => {
           pairs_discovered: participant.pairs_discovered,
           photo_filename:
             participant.photo_filename != null
-              ? `${baseUrl}/storage/photos/${participant.photo_filename}`
+              ? authStore.getPhotoUrl(participant.photo_filename)
               : avatarNoneAssetURL
         })),
         status:

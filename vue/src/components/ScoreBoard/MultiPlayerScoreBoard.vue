@@ -6,8 +6,7 @@ const scoreBoardStore = usescoreBoardStore()
 const loading = computed(() => scoreBoardStore.loading)
 
 onMounted(async () => {
-
-  scoreBoardStore.loading = true;
+  scoreBoardStore.loading = true
 
   await scoreBoardStore.fetchMultiPlayerScoreboard()
 
@@ -27,7 +26,7 @@ onMounted(async () => {
     scoreBoardStore.scoreboards[4].Player
   )
 
-  scoreBoardStore.loading = false;
+  scoreBoardStore.loading = false
 })
 </script>
 
@@ -40,16 +39,15 @@ onMounted(async () => {
             <div class="text-center">
               <p class="text-xl text-gray-700 font-semibold">Multi-Player Global Score Board</p>
               <div class="flex items-center space-x-3 justify-center mt-4">
-                <img src="/fireworks.png" alt="Notification Icon" class="w-7 h-7 " />
-                <p class="text-base text-gray-600">
-                  Congratulations to the Top 5 players
-                </p>
+                <img src="/fireworks.png" alt="Notification Icon" class="w-7 h-7" />
+                <p class="text-base text-gray-600">Congratulations to the Top 5 players</p>
                 <img src="/fireworks.png" alt="Notification Icon" class="w-7 h-7" />
               </div>
 
               <p class="mt-4 text-sm text-gray-500">
-                Your photographic memory and sharp strategy have placed you
-                among the best in the Memory Game. <br> Keep showing the world your unmatched skills!
+                Your photographic memory and sharp strategy have placed you among the best in the
+                Memory Game. <br />
+                Keep showing the world your unmatched skills!
               </p>
             </div>
           </div>
@@ -57,13 +55,19 @@ onMounted(async () => {
 
         <div v-if="loading == false" class="bg-white p-6 rounded-lg shadow-md mb-6 pb-12">
           <div class="flex items-end justify-center space-x-12 mb-6">
-            <div class="player-container flex flex-col items-center top-[120px] left-8 relative group">
-              <img v-if="scoreBoardStore.topPlayer4?.photo_filename" :src="scoreBoardStore.topPlayer4.photo_filename"
+            <div
+              class="player-container flex flex-col items-center top-[120px] left-8 relative group"
+            >
+              <img
+                v-if="scoreBoardStore.topPlayer4?.photo_filename"
+                :src="scoreBoardStore.topPlayer4.photo_filename"
                 alt="User Profile Picture"
-                class="w-16 h-16 rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl cursor-pointer" />
+                class="w-16 h-16 rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl cursor-pointer"
+              />
 
               <div
-                class="w-64 h-24 border border-gray-200 items-center justify-center absolute left-[-95px] top-[159px] opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col bg-white shadow-lg rounded-lg z-10 transition-all duration-300 ease-in-out">
+                class="w-64 h-24 border border-gray-200 items-center justify-center absolute left-[-95px] top-[159px] opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col bg-white shadow-lg rounded-lg z-10 transition-all duration-300 ease-in-out"
+              >
                 <div class="w-full p-4 pl-3 flex flex-col items-center justify-center">
                   <div class="flex flex-col items-center justify-center space-y-3">
                     <div class="flex justify-center items-center mb-[-8px]">
@@ -75,15 +79,21 @@ onMounted(async () => {
                     <div class="flex space-x-6 text-center items-center pt-2">
                       <div>
                         <p class="text-xs font-semibold text-gray-700">Victories</p>
-                        <p class="text-sm text-green-500">{{ scoreBoardStore.scoreboards[3]?.Victories }}</p>
+                        <p class="text-sm text-green-500">
+                          {{ scoreBoardStore.scoreboards[3]?.Victories }}
+                        </p>
                       </div>
                       <div>
                         <p class="text-xs font-semibold text-gray-700">Win/Loss</p>
-                        <p class="text-sm text-gray-500">{{ scoreBoardStore.scoreboards[3]?.WinRatio }}</p>
+                        <p class="text-sm text-gray-500">
+                          {{ scoreBoardStore.scoreboards[3]?.WinRatio }}
+                        </p>
                       </div>
                       <div>
                         <p class="text-xs font-semibold text-gray-700">Losses</p>
-                        <p class="text-sm text-red-500">{{ scoreBoardStore.scoreboards[3]?.Losses }}</p>
+                        <p class="text-sm text-red-500">
+                          {{ scoreBoardStore.scoreboards[3]?.Losses }}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -91,13 +101,19 @@ onMounted(async () => {
               </div>
             </div>
 
-            <div class="player-container flex flex-col items-center top-[62px] left-4 relative group">
-              <img v-if="scoreBoardStore.topPlayer2?.photo_filename" :src="scoreBoardStore.topPlayer2.photo_filename"
+            <div
+              class="player-container flex flex-col items-center top-[62px] left-4 relative group"
+            >
+              <img
+                v-if="scoreBoardStore.topPlayer2?.photo_filename"
+                :src="scoreBoardStore.topPlayer2.photo_filename"
                 alt="User Profile Picture"
-                class="w-16 h-16 rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl cursor-pointer" />
+                class="w-16 h-16 rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl cursor-pointer"
+              />
 
               <div
-                class="w-64 h-24 border border-gray-200 items-center justify-center absolute left-[-95px] top-[217px] opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col bg-white shadow-lg rounded-lg z-10 transition-all duration-300 ease-in-out">
+                class="w-64 h-24 border border-gray-200 items-center justify-center absolute left-[-95px] top-[217px] opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col bg-white shadow-lg rounded-lg z-10 transition-all duration-300 ease-in-out"
+              >
                 <div class="w-full p-4 pl-3 flex flex-col items-center justify-center">
                   <div class="flex flex-col items-center justify-center space-y-3">
                     <div class="flex justify-center items-center mb-[-8px]">
@@ -109,15 +125,21 @@ onMounted(async () => {
                     <div class="flex space-x-6 text-center items-center pt-2">
                       <div>
                         <p class="text-xs font-semibold text-gray-700">Victories</p>
-                        <p class="text-sm text-green-500">{{ scoreBoardStore.scoreboards[1]?.Victories }}</p>
+                        <p class="text-sm text-green-500">
+                          {{ scoreBoardStore.scoreboards[1]?.Victories }}
+                        </p>
                       </div>
                       <div>
                         <p class="text-xs font-semibold text-gray-700">Win/Loss</p>
-                        <p class="text-sm text-gray-500">{{ scoreBoardStore.scoreboards[1]?.WinRatio }}</p>
+                        <p class="text-sm text-gray-500">
+                          {{ scoreBoardStore.scoreboards[1]?.WinRatio }}
+                        </p>
                       </div>
                       <div>
                         <p class="text-xs font-semibold text-gray-700">Losses</p>
-                        <p class="text-sm text-red-500">{{ scoreBoardStore.scoreboards[1]?.Losses }}</p>
+                        <p class="text-sm text-red-500">
+                          {{ scoreBoardStore.scoreboards[1]?.Losses }}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -126,12 +148,16 @@ onMounted(async () => {
             </div>
 
             <div class="player-container flex flex-col items-center top-6 relative group">
-              <img v-if="scoreBoardStore.topPlayer1?.photo_filename" :src="scoreBoardStore.topPlayer1.photo_filename"
+              <img
+                v-if="scoreBoardStore.topPlayer1?.photo_filename"
+                :src="scoreBoardStore.topPlayer1.photo_filename"
                 alt="User Profile Picture"
-                class=" w-16 h-16 rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl cursor-pointer" />
+                class="w-16 h-16 rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-110 hover:shadow-2xl cursor-pointer"
+              />
 
               <div
-                class="w-64 h-24 border border-gray-200 items-center justify-center absolute left-[-95px] top-[255px] opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col bg-white shadow-lg rounded-lg z-10 transition-all duration-300 ease-in-out">
+                class="w-64 h-24 border border-gray-200 items-center justify-center absolute left-[-95px] top-[255px] opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col bg-white shadow-lg rounded-lg z-10 transition-all duration-300 ease-in-out"
+              >
                 <div class="w-full p-4 pl-3 flex flex-col items-center justify-center">
                   <div class="flex flex-col items-center justify-center space-y-3">
                     <div class="flex justify-center items-center mb-[-8px]">
@@ -143,15 +169,21 @@ onMounted(async () => {
                     <div class="flex space-x-6 text-center items-center pt-2">
                       <div>
                         <p class="text-xs font-semibold text-gray-700">Victories</p>
-                        <p class="text-sm text-green-500">{{ scoreBoardStore.scoreboards[0]?.Victories }}</p>
+                        <p class="text-sm text-green-500">
+                          {{ scoreBoardStore.scoreboards[0]?.Victories }}
+                        </p>
                       </div>
                       <div>
                         <p class="text-xs font-semibold text-gray-700">Win/Loss</p>
-                        <p class="text-sm text-gray-500">{{ scoreBoardStore.scoreboards[0]?.WinRatio }}</p>
+                        <p class="text-sm text-gray-500">
+                          {{ scoreBoardStore.scoreboards[0]?.WinRatio }}
+                        </p>
                       </div>
                       <div>
                         <p class="text-xs font-semibold text-gray-700">Losses</p>
-                        <p class="text-sm text-red-500">{{ scoreBoardStore.scoreboards[0]?.Losses }}</p>
+                        <p class="text-sm text-red-500">
+                          {{ scoreBoardStore.scoreboards[0]?.Losses }}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -159,13 +191,19 @@ onMounted(async () => {
               </div>
             </div>
 
-            <div class="player-container flex flex-col items-center top-[95px] right-3 relative group">
-              <img v-if="scoreBoardStore.topPlayer3?.photo_filename" :src="scoreBoardStore.topPlayer3.photo_filename"
+            <div
+              class="player-container flex flex-col items-center top-[95px] right-3 relative group"
+            >
+              <img
+                v-if="scoreBoardStore.topPlayer3?.photo_filename"
+                :src="scoreBoardStore.topPlayer3.photo_filename"
                 alt="User Profile Picture"
-                class="w-16 h-16 rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl cursor-pointer" />
+                class="w-16 h-16 rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl cursor-pointer"
+              />
 
               <div
-                class="w-64 h-24 border border-gray-200 items-center justify-center absolute left-[-95px] top-[184px] opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col bg-white shadow-lg rounded-lg z-10 transition-all duration-300 ease-in-out">
+                class="w-64 h-24 border border-gray-200 items-center justify-center absolute left-[-95px] top-[184px] opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col bg-white shadow-lg rounded-lg z-10 transition-all duration-300 ease-in-out"
+              >
                 <div class="w-full p-4 pl-3 flex flex-col items-center justify-center">
                   <div class="flex flex-col items-center justify-center space-y-3">
                     <div class="flex justify-center items-center mb-[-8px]">
@@ -177,15 +215,21 @@ onMounted(async () => {
                     <div class="flex space-x-6 text-center items-center pt-2">
                       <div>
                         <p class="text-xs font-semibold text-gray-700">Victories</p>
-                        <p class="text-sm text-green-500">{{ scoreBoardStore.scoreboards[2]?.Victories }}</p>
+                        <p class="text-sm text-green-500">
+                          {{ scoreBoardStore.scoreboards[2]?.Victories }}
+                        </p>
                       </div>
                       <div>
                         <p class="text-xs font-semibold text-gray-700">Win/Loss</p>
-                        <p class="text-sm text-gray-500">{{ scoreBoardStore.scoreboards[2]?.WinRatio }}</p>
+                        <p class="text-sm text-gray-500">
+                          {{ scoreBoardStore.scoreboards[2]?.WinRatio }}
+                        </p>
                       </div>
                       <div>
                         <p class="text-xs font-semibold text-gray-700">Losses</p>
-                        <p class="text-sm text-red-500">{{ scoreBoardStore.scoreboards[2]?.Losses }}</p>
+                        <p class="text-sm text-red-500">
+                          {{ scoreBoardStore.scoreboards[2]?.Losses }}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -193,14 +237,19 @@ onMounted(async () => {
               </div>
             </div>
 
-
-            <div class="player-container flex flex-col items-center top-[146px] right-7 relative group">
+            <div
+              class="player-container flex flex-col items-center top-[146px] right-7 relative group"
+            >
               <!-- Imagem do jogador -->
-              <img v-if="scoreBoardStore.topPlayer5?.photo_filename" :src="scoreBoardStore.topPlayer5.photo_filename"
+              <img
+                v-if="scoreBoardStore.topPlayer5?.photo_filename"
+                :src="scoreBoardStore.topPlayer5.photo_filename"
                 alt="User Profile Picture"
-                class="w-16 h-16 rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl cursor-pointer" />
+                class="w-16 h-16 rounded-full shadow-xl transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl cursor-pointer"
+              />
               <div
-                class="w-64 h-24 border border-gray-200 items-center justify-center absolute left-[-95px] top-[133px] opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col bg-white shadow-lg rounded-lg z-10 transition-all duration-300 ease-in-out">
+                class="w-64 h-24 border border-gray-200 items-center justify-center absolute left-[-95px] top-[133px] opacity-0 invisible group-hover:opacity-100 group-hover:visible flex flex-col bg-white shadow-lg rounded-lg z-10 transition-all duration-300 ease-in-out"
+              >
                 <div class="w-full p-4 pl-3 flex flex-col items-center justify-center">
                   <div class="flex flex-col items-center justify-center space-y-3">
                     <div class="flex justify-center items-center mb-[-8px]">
@@ -212,15 +261,21 @@ onMounted(async () => {
                     <div class="flex space-x-6 text-center items-center pt-2">
                       <div>
                         <p class="text-xs font-semibold text-gray-700">Victories</p>
-                        <p class="text-sm text-green-500">{{ scoreBoardStore.scoreboards[4]?.Victories }}</p>
+                        <p class="text-sm text-green-500">
+                          {{ scoreBoardStore.scoreboards[4]?.Victories }}
+                        </p>
                       </div>
                       <div>
                         <p class="text-xs font-semibold text-gray-700">Win/Loss</p>
-                        <p class="text-sm text-gray-500">{{ scoreBoardStore.scoreboards[4]?.WinRatio }}</p>
+                        <p class="text-sm text-gray-500">
+                          {{ scoreBoardStore.scoreboards[4]?.WinRatio }}
+                        </p>
                       </div>
                       <div>
                         <p class="text-xs font-semibold text-gray-700">Losses</p>
-                        <p class="text-sm text-red-500">{{ scoreBoardStore.scoreboards[4]?.Losses }}</p>
+                        <p class="text-sm text-red-500">
+                          {{ scoreBoardStore.scoreboards[4]?.Losses }}
+                        </p>
                       </div>
                     </div>
                   </div>

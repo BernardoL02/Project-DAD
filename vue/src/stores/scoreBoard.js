@@ -1,9 +1,11 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import { useAuthStore } from './auth'
 import axios from 'axios'
 import avatarNoneAssetURL from '@/assets/avatar-none.png'
 
 export const usescoreBoardStore = defineStore('scoreBoard', () => {
+  const authStore = useAuthStore()
   const boardSize = ref('3x4')
   const scoreboards = ref([])
   const loading = ref(false)
@@ -55,9 +57,7 @@ export const usescoreBoardStore = defineStore('scoreBoard', () => {
       const user = response.data?.data
 
       if (user && user.photo_filename) {
-        // Check if user and photo_filename exist
-        const baseUrl = axios.defaults.baseURL.replace('/api', '')
-        user.photo_filename = `${baseUrl}/storage/photos/${user.photo_filename}`
+        user.photo_filename = authStore.getPhotoUrl(user.photo_filename)
       } else {
         user.photo_filename = avatarNoneAssetURL
       }
