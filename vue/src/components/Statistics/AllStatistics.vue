@@ -1,7 +1,7 @@
 <script setup>
 import { useStatisticsStore } from '@/stores/statistics'
 import { useAuthStore } from '@/stores/auth'
-import { onMounted, computed, ref, defineAsyncComponent } from 'vue'
+import { onMounted, computed, ref } from 'vue'
 import {
   Chart as ChartJS,
   Title,
@@ -14,9 +14,7 @@ import {
   CategoryScale,
   LinearScale
 } from 'chart.js'
-const Bar = defineAsyncComponent(() => import('vue-chartjs').then((m) => m.Bar))
-const Pie = defineAsyncComponent(() => import('vue-chartjs').then((m) => m.Pie))
-const Doughnut = defineAsyncComponent(() => import('vue-chartjs').then((m) => m.Doughnut))
+import { Bar, Pie, Doughnut } from 'vue-chartjs'
 
 ChartJS.register(
   CategoryScale,
@@ -57,7 +55,7 @@ const chartData = computed(() => {
   const monthlyData = gameStatistics.value.totalGamesByYearMoth
     .filter((item) => item.year === selectedYear.value)
     .reduce((acc, { month, total }) => {
-      const monthName = new Date(0, month - 1).toLocaleString('default', { month: 'short' })
+      const monthName = new Date(0, month - 1).toLocaleString('en-US', { month: 'short' })
       acc[monthName] = total
       return acc
     }, {})
@@ -191,7 +189,7 @@ const horizontalBarChartDataUser = computed(() => {
     datasets: [
       {
         label: 'Number of Games',
-        data: [singlePlayerCount, multiPlayerCount], // Use plain numbers
+        data: [singlePlayerCount, multiPlayerCount],
         backgroundColor: ['#07e87e', '#07b1e8'],
         hoverBackgroundColor: ['#06c86c', '#008dbb']
       }
@@ -202,7 +200,6 @@ const horizontalBarChartDataUser = computed(() => {
 const userRegistrationData = computed(() => {
   const userCounts = statisticsStore.monthlyUserCounts
 
-  // Define the fixed order of months
   const labels = [
     'Jan',
     'Feb',
@@ -311,11 +308,11 @@ const paymentTypesData = computed(() => {
   const paymentTypeCounts = transactionsStatistics.value.numberOfPurchasesPerPaymentType || []
 
   return {
-    labels: paymentTypeCounts.map((item) => item.payment_type), // Correct field for labels
+    labels: paymentTypeCounts.map((item) => item.payment_type),
     datasets: [
       {
         label: 'Purchases per Payment Type',
-        data: paymentTypeCounts.map((item) => item.total), // Use "total" instead of "purchases"
+        data: paymentTypeCounts.map((item) => item.total),
         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722'],
         hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722']
       }
@@ -354,11 +351,11 @@ const monthlyPurchaseData = computed(() => {
   const purchasesByMonth = transactionsStatistics.value.totalPurchasesByMonth || []
 
   return {
-    labels: purchasesByMonth.map((item) => `${item.month}/${item.year}`), // Showing month and year
+    labels: purchasesByMonth.map((item) => `${item.month}/${item.year}`),
     datasets: [
       {
         label: 'Purchases per Month',
-        data: purchasesByMonth.map((item) => item.total), // Use "total" instead of "purchases"
+        data: purchasesByMonth.map((item) => item.total),
         backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722'],
         hoverBackgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8BC34A', '#FF5722']
       }
@@ -469,7 +466,7 @@ onMounted(() => {
   if (authStore.isAdmin) {
     statisticsStore.fetchTransactionStatistics()
     statisticsStore.fetchGameStatistics()
-    //statisticsStore.fetchProfile()
+    statisticsStore.fetchProfile()
     statisticsStore.getUsers()
   } else {
     statisticsStore.fetchProfile()
