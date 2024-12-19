@@ -309,14 +309,29 @@ export const useStatisticsStore = defineStore('statistics', () => {
 
     const currentYear = new Date().getFullYear()
 
+    const monthMapping = {
+      'JAN.': 'Jan',
+      'FEV.': 'Feb',
+      'MAR.': 'Mar',
+      'ABR.': 'Apr',
+      'MAI.': 'May',
+      'JUN.': 'Jun',
+      'JUL.': 'Jul',
+      'AGO.': 'Aug',
+      'SET.': 'Sep',
+      'OUT.': 'Oct',
+      'NOV.': 'Nov',
+      'DEZ.': 'Dec'
+    }
+
     users.value.forEach((user) => {
       if (!user.RegisteredAt) return
 
       const registeredAt = new Date(user.RegisteredAt)
 
       if (registeredAt.getFullYear() !== currentYear) return
-
-      const monthName = registeredAt.toLocaleString('default', { month: 'short' })
+      let monthName = registeredAt.toLocaleString('default', { month: 'short' }).toUpperCase()
+      monthName = monthMapping[monthName] || monthName
 
       if (!userCounts[monthName]) {
         userCounts[monthName] = 0
@@ -387,6 +402,7 @@ export const useStatisticsStore = defineStore('statistics', () => {
     numberOfPurchasesPerPaymentType: [],
     totalPurchasesByMonth: []
   })
+
   const fetchTransactionStatistics = async () => {
     loading.value = true
     error.value = null
@@ -404,7 +420,6 @@ export const useStatisticsStore = defineStore('statistics', () => {
       loading.value = false
     }
   }
-  console.log(transactionsStatistics.value)
 
   const fetchProfile = async () => {
     loading.value = true
@@ -440,6 +455,9 @@ export const useStatisticsStore = defineStore('statistics', () => {
     // Return only the top 10 valid players
     return validPlayers.slice(0, 10)
   })
+
+
+  
 
   return {
     totalSinglePlayerGames,

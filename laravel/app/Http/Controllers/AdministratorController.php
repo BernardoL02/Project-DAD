@@ -156,7 +156,7 @@ class AdministratorController extends Controller
 
         return [
             'totalPurchases' => $totalPurchases,
-            'totalValuePurchases' => $totalValuePurchases,
+            'totalPurchaseValue' => $totalValuePurchases,
             'numberOfPurchasesPerPack' => $numberOfPurchasesPerPack,
             'numberOfPurchasesPerPaymentType' => $numberOfPurchasesPerPaymentType,
             'totalPurchasesByMonth' => $totalPurchasesByMonth
