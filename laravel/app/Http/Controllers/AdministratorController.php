@@ -16,9 +16,24 @@ class AdministratorController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        $users = User::withTrashed()
+            ->select('id', 'name', 'email', 'nickname', 'type', 'blocked', 'deleted_at')
+            ->get()
+            ->map(function ($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'nickname' => $user->nickname,
+                    'blocked' => $user->blocked,
+                    'type' => $user->type,
+                    'is_deleted' => $user->trashed()
+                ];
+            });
+
         return response()->json($users);
     }
+
 
     public function store(RegistrationRequest $request)
     {
@@ -66,8 +81,8 @@ class AdministratorController extends Controller
             return response()->json(['message' => 'Cannot delete this account.'], 403);
         }
 
-        if ($user->isAdmin()) {
-            return response()->json(['message' => 'Administrators cannot delete their own accounts.'], 403);
+        if ($user->trashed()) {
+            return response()->json(['message' => 'This account has already been deleted.'], 403);
         }
 
         $user->delete();
