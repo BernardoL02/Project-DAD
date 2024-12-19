@@ -369,6 +369,31 @@ export const useStatisticsStore = defineStore('statistics', () => {
 
   const totalGames = computed(() => gameStatistics.value.total)
 
+  const gameStatisticsAnonymous = ref({
+    total: 0,
+    totalGamesCurrentMonth: 0,
+    totalPlayers: 0
+  })
+
+  const fetchGameAnonymous = async () => {
+    loading.value = true
+    storeError.resetMessages()
+
+    try {
+      const response = await axios.get('anonymous/games')
+      gameStatisticsAnonymous.value = response.data
+    } catch (err) {
+      storeError.setErrorMessages(
+        err.response?.data?.message,
+        err.response?.data?.errors,
+        err.response?.data?.status,
+        'Error Getting Game Statistics'
+      )
+    } finally {
+      loading.value = false
+    }
+  }
+
   const gameStatistics = ref({
     totalGamesByYearMoth: [],
     gamesByBoardSize: [],
@@ -456,9 +481,6 @@ export const useStatisticsStore = defineStore('statistics', () => {
     return validPlayers.slice(0, 10)
   })
 
-
-  
-
   return {
     totalSinglePlayerGames,
     loading,
@@ -486,6 +508,8 @@ export const useStatisticsStore = defineStore('statistics', () => {
     monthlyPurchaseCountsUser,
     topPlayersByTimePlayed,
     fetchGameStatistics,
-    gameStatistics
+    gameStatistics,
+    gameStatisticsAnonymous,
+    fetchGameAnonymous
   }
 })

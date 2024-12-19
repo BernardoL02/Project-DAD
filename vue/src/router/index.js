@@ -179,7 +179,8 @@ router.beforeEach(async (to, from, next) => {
       to.name !== 'single-player' &&
       to.name !== 'singlePlayerScore' &&
       to.name !== 'multiPlayerScore' &&
-      to.name !== 'SinglePlayerGameBoard'
+      to.name !== 'SinglePlayerGameBoard' &&
+      to.name !== 'statistics'
     ) {
       next({ name: 'login' })
       return

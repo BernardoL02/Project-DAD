@@ -654,7 +654,10 @@ onMounted(() => {
           </div>
         </div>
         <!--ESTATISTICA DOS GAMES PARA O USER LOGADO-->
-        <div v-if="selectedView === 'myStatistics'" class="chart-container p-4 w-full">
+        <div
+          v-if="authStore.isPlayer && selectedView === 'myStatistics'"
+          class="chart-container p-4 w-full"
+        >
           <div class="flex flex-col items-center mb-6">
             <div class="text-lg font-semibold mb-6 text-center">
               Total Games Played: <span class="text-blue-600">{{ totalGamesUser }}</span>

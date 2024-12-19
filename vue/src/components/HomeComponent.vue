@@ -1,14 +1,30 @@
 <script setup>
 import { useAuthStore } from '@/stores/auth'
+import { computed, onMounted } from 'vue'
+import { useStatisticsStore } from '@/stores/statistics'
 
 const authStore = useAuthStore()
+const statisticsStore = useStatisticsStore()
+
+const totalGamesAnonymous = computed(() => statisticsStore.gameStatisticsAnonymous.total || 0)
+const totalGamesThisMonth = computed(
+  () => statisticsStore.gameStatisticsAnonymous.totalGamesCurrentMonth || 0
+)
+const totalPlayers = computed(() => statisticsStore.gameStatisticsAnonymous.totalPlayers || 0)
+
+onMounted(() => {
+  statisticsStore.fetchGameAnonymous()
+})
 </script>
 
 <template>
-  <div class="bg-gradient-to-b from-blue-100 to-blue-50 pb-4 flex flex-col items-center rounded-lg mt-10">
+  <div
+    class="bg-gradient-to-b from-blue-100 to-blue-50 pb-4 flex flex-col items-center rounded-lg mt-10"
+  >
     <!-- Banner -->
     <div
-      class="w-full relative bg-gradient-to-r from-sky-500 to-indigo-700 text-white py-16 rounded-lg animate-fade-in">
+      class="w-full relative bg-gradient-to-r from-sky-500 to-indigo-700 text-white py-16 rounded-lg animate-fade-in"
+    >
       <div class="flex flex-col justify-center items-center text-center space-y-2 px-2">
         <h1 class="text-4xl sm:text-5xl font-bold tracking-wide animate-slide-in-down">
           Welcome to Memory Game
@@ -33,21 +49,24 @@ const authStore = useAuthStore()
       <!-- Highlights -->
       <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 animate-fade-in-delayed">
         <div
-          class="bg-white shadow-md p-6 rounded-lg text-center space-y-4 hover:shadow-lg transition-transform transform hover:scale-105">
+          class="bg-white shadow-md p-6 rounded-lg text-center space-y-4 hover:shadow-lg transition-transform transform hover:scale-105"
+        >
           <h3 class="text-xl font-bold text-sky-600">Single-Player Mode</h3>
           <p class="text-gray-600">
             Play on your own and improve your memory while climbing the rankings.
           </p>
         </div>
         <div
-          class="bg-white shadow-md p-6 rounded-lg text-center space-y-4 hover:shadow-lg transition-transform transform hover:scale-105">
+          class="bg-white shadow-md p-6 rounded-lg text-center space-y-4 hover:shadow-lg transition-transform transform hover:scale-105"
+        >
           <h3 class="text-xl font-bold text-sky-600">Multi-Player Mode</h3>
           <p class="text-gray-600">
             Challenge your friends or compete online for the ultimate victory.
           </p>
         </div>
         <div
-          class="bg-white shadow-md p-6 rounded-lg text-center space-y-4 hover:shadow-lg transition-transform transform hover:scale-105">
+          class="bg-white shadow-md p-6 rounded-lg text-center space-y-4 hover:shadow-lg transition-transform transform hover:scale-105"
+        >
           <h3 class="text-xl font-bold text-sky-600">Scoreboard</h3>
           <p class="text-gray-600">Check out the leaderboard and see who has the best memory!</p>
         </div>
@@ -60,17 +79,33 @@ const authStore = useAuthStore()
           Create an account and join the fun!
         </p>
         <div class="flex justify-center gap-4">
-          <router-link v-if="!authStore.user" to="/registration"
-            class="bg-sky-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-sky-600 transition-transform transform hover:scale-105 hover:shadow-lg">
+          <router-link
+            v-if="!authStore.user"
+            to="/registration"
+            class="bg-sky-500 text-white px-6 py-3 rounded-lg shadow-md hover:bg-sky-600 transition-transform transform hover:scale-105 hover:shadow-lg"
+          >
             Register Now
           </router-link>
-          <router-link to="/scoreBoard/multiPlayer"
-            class="bg-gray-200 text-gray-800 px-6 py-3 rounded-lg shadow-md hover:bg-gray-300 transition-transform transform hover:scale-105 hover:shadow-lg">
+          <router-link
+            to="/scoreBoard/multiPlayer"
+            class="bg-gray-200 text-gray-800 px-6 py-3 rounded-lg shadow-md hover:bg-gray-300 transition-transform transform hover:scale-105 hover:shadow-lg"
+          >
             View Leaderboard
           </router-link>
         </div>
       </section>
     </div>
+  </div>
+
+  <div class="text-lg font-semibold mb-6 text-center">
+    Total Games Played: <span class="text-blue-600">{{ totalGamesAnonymous }}</span>
+  </div>
+
+  <div class="text-lg font-semibold mb-6 text-center">
+    Total Games Played This Month: <span class="text-blue-600">{{ totalGamesThisMonth }}</span>
+  </div>
+  <div class="text-lg font-semibold mb-6 text-center">
+    Total Player Registered: <span class="text-blue-600">{{ totalPlayers }}</span>
   </div>
 </template>
 

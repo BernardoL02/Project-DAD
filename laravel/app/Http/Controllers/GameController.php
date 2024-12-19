@@ -82,6 +82,30 @@ class GameController extends Controller
         ];
     }
 
+    public function viewAllStatisticsAnonymous()
+    {
+        $totalGames = DB::table('games')
+            ->where('status', 'E')
+            ->count();
+
+        $firstDayCurrentMonth = now()->startOfMonth()->toDateString();
+        $lastDayCurrentMonth = now()->endOfMonth()->toDateString();
+        $totalGamesCurrentMonth = DB::table('games')
+            ->where('status', 'E')
+            ->whereBetween('created_at', [$firstDayCurrentMonth, $lastDayCurrentMonth])
+            ->count();
+
+        $totalPlayers = DB::table('users')
+            ->where('type', 'P')
+            ->count();
+
+        return [
+            'total' =>$totalGames,
+            'totalGamesCurrentMonth' => $totalGamesCurrentMonth,
+            'totalPlayers' => $totalPlayers,
+        ];
+    }
+
 
     public function index(Request $request)
     {
