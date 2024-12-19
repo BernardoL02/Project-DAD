@@ -60,10 +60,19 @@ export const useAdminStore = defineStore('admin', () => {
         !term ||
         user.NickName?.toLowerCase().includes(term) ||
         user.Email?.toLowerCase().includes(term)
+
+      if (status === 'All') {
+        return matchesSearch
+      }
+
+      if (status === 'Deleted') {
+        return user.Deleted === 'Deleted' && matchesSearch
+      }
+
       const matchesType = type === 'All' || user.Type === type
       const matchesStatus = status === 'All' || user.Blocked === status
 
-      return matchesSearch && matchesType && matchesStatus
+      return matchesSearch && matchesType && matchesStatus && user.Deleted !== 'Deleted'
     })
   })
 
@@ -72,14 +81,9 @@ export const useAdminStore = defineStore('admin', () => {
   }
 
   const setSelectedStatus = (status) => {
-    if (status === 'Blocked') {
-      selectedStatus.value = 1
-    } else if (status === 'Unblocked') {
-      selectedStatus.value = 0
-    } else {
-      selectedStatus.value = 'All'
-    }
+    selectedStatus.value = status
   }
+
   const filteredTransactions = computed(() => {
     const filteredByDate =
       !dateRange.value[0] && !dateRange.value[1]
@@ -131,8 +135,10 @@ export const useAdminStore = defineStore('admin', () => {
         Email: user.email,
         NickName: user.nickname,
         Type: user.type == 'A' ? 'Administrator' : 'Player',
-        Blocked: user.blocked
+        Blocked: user.blocked == 0 ? 'Unblocked' : 'Blocked',
+        Deleted: user.is_deleted ? 'Deleted' : 'NotDeleted'
       }))
+
       filterType.value = ''
     } catch (err) {
       error.value = 'Failed to load usersPlease try again.'

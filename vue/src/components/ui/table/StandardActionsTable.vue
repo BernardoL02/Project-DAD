@@ -32,10 +32,8 @@ const paginatedData = computed(() => {
     return props.data.slice(start, end);
 });
 
-// Filtra colunas visíveis com base nas colunas ocultas
 const visibleColumns = computed(() => props.columns.filter(col => !props.hiddenColumns.includes(col)))
 
-// Filtra os dados para mostrar apenas as colunas visíveis
 const filteredRow = (row) => {
     const filtered = {}
     for (const [key, value] of Object.entries(row)) {
@@ -113,7 +111,6 @@ watch(
             </tbody>
         </table>
 
-        <!-- Controles de Paginação -->
         <div v-if="pagination" class="flex items-center justify-between m-4">
             <div>
                 <button @click="previousPage" :disabled="currentPage === 1 || totalPages === 0"
