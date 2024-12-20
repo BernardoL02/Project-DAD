@@ -33,12 +33,16 @@ const authStore = useAuthStore()
 
 const loading = computed(() => statisticsStore.loading)
 const totalGames = computed(() => statisticsStore.totalGames || 0)
-const totalGamesUser = computed(() => statisticsStore.totalGamesUser || 0)
+const totalGamesUser = computed(() => statisticsStore.filteredGamesUser.length || 0)
 const selectedYear = computed(() => statisticsStore.selectedYear)
 const transactionsStatistics = computed(() => statisticsStore.transactionsStatistics)
 const transactionsUser = computed(() => statisticsStore.transactionsUser)
-const totalMultiPlayerGames = computed(() => statisticsStore.totalMultiPlayerGames)
-const totalSinglePlayerGames = computed(() => statisticsStore.totalSinglePlayerGames)
+const totalMultiPlayerGames = computed(
+  () => statisticsStore.gameStatisticsUser?.totalMulty.length || 0
+)
+const totalSinglePlayerGames = computed(
+  () => statisticsStore.gameStatisticsUser?.totalSingle.length || 0
+)
 const gameStatistics = computed(() => statisticsStore.gameStatistics)
 const topPlayersByTimePlayed = computed(() => statisticsStore.topPlayersByTimePlayed)
 const selectedView = ref('')
@@ -49,7 +53,9 @@ if (authStore.isAdmin) {
   selectedView.value = 'myStatistics'
 }
 
-const monthlyGameCountsUser = computed(() => statisticsStore.monthlyGameCountsUser)
+const monthlyGameCountsUser = computed(
+  () => statisticsStore.gameStatisticsUser.totalGamesByYearMonth
+)
 
 const chartData = computed(() => {
   const monthlyData = gameStatistics.value.totalGamesByYearMoth
@@ -90,15 +96,36 @@ const chartData = computed(() => {
 const chartDataUser = computed(() => {
   const gameCounts = monthlyGameCountsUser.value
 
-  const months = Object.keys(gameCounts)
-  const counts = Object.values(gameCounts)
+  const filteredGameCounts = gameCounts.filter((entry) => entry.year === selectedYear.value)
+
+  const monthlyData = new Array(12).fill(0)
+
+  filteredGameCounts.forEach((entry) => {
+    const monthIndex = entry.month - 1
+    monthlyData[monthIndex] = entry.total
+  })
+
+  const labels = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+  ]
 
   return {
-    labels: months,
+    labels: labels,
     datasets: [
       {
         label: 'Games Played Each Month',
-        data: counts,
+        data: monthlyData,
         backgroundColor: '#fea112'
       }
     ]
@@ -134,10 +161,19 @@ const pieChartDataUser = computed(() => {
     : []
 
   const boardSizeCounts = games.reduce((acc, game) => {
-    if (!acc[game.board_id]) {
-      acc[game.board_id] = 0
+    const boardSize =
+      game.board_id === 1
+        ? '3x4'
+        : game.board_id === 2
+          ? '4x4'
+          : game.board_id === 3
+            ? '6x6'
+            : 'Other'
+
+    if (!acc[boardSize]) {
+      acc[boardSize] = 0
     }
-    acc[game.board_id]++
+    acc[boardSize]++
     return acc
   }, {})
 
@@ -470,8 +506,7 @@ onMounted(() => {
     statisticsStore.getUsers()
   } else {
     statisticsStore.fetchProfile()
-    statisticsStore.getMultiPlayerGames()
-    statisticsStore.getSinglePlayerGames()
+    statisticsStore.fetchPlayerGames()
     statisticsStore.getTransactionsGroupedByMonth()
     statisticsStore.getTransactionsUser()
   }

@@ -14,6 +14,11 @@ class UserPolicy
         //
     }
 
+    public function view(User $user)
+    {
+        return $user->isPlayer();
+    }
+
     public function viewAny(User $user)
     {
         return $user->isAdmin();
@@ -40,11 +45,6 @@ class UserPolicy
     }
 
     public function deleteMyAccount(User $user)
-    {
-        return $user->isPlayer();
-    }
-
-    public function viewNotifications(User $user)
     {
         return $user->isPlayer();
     }

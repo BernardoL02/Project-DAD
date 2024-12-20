@@ -25,8 +25,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/users/me', [UserController::class, 'update']);
     Route::patch('/users/me', [UserController::class, 'updatePassword']);
     Route::delete('/users/me', [UserController::class, 'destroy'])->can("deleteMyAccount", User::class);
-    Route::get('/users/me/notifications', [UserController::class , 'getNotifications'])->can("viewNotifications", User::class);
+    Route::get('/users/me/notifications', [UserController::class , 'getNotifications'])->can("view", User::class);
     Route::delete('/users/me/notifications', [UserController::class , 'deleteAllNotifications'])->can("deleteNotifications", User::class);
+    Route::get('/users/me/statistics', [UserController::class, 'Statistics'])->can("view", User::class);
 
     //------Administrator -----
     Route::get('/admin/users', [AdministratorController::class, 'index'])->can("viewAny", User::class);
@@ -48,6 +49,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::patch('/games/{game}/owner', [GameController::class, 'updateOwner'])->can("update", "game");
     Route::post('/games/{game}', [GameController::class, 'storePlayers'])->can("update", "game");
     Route::patch('/games/{game}/players', [GameController::class, 'updatePlayers'])->can("update", "game");
+
 
     // ----- Transactions -----
     Route::get('/transactions', [TransactionController::class, 'index'])->can("viewAny", Transaction::class);

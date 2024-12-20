@@ -17,6 +17,7 @@ use App\Http\Requests\RegistrationRequest;
 use App\Http\Resources\TransactionResource;
 use App\Http\Requests\UpdatePasswordRequest;
 use App\Http\Resources\ProfileUserResource as ResourcesProfileUserResource;
+use App\Models\Game;
 
 class UserController extends Controller
 {
@@ -181,6 +182,56 @@ class UserController extends Controller
             'message' => 'All notifications updated successfully.',
             'updatedCount' => $transactions->count(),
         ], 200);
+    }
+
+        public function Statistics(Request $request)
+    {
+        $user = $request->user();
+
+        $singlePlayerGames = $user->games()
+            ->where('type', 'S')
+            ->orderBy('began_at', 'desc')
+            ->get();
+
+             $user = $request->user();
+
+        $multiPlayerGames = Game::with([
+                'createdUser' => function ($query) {
+                    $query->withTrashed();
+                },
+                'winnerUser' => function ($query) {
+                    $query->withTrashed();
+                },
+                'multiplayerGamesPlayed' => function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                }
+            ])
+            ->withCount('multiplayerGamesPlayed')
+            ->whereHas('multiplayerGamesPlayed', function ($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })
+            ->where('type', 'M')
+            ->orderBy('id', 'desc')
+            ->get();
+
+        $multiPlayerGames->each(function ($game) use ($user) {
+            $playerStats = $game->multiplayerGamesPlayed->firstWhere('user_id', $user->id);
+            $game->pairs_discovered = $playerStats ? (int)$playerStats->pairs_discovered : 0;
+        });
+
+            $totalGamesByYearMonth = DB::table('games')
+            ->selectRaw('YEAR(began_at) as year, MONTH(began_at) as month, COUNT(*) as total')
+            ->where('status', 'E')
+            ->where('created_user_id', $user->id)
+            ->groupByRaw('YEAR(began_at), MONTH(began_at)')
+            ->orderByRaw('YEAR(began_at), MONTH(began_at)')
+            ->get();
+
+             return [
+            'totalSingle' =>$singlePlayerGames,
+            'totalMulty' => $multiPlayerGames,
+            'totalGamesByYearMonth' => $totalGamesByYearMonth
+        ];
     }
 }
 
