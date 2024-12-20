@@ -185,6 +185,7 @@
             </RouterLink>
 
             <RouterLink
+              v-if="authStore.isAdmin || authStore.isPlayer"
               :to="{ name: 'statistics' }"
               :class="[
                 'px-3 py-2 rounded-md text-sm font-medium transition-colors pt-[9px]',
