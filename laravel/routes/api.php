@@ -66,7 +66,6 @@ Route::get('/scoreboard/multiplayer', [ScoreBoardController::class, 'multiplayer
 Route::get('/users/{nickname}', [UserController::class , 'profileUser']);
 
 // ------ Anonymous Statistics ------
-
 Route::get('/anonymous/games', [GameController::class, 'viewAllStatisticsAnonymous']);
 
 

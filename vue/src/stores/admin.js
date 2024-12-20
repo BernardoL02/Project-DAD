@@ -61,18 +61,15 @@ export const useAdminStore = defineStore('admin', () => {
         user.NickName?.toLowerCase().includes(term) ||
         user.Email?.toLowerCase().includes(term)
 
-      if (status === 'All') {
-        return matchesSearch
-      }
-
-      if (status === 'Deleted') {
-        return user.Deleted === 'Deleted' && matchesSearch
-      }
-
       const matchesType = type === 'All' || user.Type === type
-      const matchesStatus = status === 'All' || user.Blocked === status
 
-      return matchesSearch && matchesType && matchesStatus && user.Deleted !== 'Deleted'
+      if ((status === 'Blocked' || status === 'Unblocked') && user.Deleted === 'Deleted') {
+        return false
+      }
+
+      const matchesStatus = status === 'All' || user.Blocked === status || user.Deleted === status
+
+      return matchesSearch && matchesType && matchesStatus
     })
   })
 

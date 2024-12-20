@@ -49,7 +49,15 @@ class ScoreBoardController extends Controller
             ])
                 ->orderByDesc('victories')
                 ->limit(5)
-                ->get(['id', 'nickname']);
+                ->get(['id', 'nickname'])
+                ->map(function ($player) {
+                    return [
+                        'id' => $player->id,
+                        'nickname' => $player->nickname,
+                        'victories' => $player->victories,
+                        'losses' => $player->losses,
+                    ];
+                });
 
             return response()->json(['player_stats' => $topPlayers]);
         } catch (\Exception $e) {
