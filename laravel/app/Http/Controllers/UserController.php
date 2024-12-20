@@ -184,7 +184,7 @@ class UserController extends Controller
         ], 200);
     }
 
-        public function Statistics(Request $request)
+    public function Statistics(Request $request)
     {
         $user = $request->user();
 
@@ -192,8 +192,6 @@ class UserController extends Controller
             ->where('type', 'S')
             ->orderBy('began_at', 'desc')
             ->get();
-
-             $user = $request->user();
 
         $multiPlayerGames = Game::with([
                 'createdUser' => function ($query) {
@@ -219,7 +217,7 @@ class UserController extends Controller
             $game->pairs_discovered = $playerStats ? (int)$playerStats->pairs_discovered : 0;
         });
 
-            $totalGamesByYearMonth = DB::table('games')
+        $totalGamesByYearMonth = DB::table('games')
             ->selectRaw('YEAR(began_at) as year, MONTH(began_at) as month, COUNT(*) as total')
             ->where('status', 'E')
             ->where('created_user_id', $user->id)
@@ -227,11 +225,53 @@ class UserController extends Controller
             ->orderByRaw('YEAR(began_at), MONTH(began_at)')
             ->get();
 
-             return [
-            'totalSingle' =>$singlePlayerGames,
+        $transactions = DB::table('transactions')
+            ->where('user_id', $user->id)
+            ->get();
+
+        $transactionsFormatted = $transactions->map(function ($transaction) {
+            $transactionValue = $transaction->euros ?? 0;
+            $pack = min((int) floor($transactionValue), 6);
+
+            return [
+                'id' => $transaction->id,
+                'name' => $transaction->user_name ?? '-',
+                'date' => $transaction->transaction_datetime,
+                'type' => $transaction->type === 'P' ? 'Purchase' : 'Unknown',
+                'value' => $transactionValue,
+                'paymentMethod' => $transaction->payment_type ?? '-',
+                'reference' => $transaction->payment_reference ?? '-',
+                'coins' => $transaction->brain_coins,
+                'pack' => $pack,
+            ];
+        });
+
+        $transactionsGroupedByMonth = $transactionsFormatted->groupBy(function ($transaction) {
+            return \Carbon\Carbon::parse($transaction['date'])->format('F Y');
+        });
+
+        $selectedYear = now()->year;
+        $monthlyPurchaseCounts = [];
+        foreach (range(1, 12) as $month) {
+            $monthName = \Carbon\Carbon::createFromDate(null, $month, 1)->format('M');
+            $monthlyPurchaseCounts[$monthName] = $transactionsFormatted
+                ->filter(function ($transaction) use ($month, $selectedYear) {
+                    $transactionDate = \Carbon\Carbon::parse($transaction['date']);
+                    return $transaction['type'] === 'Purchase'
+                        && $transactionDate->year === $selectedYear
+                        && $transactionDate->month === $month;
+                })
+                ->count();
+        }
+
+        return response()->json([
+            'totalSingle' => $singlePlayerGames,
             'totalMulty' => $multiPlayerGames,
-            'totalGamesByYearMonth' => $totalGamesByYearMonth
-        ];
+            'totalGamesByYearMonth' => $totalGamesByYearMonth,
+            'transactionsUser' => $transactionsFormatted,
+            'transactionsGroupedByMonth' => $transactionsGroupedByMonth,
+            'monthlyPurchaseCounts' => $monthlyPurchaseCounts,
+        ]);
     }
 }
 

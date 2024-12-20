@@ -36,7 +36,7 @@ const totalGames = computed(() => statisticsStore.totalGames || 0)
 const totalGamesUser = computed(() => statisticsStore.filteredGamesUser.length || 0)
 const selectedYear = computed(() => statisticsStore.selectedYear)
 const transactionsStatistics = computed(() => statisticsStore.transactionsStatistics)
-const transactionsUser = computed(() => statisticsStore.transactionsUser)
+
 const totalMultiPlayerGames = computed(
   () => statisticsStore.gameStatisticsUser?.totalMulty.length || 0
 )
@@ -293,9 +293,9 @@ const userRegistrationData = computed(() => {
 })
 
 const playerStatsUser = computed(() => {
-  if (!transactionsUser.value) return null
+  if (!statisticsStore.gameStatisticsUser.transactionsUser) return null
 
-  const purchaseTransactions = transactionsUser.value.filter(
+  const purchaseTransactions = statisticsStore.gameStatisticsUser.transactionsUser.filter(
     (transaction) => transaction.type === 'Purchase'
   )
 
@@ -304,6 +304,7 @@ const playerStatsUser = computed(() => {
     (sum, transaction) => sum + (parseFloat(transaction.value) || 0),
     0
   )
+
   return {
     totalPurchasesUser,
     totalPurchaseUserValue
@@ -311,14 +312,17 @@ const playerStatsUser = computed(() => {
 })
 
 const packSalesDataUser = computed(() => {
-  const packCounts = transactionsUser.value.reduce((acc, transaction) => {
-    const pack = transaction.pack
-    if (!acc[pack]) {
-      acc[pack] = 0
-    }
-    acc[pack]++
-    return acc
-  }, {})
+  const packCounts = statisticsStore.gameStatisticsUser.transactionsUser.reduce(
+    (acc, transaction) => {
+      const pack = transaction.pack
+      if (!acc[pack]) {
+        acc[pack] = 0
+      }
+      acc[pack]++
+      return acc
+    },
+    {}
+  )
 
   const allPacks = [1, 2, 3, 4, 5, 6]
   allPacks.forEach((pack) => {
@@ -400,7 +404,7 @@ const monthlyPurchaseData = computed(() => {
 })
 
 const monthlyPurchaseDataUser = computed(() => {
-  const purchaseCounts = statisticsStore.monthlyPurchaseCountsUser
+  const purchaseCounts = statisticsStore.gameStatisticsUser.monthlyPurchaseCounts
 
   return {
     labels: Object.keys(purchaseCounts),
@@ -507,8 +511,6 @@ onMounted(() => {
   } else {
     statisticsStore.fetchProfile()
     statisticsStore.fetchPlayerGames()
-    statisticsStore.getTransactionsGroupedByMonth()
-    statisticsStore.getTransactionsUser()
   }
 })
 </script>

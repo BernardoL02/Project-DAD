@@ -11,7 +11,6 @@ export const useStatisticsStore = defineStore('statistics', () => {
   const loading = ref(false)
   const error = ref(null)
   const selectedYear = ref(new Date().getFullYear())
-  const transactionsUser = ref([])
   const users = ref([])
   const user = ref(null)
   const gamesMulty = ref([])
@@ -23,9 +22,13 @@ export const useStatisticsStore = defineStore('statistics', () => {
   const gameStatisticsUser = ref({
     totalMulty: 0,
     totalSingle: 0,
-    totalGamesByYearMonth: []
+    totalGamesByYearMonth: [],
+    transactionsUser: [],
+    transactionsGroupedByMonth: [],
+    monthlyPurchaseCounts: []
   })
 
+  const totalPurchasesUser = computed(() => gameStatisticsUser.value.length)
   const fetchPlayerGames = async () => {
     loading.value = true
     storeError.resetMessages()
@@ -94,88 +97,6 @@ export const useStatisticsStore = defineStore('statistics', () => {
     })
 
     return gameCounts
-  })
-
-  const getTransactionsUser = async () => {
-    storeError.resetMessages()
-    try {
-      const response = await axios.get('/transactions', {})
-      transactionsUser.value = response.data.data.map((transaction) => {
-        const transactionValue = transaction.euros || 0
-        const pack = Math.min(Math.floor(transactionValue), 6)
-        return {
-          id: transaction.id,
-          Name: transaction.user?.name,
-          date: transaction.transaction_datetime,
-          type: transaction.type === 'P' ? 'Purchase' : 'Unknown',
-          value: transactionValue,
-          paymentMethod: transaction.payment_type || '-',
-          reference: transaction.payment_reference || '-',
-          coins: transaction.brain_coins,
-          pack
-        }
-      })
-    } catch (error) {
-      storeError.setErrorMessages(
-        error.response?.data?.message || 'An error occurred while fetching transactions.',
-        'Transaction Fetch Error'
-      )
-    }
-  }
-  const getTransactionsGroupedByMonth = () => {
-    return transactionsUser.value.reduce((grouped, transaction) => {
-      const monthYear = transaction.date.toLocaleString('default', {
-        month: 'long',
-        year: 'numeric'
-      })
-
-      if (!grouped[monthYear]) {
-        grouped[monthYear] = []
-      }
-      grouped[monthYear].push(transaction)
-      return grouped
-    }, {})
-  }
-
-  const monthlyPurchaseCountsUser = computed(() => {
-    const purchaseCounts = {}
-
-    transactionsUser.value.forEach((transaction) => {
-      if (transaction.type === 'Purchase') {
-        const transactionDate = new Date(transaction.date)
-        const year = transactionDate.getFullYear()
-
-        if (year === selectedYear.value) {
-          const monthName = transactionDate.toLocaleString('default', { month: 'short' })
-          if (!purchaseCounts[monthName]) {
-            purchaseCounts[monthName] = 0
-          }
-          purchaseCounts[monthName]++
-        }
-      }
-    })
-
-    const allMonths = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec'
-    ]
-    allMonths.forEach((month) => {
-      if (!purchaseCounts[month]) {
-        purchaseCounts[month] = 0
-      }
-    })
-
-    return purchaseCounts
   })
 
   //-----------------------------------------------------
@@ -408,16 +329,13 @@ export const useStatisticsStore = defineStore('statistics', () => {
     user,
     totalGamesUser,
     filteredGamesUser,
-    getTransactionsGroupedByMonth,
-    transactionsUser,
-    getTransactionsUser,
-    monthlyPurchaseCountsUser,
     topPlayersByTimePlayed,
     fetchGameStatistics,
     gameStatistics,
     gameStatisticsAnonymous,
     fetchGameAnonymous,
     gameStatisticsUser,
-    fetchPlayerGames
+    fetchPlayerGames,
+    totalPurchasesUser
   }
 })
