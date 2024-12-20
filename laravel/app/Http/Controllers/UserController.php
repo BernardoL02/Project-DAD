@@ -264,13 +264,16 @@ class UserController extends Controller
                 ->count();
         }
 
+
+
         return response()->json([
             'totalSingle' => $singlePlayerGames,
             'totalMulty' => $multiPlayerGames,
             'totalGamesByYearMonth' => $totalGamesByYearMonth,
             'transactionsUser' => $transactionsFormatted,
             'transactionsGroupedByMonth' => $transactionsGroupedByMonth,
-            'monthlyPurchaseCounts' => $monthlyPurchaseCounts,
+            'monthlyPurchaseCounts' => $monthlyPurchaseCounts
+
         ]);
     }
 }

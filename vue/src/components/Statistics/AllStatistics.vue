@@ -236,6 +236,7 @@ const horizontalBarChartDataUser = computed(() => {
 const userRegistrationData = computed(() => {
   const userCounts = statisticsStore.monthlyUserCounts
 
+  const currentYear = new Date().getFullYear() // Get the current year
   const labels = [
     'Jan',
     'Feb',
@@ -251,7 +252,11 @@ const userRegistrationData = computed(() => {
     'Dec'
   ]
 
-  const counts = labels.map((month) => userCounts[month] || 0)
+  // Build keys using the "Month Year" format
+  const counts = labels.map((month) => {
+    const key = `${month} ${currentYear}`
+    return userCounts[key] || 0
+  })
 
   return {
     labels,

@@ -134,42 +134,34 @@ export const useStatisticsStore = defineStore('statistics', () => {
   const monthlyUserCounts = computed(() => {
     const userCounts = {}
 
-    if (!users.value || users.value.length === 0) {
+    const backendCounts = gameStatistics.value?.totalUsersByYearMonth
+    if (!backendCounts || backendCounts.length === 0) {
       return userCounts
     }
 
-    const currentYear = new Date().getFullYear()
-
-    const monthMapping = {
-      'JAN.': 'Jan',
-      'FEV.': 'Feb',
-      'MAR.': 'Mar',
-      'ABR.': 'Apr',
-      'MAI.': 'May',
-      'JUN.': 'Jun',
-      'JUL.': 'Jul',
-      'AGO.': 'Aug',
-      'SET.': 'Sep',
-      'OUT.': 'Oct',
-      'NOV.': 'Nov',
-      'DEZ.': 'Dec'
-    }
-
-    users.value.forEach((user) => {
-      if (!user.RegisteredAt) return
-
-      const registeredAt = new Date(user.RegisteredAt)
-
-      if (registeredAt.getFullYear() !== currentYear) return
-      let monthName = registeredAt.toLocaleString('default', { month: 'short' }).toUpperCase()
-      monthName = monthMapping[monthName] || monthName
-
-      if (!userCounts[monthName]) {
-        userCounts[monthName] = 0
+    // Preencher os meses com os dados do backend
+    backendCounts.forEach(({ year, month, total }) => {
+      const monthNames = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ]
+      const monthName = monthNames[month - 1]
+      if (monthName) {
+        userCounts[`${monthName} ${year}`] = total
       }
-      userCounts[monthName]++
     })
 
+    const currentYear = new Date().getFullYear()
     const allMonths = [
       'Jan',
       'Feb',
@@ -185,8 +177,9 @@ export const useStatisticsStore = defineStore('statistics', () => {
       'Dec'
     ]
     allMonths.forEach((month) => {
-      if (!userCounts[month]) {
-        userCounts[month] = 0
+      const key = `${month} ${currentYear}`
+      if (!userCounts[key]) {
+        userCounts[key] = 0
       }
     })
 
@@ -229,7 +222,8 @@ export const useStatisticsStore = defineStore('statistics', () => {
     totalGamesByYearMoth: [],
     gamesByBoardSize: [],
     gamesByType: [],
-    total: []
+    total: [],
+    totalUsersByYearMonth: []
   })
 
   const fetchGameStatistics = async () => {

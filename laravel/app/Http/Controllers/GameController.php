@@ -73,12 +73,19 @@ class GameController extends Controller
     ->limit(20)
     ->get();
 
+     $totalUsersByYearMonth = DB::table('users')
+        ->selectRaw('YEAR(created_at) as year, MONTH(created_at) as month, COUNT(*) as total')
+        ->groupByRaw('YEAR(created_at), MONTH(created_at)')
+        ->orderByRaw('YEAR(created_at), MONTH(created_at)')
+        ->get();
+
         return [
             'total' =>$totalGames,
             'totalGamesByYearMoth' => $totalGamesByYearMoth,
             'gamesByBoardSize' => $gamesByBoardSize,
             'gamesByType' => $gamesByType,
-            'topPlayersByTimePlayed' => $topPlayersByTimePlayed
+            'topPlayersByTimePlayed' => $topPlayersByTimePlayed,
+            'totalUsersByYearMonth'=> $totalUsersByYearMonth
         ];
     }
 
